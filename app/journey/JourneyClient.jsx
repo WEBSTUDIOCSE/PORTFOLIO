@@ -6,15 +6,17 @@ import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF, useTexture } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
+import { SCENES } from './components/scenes.js';
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
-useTexture.preload('/assets/mountains_bg.png?v=3');
-useTexture.preload('/assets/village_bg.png?v=1');
+SCENES.forEach((s) => {
+  if (s.topImage) useTexture.preload(s.topImage);
+  if (s.bottomImage) useTexture.preload(s.bottomImage);
+  if (s.station?.url) useGLTF.preload(s.station.url, DRACO_DECODER_PATH);
+});
 
 export default function JourneyClient() {
-  // Mount-gate: skip Canvas during SSR/hydration. Next.js 16 doesn't
-  // allow next/dynamic({ ssr: false }) inside a Server Component, so
-  // we gate at the client-component level instead.
+  // Mount-gate: skip Canvas during SSR/hydration.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -49,6 +51,14 @@ export default function JourneyClient() {
           <Diorama />
         </Suspense>
       </Canvas>
+
+      {/* Scroll runway — one viewport tall per scene. The fixed
+          canvas above stays put while the page scrolls behind it. */}
+      <main aria-hidden>
+        {SCENES.map((s) => (
+          <section key={s.id} className="h-screen" />
+        ))}
+      </main>
 
       <Loader
         containerStyles={{ background: '#bfd8e8' }}
