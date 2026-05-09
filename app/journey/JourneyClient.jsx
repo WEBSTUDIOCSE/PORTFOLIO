@@ -3,17 +3,12 @@
 import * as THREE from 'three';
 import { Suspense, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Loader, useGLTF, useTexture } from '@react-three/drei';
+import { Loader, useGLTF } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
-import { SCENES } from './components/scenes.js';
+import { JOURNEY_VIEWPORTS } from './components/scenes.js';
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
-SCENES.forEach((s) => {
-  if (s.topImage) useTexture.preload(s.topImage);
-  if (s.bottomImage) useTexture.preload(s.bottomImage);
-  if (s.station?.url) useGLTF.preload(s.station.url, DRACO_DECODER_PATH);
-});
 
 export default function JourneyClient() {
   // Mount-gate: skip Canvas during SSR/hydration.
@@ -52,11 +47,12 @@ export default function JourneyClient() {
         </Suspense>
       </Canvas>
 
-      {/* Scroll runway — one viewport tall per scene. The fixed
-          canvas above stays put while the page scrolls behind it. */}
+      {/* Scroll runway — N viewports tall. The fixed canvas above
+          stays put while the page scrolls; the train glides smoothly
+          across all viewports as one continuous arc. */}
       <main aria-hidden>
-        {SCENES.map((s) => (
-          <section key={s.id} className="h-screen" />
+        {Array.from({ length: JOURNEY_VIEWPORTS }).map((_, i) => (
+          <section key={i} className="h-screen" />
         ))}
       </main>
 
@@ -64,7 +60,12 @@ export default function JourneyClient() {
         containerStyles={{ background: '#bfd8e8' }}
         innerStyles={{ background: 'rgba(255,255,255,0.4)' }}
         barStyles={{ background: '#2a241c' }}
-        dataStyles={{ color: '#2a241c', fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.2em' }}
+        dataStyles={{
+          color: '#2a241c',
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          letterSpacing: '0.2em',
+        }}
       />
     </>
   );

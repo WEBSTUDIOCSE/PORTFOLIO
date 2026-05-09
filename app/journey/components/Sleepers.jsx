@@ -13,20 +13,17 @@ export default function Sleepers() {
   const ref = useRef(null);
 
   const { geometry, material, count } = useMemo(() => {
-    const trackSection = gltf.scene.getObjectByName('TrackSection');
-    if (!trackSection) {
-      console.error('[Sleepers] "TrackSection" group not found in GLB');
-      return { geometry: null, material: null, count: 0 };
-    }
-
+    // Search the WHOLE GLB for any mesh named Sleeper_* — works
+    // regardless of whether the artist nested them inside a
+    // TrackSection group, the scene root, or a renamed parent.
     const sleeperMeshes = [];
-    trackSection.traverse((obj) => {
+    gltf.scene.traverse((obj) => {
       if (obj.isMesh && obj.name.startsWith('Sleeper_')) {
         sleeperMeshes.push(obj);
       }
     });
     if (sleeperMeshes.length === 0) {
-      console.error('[Sleepers] No "Sleeper_*" meshes inside TrackSection');
+      console.error('[Sleepers] No "Sleeper_*" meshes found in scene.glb');
       return { geometry: null, material: null, count: 0 };
     }
 
