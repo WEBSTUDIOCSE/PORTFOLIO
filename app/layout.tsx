@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Fraunces,
+  Tiro_Devanagari_Marathi,
+} from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +15,21 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Display serif for journey-page headlines (matches Saurabh Express
+// design — Fraunces stands in for the design's premium serif).
+const fraunces = Fraunces({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+// Devanagari for Hindi station names on the journey page.
+const tiroDevanagari = Tiro_Devanagari_Marathi({
+  variable: "--font-deva",
+  subsets: ["devanagari", "latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

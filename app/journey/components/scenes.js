@@ -1,80 +1,164 @@
-// Scene configuration. Add a new entry to SCENES to add a new
-// screen — the page automatically grows by one viewport per scene
-// and the train passes through them in order on scroll.
+// Saurabh Express stations. Each entry is one stop on the journey.
+// One viewport of vertical scroll = one station. The train glides
+// L→R within each viewport and the active station drives the top
+// hoarding panel + the bottom route-map medallion highlight.
 //
-// Optional per-scene `station` block — pulls in a GLB landmark
-// that sits in the diorama only while this scene is the active one:
-//   url       — GLB path (run through sceneAsset() for cache-bust)
-//   scale     — uniform scale applied to the loaded model
-//   position  — [x, y, z] world placement
-//   rotationY — rotation around Y in radians (e.g. -Math.PI / 2)
+// Per-station fields:
+//   id      — short slug (also React key)
+//   stop    — display number (00..N), shown on the medallion
+//   p       — normalised position 0..1 along the route (drives medallion left%)
+//   name    — English station name
+//   deva    — Devanagari station name
+//   km      — milepost as a string (e.g. '000', '942')
+//   plat    — platform string (e.g. 'PF 1')
+//   panel   — { type, ...content } feeding the matching panel component
 
-import { sceneAsset } from './glb.js';
-
-export const SCENES = [
+export const STATIONS = [
   {
-    id: 'origin',
-    title: 'The Origin',
-    topImage: '/assets/scene1_top.png?v=1',
-    topAspect: 4.03,            // 1024 / 254
-    bottomImage: '/assets/scene1_bottom.png?v=1',
-    bottomAspect: 4.06,         // 2080 / 512
-    bottomCropTop: 0.20,        // beige padding at top of source PNG
-  },
-  {
-    id: 'coast',
-    title: 'The Coast',
-    topImage: '/assets/scene2_top.png?v=1',
-    topAspect: 1.832,           // 1024 / 559 — narrower (16:9 source)
-    bottomImage: '/assets/scene2_bottom.png?v=1',
-    bottomAspect: 1.792,        // 2752 / 1536
-    bottomCropTop: 0,
-  },
-  {
-    // Scene 3 — Origin Station. Station fills section A; a sandy
-    // ground card covers section C; story board overlay sits on
-    // top of the ground card.
-    id: 'origin-station',
-    title: 'The Origin Station',
-    bottomColor: '#d4c4a8',     // sandy concrete tone for section C
-    station: {
-      url: sceneAsset('/models/station_origin.glb'),
-      hideMeshes: [
-        'Background_Ground',
-        'Track_Ballast',
-        'Rail_',
-        'Sleeper_',
-      ],
-      targetWidth: 60,
-      // Pulled forward from -7 to -4 so the station's base sits
-      // closer to the rails, closing the visible sky gap between
-      // the train and the platform foundation.
-      position: [0, 0, -4],
-      rotationY: 0,
+    // 00 — The pre-departure platform.
+    id: 'platform',
+    stop: 0,
+    p: 0.0,
+    name: 'The Platform',
+    deva: 'प्लॅटफॉर्म',
+    km: '000',
+    plat: 'PF 0',
+    departure: '05:30',
+    bgImage: '/assets/platform_bg.jpg?v=2',
+    panel: {
+      type: 'intro',
+      lede:
+        'A platform somewhere along the Konkan line. Distant horn, mist on the rails, the Sahyadri ridges in soft pre-dawn blue. The 06:00 to Mumbai Central is pulling in. Stand still — when you scroll, you board.',
+      meta: 'Pre-departure · 05:30 AM IST',
     },
-    storyBoard: {
-      title: 'The Origin',
-      body: 'Where every long journey begins — a small station, a curious mind, the hum of an engine pulling out of the platform for the very first time.',
+  },
+  {
+    id: 'story',
+    stop: 1,
+    p: 0.25,
+    name: 'The Story',
+    deva: 'कथा',
+    km: '235',
+    plat: 'PF 1',
+    departure: '06:00',
+    bgImage: '/assets/story_bg.jpg?v=2',
+    panel: {
+      type: 'intro',
+      lede:
+        'Saurabh Jadhav. Product engineer based in Mumbai. I build software end-to-end — design, code, ship — for products people actually use. Welcome aboard.',
+      meta: 'Mumbai · India · Boarding since 1998',
+    },
+  },
+  {
+    id: 'skills',
+    stop: 2,
+    p: 0.5,
+    name: 'Skills',
+    deva: 'कौशल्ये',
+    km: '471',
+    plat: 'PF 2',
+    departure: '09:12',
+    bgImage: '/assets/skills_bg.jpg?v=2',
+    panel: {
+      type: 'skills',
+      items: [
+        { icon: '⚛', name: 'React', note: 'Years of production work' },
+        { icon: 'TS', name: 'TypeScript', note: 'Strict mode, always' },
+        { icon: '◆', name: 'Next.js', note: 'App router, RSC' },
+        { icon: '⬢', name: 'Node.js', note: 'APIs, scripts, CLI tools' },
+        { icon: '⚙', name: 'Postgres', note: 'Schema, perf, migrations' },
+        { icon: '☁', name: 'Cloudflare', note: 'Workers, R2, KV' },
+        { icon: '✦', name: 'Three.js', note: 'r3f — this site' },
+        { icon: '★', name: 'Tailwind', note: 'v4 with design tokens' },
+      ],
+    },
+  },
+  {
+    id: 'projects',
+    stop: 3,
+    p: 0.75,
+    name: 'Projects',
+    deva: 'कार्य',
+    km: '706',
+    plat: 'PF 3',
+    departure: '11:24',
+    bgImage: '/assets/projects_bg.jpg?v=2',
+    panel: {
+      type: 'projects',
+      cards: [
+        {
+          num: 'P-001',
+          title: 'SaaS product 0→10k MAU',
+          meta: 'Founding engineer · 2018–20',
+          stack: ['React', 'Node', 'Postgres'],
+        },
+        {
+          num: 'P-002',
+          title: 'Mobile app for kirana stores',
+          meta: 'Lead · 2020',
+          stack: ['React Native', 'Firebase'],
+        },
+        {
+          num: 'P-003',
+          title: 'Realtime collab editor',
+          meta: 'Tech lead · 2022',
+          stack: ['CRDT', 'WebSocket', 'Yjs'],
+        },
+        {
+          num: 'P-004',
+          title: 'Edge ML inference',
+          meta: 'Architect · 2023',
+          stack: ['Cloudflare Workers', 'ONNX'],
+        },
+        {
+          num: 'P-005',
+          title: 'rail-svg toolkit',
+          meta: 'Open-source · maintainer',
+          stack: ['SVG', 'TypeScript'],
+        },
+        {
+          num: 'P-006',
+          title: 'Konkan diorama (this site)',
+          meta: 'Personal · 2025',
+          stack: ['Next.js', 'react-three-fiber'],
+        },
+      ],
+    },
+  },
+  {
+    id: 'contact',
+    stop: 4,
+    p: 1.0,
+    name: 'Contact',
+    deva: 'संपर्क',
+    km: '942',
+    plat: 'PF 4',
+    departure: '13:50',
+    // No bgImage — Contact has a dedicated full-overlay component
+    // (ContactStation.jsx) that supplies its own banner backdrop +
+    // headline + contact actions. Avoids double-stacking bg layers.
+    panel: {
+      type: 'terminus',
+      heading: 'Now boarding the next route.',
+      body:
+        'Available for senior product-engineer roles, technical co-founding, and design-engineering work. Mumbai or remote.',
+      links: [
+        { label: 'Email', href: 'mailto:saurabhjadhav.webstudio@gmail.com' },
+        { label: 'Resume PDF', href: '#' },
+        { label: 'GitHub', href: '#' },
+        { label: 'LinkedIn', href: '#' },
+      ],
     },
   },
 ];
 
-// Train motion. The train enters at the extreme left edge of the
-// frame (engine rear off-screen) and travels rightward as the user
-// scrolls. Leaves room past the start for a future coach to be
-// pulled in behind the engine. Smoothstep easing in Diorama softens
-// arrival/departure pacing.
-export const TRAIN_X_START = -30;
-export const TRAIN_X_END   = +20;
+// Total route length for the route-map readout ("000 / 942 KM").
+export const TOTAL_KM = 942;
 
-// Top backdrop card (vertical, face-camera). The plane width per
-// scene = TOP_CARD_HEIGHT × scene.topAspect, computed in Diorama.
-// Position Y is tuned so the plane's bottom edge projects to
-// cam_Y ≈ 0.65 (just at the back-rail top — no gap, no overlap).
-export const TOP_CARD_HEIGHT = 14.89;
-export const TOP_CARD_POSITION = [0, 2.67, -10];
-
-// Bottom backdrop card (horizontal "ground" past the front rail).
-export const BOTTOM_CARD_DEPTH    = 22;
-export const BOTTOM_CARD_Z_NEAR   = 1.5;     // top edge just past front rail
-export const BOTTOM_CARD_Z_CENTER = BOTTOM_CARD_Z_NEAR + BOTTOM_CARD_DEPTH / 2;
+// Train motion in world X. The train glides from X_START → X_END as
+// the user scrolls from the top to the bottom of the runway.
+//   X_START = -23: at scroll=0 the COACH (back of train) is half off
+//                  the left edge of the visible frame.
+//   X_END   = +18: at end-of-scroll the train is at the right edge.
+export const TRAIN_X_START = -23;
+export const TRAIN_X_END   = +18;
