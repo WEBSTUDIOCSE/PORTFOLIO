@@ -58,7 +58,8 @@ export const STATIONS = [
     km: '471',
     plat: 'PF 2',
     departure: '09:12',
-    bgImage: '/assets/skills_bg.jpg?v=2',
+    // No bgImage — Skills has a dedicated full-overlay component
+    // (SkillsStation.jsx) with its own dotted-grid backdrop.
     panel: {
       type: 'skills',
       items: [

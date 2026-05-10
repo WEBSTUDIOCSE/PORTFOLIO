@@ -17,7 +17,14 @@ function jumpToStation(idx) {
 // + prev/play/next + a small KM readout. No engraved header, no
 // status chips, no speed readout, no per-medallion time labels.
 // One job: show progression along the line and let users jump.
-export default function RouteMap({ stations, activeIdx, progress, scrollT }) {
+export default function RouteMap({
+  stations,
+  activeIdx,
+  progress,
+  scrollT,
+  isPlaying = false,
+  onTogglePlay,
+}) {
   const fromKm = parseInt(stations[activeIdx]?.km ?? '0', 10);
   const toKm = parseInt(
     stations[Math.min(stations.length - 1, activeIdx + 1)]?.km ??
@@ -93,10 +100,11 @@ export default function RouteMap({ stations, activeIdx, progress, scrollT }) {
             <button
               type="button"
               className="journey-dock__play"
-              aria-label="Auto-play (coming soon)"
-              disabled
+              aria-label={isPlaying ? 'Pause autoplay' : 'Play journey'}
+              aria-pressed={isPlaying}
+              onClick={onTogglePlay}
             >
-              ▶
+              {isPlaying ? '❚❚' : '▶'}
             </button>
             <button
               type="button"
