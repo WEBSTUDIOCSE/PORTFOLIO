@@ -19,54 +19,19 @@ export default function ContactStation({ scrollT, index }) {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 'var(--routemap-h, 96px)',
+        // Leave a strip above the route-map for the 3D train to show
+        // through, so the journey metaphor stays visible while the
+        // contact panel is open.
+        bottom: 'calc(var(--routemap-h, 96px) + 110px)',
         zIndex: 10,
         opacity,
         pointerEvents: opacity > 0.5 ? 'auto' : 'none',
-        background: '#fafafa',
+        // Transparent bg — the dotted-grid layer at z=0 covers the
+        // whole canvas height, so the panel area and the train strip
+        // share identical surface during scroll fades (no seam).
       }}
       aria-hidden={opacity < 0.5}
     >
-      {/* Layer 1 — dotted grid backdrop. Subtle slate dots at 22px
-          spacing — the same trick Linear / Vercel / Resend use to
-          add texture without noise. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage:
-            'radial-gradient(circle, #cbd5e1 1.2px, transparent 1.2px)',
-          backgroundSize: '22px 22px',
-          backgroundPosition: '0 0',
-        }}
-      />
-
-      {/* Layer 2 — radial vignette: fades dots toward white at the
-          edges so the eye lands on the centred content card. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 70%, #fafafa 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Layer 3 — soft amber wash at the top, tying back to the
-          journey's brass / golden-hour palette. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(251,191,36,0.10), transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
 
       <div className="relative z-10 h-full w-full flex items-center justify-center px-4 sm:px-6 py-6">
         <div className="w-full max-w-3xl mx-auto">
