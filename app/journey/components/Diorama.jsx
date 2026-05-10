@@ -22,18 +22,6 @@ const GROUND_Y_OFFSET = -14.8;
 // at viewport boundaries isn't visible to the user.
 const TRAIN_HALF_LENGTH = 14;
 
-// Critical-damped spring constants for the train's X position.
-// Stiffness sets how quickly the train chases its target; damping
-// sets how smoothly it settles. Tuned for "butter smooth": train
-// glides into position with no bounce and no jitter, even on fast
-// scroll. Critical damping ≈ 2 * sqrt(stiffness) ≈ 17.9, so 19
-// gives a touch of overdamping (zero overshoot, silkier arrival).
-const SPRING_STIFFNESS = 80;
-const SPRING_DAMPING = 19;
-// Frame-time clamp — protects spring math from instability when the
-// browser drops a long frame (tab backgrounded, etc.). 33ms = 30fps.
-const MAX_DT = 1 / 30;
-
 // Train motion model
 // ──────────────────
 // One scroll viewport = one station-to-next-station segment.
@@ -65,14 +53,13 @@ function computeSegmentEndpoints(idx, total, halfCanvas) {
 
 export default function Diorama() {
   const trainGroup = useRef(null);
-  // Spring-driven X position. `currentX` is the painted position,
-  // `velocityX` is its current rate of change. The spring resolves
-  // each frame to chase `targetX` (the scroll-derived ideal).
-  const currentX = useRef(0);
-  const velocityX = useRef(0);
-  // Active segment index from the previous frame; used to detect
-  // boundary crossings and snap the train (invisibly).
-  const lastIdx = useRef(-1);
+  // Smoothed scrollY value the train reads. Mouse wheels often
+  // deliver 100px jumps per notch; smoothing the *input* over a few
+  // frames evens out those chunks so the train glides between
+  // notches the same way it glides during programmatic autoplay.
+  const smoothScrollY = useRef(
+    typeof window !== 'undefined' ? window.scrollY : 0
+  );
   // Scroll-direction tracking for the engine flip.
   const lastScrollY = useRef(0);
   const facing = useRef(0); // 0 = forward (+X), Math.PI = reverse (-X)
@@ -83,8 +70,15 @@ export default function Diorama() {
     if (!trainGroup.current || typeof window === 'undefined') return;
     if (!camera || !sizeW || !camera.zoom) return;
 
-    const scrollY = window.scrollY;
-    const t = scrollY / window.innerHeight;
+    // Exponential smoothing of scroll position. Time constant ≈ 67ms
+    // (4 frames at 60fps) — fast enough that the eye doesn't read
+    // any lag, slow enough to round off the wheel-notch step pattern
+    // that makes raw scrollY look chunky.
+    const rawScrollY = window.scrollY;
+    const smoothing = 1 - Math.exp(-delta * 15);
+    smoothScrollY.current += (rawScrollY - smoothScrollY.current) * smoothing;
+
+    const t = smoothScrollY.current / window.innerHeight;
     const total = Math.max(1, STATIONS.length - 1);
     const idx = Math.min(total - 1, Math.max(0, Math.floor(t)));
     const localProgress = clamp01(t - idx);
@@ -93,18 +87,9 @@ export default function Diorama() {
     const [xStart, xEnd] = computeSegmentEndpoints(idx, total, halfCanvas);
     const targetX = lerp(xStart, xEnd, localProgress);
 
-    // Boundary crossing → snap currentX to the new segment's target
-    // and zero the velocity so the spring doesn't carry inertia from
-    // the previous segment into the new one. Both off-canvas endpoints
-    // sit beyond the visible frame so the cut isn't seen on screen.
-    if (idx !== lastIdx.current) {
-      currentX.current = targetX;
-      velocityX.current = 0;
-      lastIdx.current = idx;
-    }
-
-    // Engine direction flip on scroll-direction change.
-    const dy = scrollY - lastScrollY.current;
+    // Engine direction flip — uses raw scrollY so the flip reacts to
+    // user input immediately, not after the smoothing settles.
+    const dy = rawScrollY - lastScrollY.current;
     if (Math.abs(dy) > 0.5) {
       const newFacing = dy < 0 ? Math.PI : 0;
       if (newFacing !== facing.current) {
@@ -112,18 +97,9 @@ export default function Diorama() {
         trainGroup.current.rotation.y = newFacing;
       }
     }
-    lastScrollY.current = scrollY;
+    lastScrollY.current = rawScrollY;
 
-    // Critical-damped spring integration. Force = stiffness × offset
-    // − damping × velocity. Slightly overdamped so the train glides
-    // to a stop with no overshoot. dt clamped to MAX_DT so a single
-    // dropped frame can't blow up the integration.
-    const dt = Math.min(delta, MAX_DT);
-    const offset = targetX - currentX.current;
-    const accel = SPRING_STIFFNESS * offset - SPRING_DAMPING * velocityX.current;
-    velocityX.current += accel * dt;
-    currentX.current += velocityX.current * dt;
-    trainGroup.current.position.x = currentX.current;
+    trainGroup.current.position.x = targetX;
   });
 
   return (
