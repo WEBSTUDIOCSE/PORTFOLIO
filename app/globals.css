@@ -20,6 +20,27 @@
   --border: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --radius: 0.625rem;
+
+  /* Saurabh Express palette (journey page). */
+  --rail-maroon: #7a1f2b;
+  --rail-maroon-dk: #4f1219;
+  --cream: #f4ead4;
+  --cream-dk: #e2d4ad;
+  --paper: #f7efd9;
+  --ink: #2a1a14;
+  --ink-soft: #5a4435;
+  --brass: #b88c3f;
+  --brass-dk: #8a6526;
+  --teak: #6b3f2a;
+  --shadow: 0 6px 24px rgba(58, 35, 22, 0.18),
+            0 2px 6px rgba(58, 35, 22, 0.10);
+  --shadow-deep: 0 18px 48px rgba(58, 35, 22, 0.32),
+                 0 4px 10px rgba(58, 35, 22, 0.18);
+
+  /* Route-map height. Drives both the dock height AND the Canvas's
+     `bottom` offset so the two stay in lockstep across viewports.
+     Fixed 96px keeps the dock thin and predictable. */
+  --routemap-h: 96px;
 }
 
 .dark {
@@ -39,5 +60,703 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ============================================================
+   Journey page — Saurabh Express design
+   ============================================================ */
+
+/* ---------- Top hoarding (Section A) ---------- */
+
+.journey-hoarding {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 7;
+  pointer-events: none;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  color: var(--ink);
+}
+
+.journey-hoarding > * {
+  pointer-events: auto;
+}
+
+.journey-brandbar {
+  height: 36px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 18px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.journey-brandbar__left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journey-brandbar__pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rail-maroon);
+  display: inline-block;
+  animation: journey-pulse 2.4s ease-in-out infinite;
+}
+
+.journey-brandbar__center {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.journey-brandbar__deva {
+  font-family: var(--font-deva), serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cream);
+}
+
+.journey-brandbar__sep {
+  opacity: 0.45;
+}
+
+.journey-brandbar__right {
+  text-align: right;
+  opacity: 0.7;
+}
+
+@keyframes journey-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+.journey-hoarding-row {
+  display: grid;
+  grid-template-columns: clamp(220px, 26vw, 320px) 1fr;
+  gap: 14px;
+  height: clamp(220px, 32vh, 320px);
+  padding: 14px clamp(14px, 2.4vw, 28px);
+  background: linear-gradient(180deg,
+    rgba(247, 239, 217, 0.95) 0%,
+    rgba(247, 239, 217, 0.92) 100%);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+/* Maroon enamel station sign */
+
+.journey-station-sign {
+  position: relative;
+  background: var(--rail-maroon);
+  border: 2px solid var(--rail-maroon-dk);
+  box-shadow: inset 0 0 0 1px var(--brass), var(--shadow);
+  border-radius: 4px;
+  padding: 16px 18px 18px;
+  color: var(--cream);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.journey-station-sign__bolt {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--brass);
+  border-radius: 50%;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+.journey-station-sign__bolt--tl { top: 6px; left: 6px; }
+.journey-station-sign__bolt--tr { top: 6px; right: 6px; }
+.journey-station-sign__bolt--bl { bottom: 6px; left: 6px; }
+.journey-station-sign__bolt--br { bottom: 6px; right: 6px; }
+
+.journey-station-sign__stop {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  opacity: 0.78;
+}
+
+.journey-station-sign__deva {
+  font-family: var(--font-deva), serif;
+  font-size: clamp(15px, 1.5vw, 18px);
+  margin-top: 2px;
+}
+
+.journey-station-sign__name {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.05;
+  margin: 4px 0 0;
+}
+
+.journey-station-sign__km-row {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.journey-station-sign__km {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+
+.journey-station-sign__plat {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  background: var(--brass);
+  color: var(--rail-maroon-dk);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+/* Cream content panel */
+
+.journey-hoarding-panel {
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(107, 63, 42, 0.06) 0 1px,
+      transparent 1px 8px),
+    linear-gradient(180deg, var(--paper) 0%, var(--cream) 100%);
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  padding: clamp(12px, 1.6vw, 18px) clamp(14px, 2vw, 22px);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.journey-panel {
+  position: absolute;
+  inset: 0;
+  padding: clamp(12px, 1.6vw, 18px) clamp(14px, 2vw, 22px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.journey-panel.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* --- Panel: Intro --- */
+
+.panel-intro {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-intro__lede {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(17px, 1.9vw, 24px);
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0;
+}
+
+.panel-intro__meta {
+  margin-top: auto;
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-top: 12px;
+  border-top: 1px dashed rgba(42, 26, 20, 0.25);
+}
+
+/* --- Panel: Journey strip --- */
+
+.panel-journey-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  height: 100%;
+}
+
+.tl-card {
+  background: var(--cream);
+  border: 1px solid rgba(42, 26, 20, 0.2);
+  border-radius: 3px;
+  padding: 10px 12px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tl-card__year {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--rail-maroon);
+}
+
+.tl-card__role {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 15px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.tl-card__org {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 2px;
+}
+
+.tl-card__notes {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* --- Panel: Hobbies grid --- */
+
+.panel-hobbies-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  height: 100%;
+  align-content: start;
+}
+
+.hobby-card {
+  background: var(--cream);
+  border: 1px solid rgba(42, 26, 20, 0.2);
+  border-radius: 3px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hobby-card__icon {
+  color: var(--rail-maroon);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.hobby-card__name {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.hobby-card__note {
+  font-size: 10px;
+  color: var(--ink-soft);
+  line-height: 1.3;
+}
+
+/* --- Panel: Projects strip --- */
+
+.panel-projects-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  height: 100%;
+}
+
+.proj-card {
+  background: var(--cream);
+  border: 1px solid rgba(42, 26, 20, 0.2);
+  border-radius: 3px;
+  padding: 10px 12px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.proj-card__num {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--rail-maroon);
+}
+
+.proj-card__title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.proj-card__meta {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.proj-card__stack {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.proj-card__tag {
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(122, 31, 43, 0.1);
+  color: var(--rail-maroon);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* --- Panel: Terminus --- */
+
+.panel-terminus {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+  background: var(--rail-maroon);
+  color: var(--cream);
+  margin: -1px;
+  padding: clamp(12px, 1.6vw, 20px) clamp(14px, 2vw, 24px);
+  border-radius: 3px;
+}
+
+.panel-terminus__heading {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(17px, 2vw, 22px);
+  margin: 0;
+}
+
+.panel-terminus__body {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.panel-terminus__links {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panel-terminus__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--cream);
+  color: var(--rail-maroon-dk);
+  padding: 6px 10px;
+  border-radius: 3px;
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 120ms ease;
+}
+
+.panel-terminus__link:hover {
+  transform: translateY(-1px);
+}
+
+.panel-terminus__arrow {
+  font-size: 12px;
+}
+
+/* ---------- Bottom route-map (Section C) ---------- */
+
+.journey-routemap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--routemap-h) !important;
+  max-height: var(--routemap-h) !important;
+  min-height: var(--routemap-h) !important;
+  z-index: 8;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+  overflow: hidden !important;
+  box-sizing: border-box;
+  contain: size layout;
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+}
+
+.journey-routemap > * {
+  pointer-events: auto;
+}
+
+.journey-plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(42, 26, 20, 0.96);
+  color: var(--cream);
+  border: 0;
+  border-top: 1px solid var(--brass);
+  border-radius: 0;
+  padding: 8px clamp(20px, 3vw, 48px) 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Track row */
+
+.journey-track-row {
+  position: relative;
+  height: 44px;
+  margin: 0;
+  flex: 0 0 44px;
+}
+
+.journey-sleepers {
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 14px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--teak) 0 4px,
+    transparent 4px 16px
+  );
+  opacity: 0.6;
+}
+
+.journey-rails {
+  position: absolute;
+  inset: 0;
+}
+
+.journey-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--brass);
+  opacity: 0.55;
+}
+
+.journey-rail:nth-child(1) {
+  top: calc(50% - 4px);
+}
+.journey-rail:nth-child(2) {
+  top: calc(50% + 4px);
+}
+
+.journey-medallions {
+  position: absolute;
+  inset: 0;
+}
+
+.journey-medallion {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  color: var(--cream);
+}
+
+.journey-medallion__circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--ink);
+  border: 1.5px solid var(--rail-maroon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  transition: transform 150ms ease, background 150ms ease,
+              border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.journey-medallion:hover .journey-medallion__circle {
+  transform: scale(1.12);
+}
+
+.journey-medallion.is-past .journey-medallion__circle {
+  background: var(--rail-maroon);
+  color: var(--cream);
+  border-color: var(--rail-maroon);
+}
+
+.journey-medallion.is-active .journey-medallion__circle {
+  background: var(--brass);
+  color: var(--rail-maroon-dk);
+  border-color: var(--cream);
+  box-shadow: 0 0 0 3px rgba(184, 140, 63, 0.3);
+}
+
+.journey-medallion__name {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+.journey-medallion.is-active .journey-medallion__name {
+  opacity: 1;
+  color: var(--brass);
+}
+
+.journey-route-train {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--brass);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 220ms ease-out;
+  box-shadow: 0 0 0 2px rgba(184, 140, 63, 0.35);
+}
+
+/* Bottom bar — dock + readout */
+
+.journey-plate-bar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.journey-dock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.journey-dock button {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cream);
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.journey-dock button:hover:not([disabled]) {
+  transform: translateY(-1px);
+}
+
+.journey-dock button[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.journey-dock__play {
+  background: var(--brass) !important;
+  border-color: var(--brass) !important;
+  color: var(--rail-maroon-dk) !important;
+}
+
+.journey-readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-self: end;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.journey-readout__deva {
+  font-family: var(--font-deva), serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--brass);
+}
+
+.journey-readout__sep {
+  opacity: 0.4;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 800px) {
+  .journey-hoarding-row {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 12px 14px;
+  }
+  .journey-station-sign {
+    padding: 12px 14px 14px;
+  }
+  .journey-station-sign__name {
+    font-size: 22px;
+  }
+  .journey-hoarding-panel {
+    min-height: 180px;
+  }
+  .panel-hobbies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .journey-brandbar__center {
+    display: none;
+  }
+  .journey-medallion__name {
+    display: none;
+  }
+  .journey-readout__deva,
+  .journey-readout__sep {
+    display: none;
   }
 }
