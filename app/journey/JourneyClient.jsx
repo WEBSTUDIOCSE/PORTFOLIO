@@ -1,19 +1,28 @@
 'use client';
 
 import * as THREE from 'three';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
 import RouteMap from './components/RouteMap.jsx';
 import ContactStation from './components/ContactStation.jsx';
+import SkillsStation from './components/SkillsStation.jsx';
 import useScrollProgress from './components/useScrollProgress.js';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
 import { STATIONS } from './components/scenes.js';
 
 const CONTACT_IDX = STATIONS.findIndex((s) => s.id === 'contact');
+const SKILLS_IDX = STATIONS.findIndex((s) => s.id === 'skills');
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
+
+// Autoplay timing (ms). Move = travel between adjacent stations
+// at a constant slow scroll velocity (no easing — trains cruise,
+// they don't sprint through the middle). Pause = "halt" at each
+// station so the user can read the panel.
+const AUTOPLAY_MOVE_MS = 8000;
+const AUTOPLAY_PAUSE_MS = 5000;
 
 export default function JourneyClient() {
   // Mount-gate: skip Canvas during SSR/hydration.
@@ -32,6 +41,108 @@ export default function JourneyClient() {
   // crossfade and marker arrival stay in lockstep.
   const total = Math.max(1, STATIONS.length - 1);
   const progress = Math.min(1, Math.max(0, scrollT / total));
+
+  // Autoplay: train auto-advances through stations with a short halt
+  // at each. Any user-initiated scroll cancels playback.
+  const [isPlaying, setIsPlaying] = useState(false);
+  const togglePlay = useCallback(() => {
+    setIsPlaying((p) => !p);
+  }, []);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const TOTAL = STATIONS.length - 1;
+
+    // The site's globals.css sets `html { scroll-behavior: smooth }`
+    // for nice manual scroll. During autoplay we set scrollY 60 times
+    // per second, and CSS-smooth-scroll tries to animate each call —
+    // every new call interrupts the previous animation, producing the
+    // "wait then skip" pulse. Switch to auto for the autoplay session
+    // and restore on stop.
+    const html = document.documentElement;
+    const prevBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+
+    let rafId;
+
+    // Determine starting position. If the user is already at the end,
+    // restart from the beginning so play actually shows progress.
+    let startT = window.scrollY / window.innerHeight;
+    let fromIdx = Math.floor(startT);
+    if (fromIdx >= TOTAL) {
+      fromIdx = 0;
+      window.scrollTo({ top: 0, left: 0 });
+      startT = 0;
+    }
+    let toIdx = fromIdx + 1;
+
+    // Always start in MOVING phase — the user just pressed play, so
+    // the train should pull out immediately. If they were mid-viewport,
+    // fast-forward the timer so the animation continues from the
+    // current scroll position rather than snapping back.
+    let phase = 'moving';
+    const localT = Math.max(0, startT - fromIdx);
+    let phaseStart = performance.now() - localT * AUTOPLAY_MOVE_MS;
+
+    const tick = (now) => {
+      const elapsed = now - phaseStart;
+
+      if (phase === 'moving') {
+        // Linear interpolation — constant scroll velocity through the
+        // segment. No smoothstep here: it created a slow-fast-slow
+        // pulse per segment that read as the train "skipping" through
+        // the middle. Real trains cruise at steady speed.
+        const t = Math.min(1, elapsed / AUTOPLAY_MOVE_MS);
+        const targetT = fromIdx + (toIdx - fromIdx) * t;
+        window.scrollTo({ top: targetT * window.innerHeight, left: 0 });
+
+        if (t >= 1) {
+          if (toIdx >= TOTAL) {
+            // Reached the final station — stop playback.
+            setIsPlaying(false);
+            return;
+          }
+          phase = 'pausing';
+          phaseStart = now;
+        }
+      } else {
+        if (elapsed >= AUTOPLAY_PAUSE_MS) {
+          fromIdx = toIdx;
+          toIdx = fromIdx + 1;
+          phase = 'moving';
+          phaseStart = now;
+        }
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    // User-initiated scroll cancels autoplay so the play button
+    // doesn't fight the user.
+    const cancel = () => setIsPlaying(false);
+    const onKey = (e) => {
+      if (
+        ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(
+          e.key
+        )
+      ) {
+        cancel();
+      }
+    };
+    window.addEventListener('wheel', cancel, { passive: true });
+    window.addEventListener('touchmove', cancel, { passive: true });
+    window.addEventListener('keydown', onKey);
+
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      html.style.scrollBehavior = prevBehavior;
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchmove', cancel);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isPlaying]);
 
   if (!mounted) {
     return (
@@ -62,6 +173,18 @@ export default function JourneyClient() {
           />
         ) : null
       )}
+
+      {/* Dotted-grid bg behind the train at Skills/Contact stations,
+          matching the SkillsStation/ContactStation panel backdrop so
+          the strip behind the train doesn't pop as sky-blue. */}
+      {[SKILLS_IDX, CONTACT_IDX].map((idx) => (
+        <div
+          key={`stationbg-${idx}`}
+          className="journey-platform-bg journey-platform-bg-dotted"
+          style={{ opacity: Math.max(0, 1 - Math.abs(scrollT - idx)) }}
+          aria-hidden="true"
+        />
+      ))}
 
       {/* Wrapper takes the fixed positioning. r3f's <Canvas> injects
           width: 100%; height: 100% on its own wrapper div, which
@@ -107,6 +230,10 @@ export default function JourneyClient() {
         ))}
       </main>
 
+      {/* Skills station overlay — three-column stack list with
+          dotted backdrop. Fades in around scrollT = SKILLS_IDX. */}
+      <SkillsStation scrollT={scrollT} index={SKILLS_IDX} />
+
       {/* Contact station — final-stop overlay. Self-contained banner
           + headline + actions. Fades in alongside the bg crossfade
           curve as the user scrolls into the last viewport. */}
@@ -120,6 +247,8 @@ export default function JourneyClient() {
         activeIdx={activeIdx}
         progress={progress}
         scrollT={scrollT}
+        isPlaying={isPlaying}
+        onTogglePlay={togglePlay}
       />
 
       <Loader
