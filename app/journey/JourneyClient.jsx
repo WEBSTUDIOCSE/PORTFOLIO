@@ -6,9 +6,12 @@ import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
 import RouteMap from './components/RouteMap.jsx';
+import ContactStation from './components/ContactStation.jsx';
 import useScrollProgress from './components/useScrollProgress.js';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
 import { STATIONS } from './components/scenes.js';
+
+const CONTACT_IDX = STATIONS.findIndex((s) => s.id === 'contact');
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
 
@@ -22,16 +25,13 @@ export default function JourneyClient() {
     STATIONS.length - 1,
     Math.max(0, Math.floor(scrollT))
   );
-  // Per-viewport progress with the same smoothstep easing as the
-  // 3D train. The mini-train marker on the route-map glides between
-  // the active station's medallion and the next one, in lockstep
-  // with the actual train's L→R sweep within the viewport.
-  const localT = Math.min(1, Math.max(0, scrollT - activeIdx));
-  const eased = localT * localT * (3 - 2 * localT);
-  const fromP = STATIONS[activeIdx]?.p ?? 0;
-  const toP =
-    STATIONS[Math.min(STATIONS.length - 1, activeIdx + 1)]?.p ?? 1;
-  const progress = fromP + (toP - fromP) * eased;
+  // CONTINUOUS, LINEAR global progress for the route-map marker.
+  // Stations sit at evenly-spaced p values (0, 0.25, 0.5, 0.75, 1.0),
+  // so a linear map from scrollT means the marker lands exactly on
+  // medallion N at the same instant `activeIdx` becomes N — bg
+  // crossfade and marker arrival stay in lockstep.
+  const total = Math.max(1, STATIONS.length - 1);
+  const progress = Math.min(1, Math.max(0, scrollT / total));
 
   if (!mounted) {
     return (
@@ -43,19 +43,39 @@ export default function JourneyClient() {
 
   return (
     <>
+      {/* Section-A base backdrop — sky-blue. Always rendered. */}
+      <div className="journey-platform-bg" aria-hidden="true" />
+
+      {/* Per-station image layers — continuous crossfade. Each image
+          is opaque when scrollT == its index, fades to 0 by the time
+          scrollT is one full viewport away. Adjacent stations blend
+          smoothly throughout the in-between scroll. */}
+      {STATIONS.map((s, i) =>
+        s.bgImage ? (
+          <img
+            key={`bg-${s.id}`}
+            src={s.bgImage}
+            alt=""
+            aria-hidden="true"
+            className="journey-platform-bg-img"
+            style={{ opacity: Math.max(0, 1 - Math.abs(scrollT - i)) }}
+          />
+        ) : null
+      )}
+
       {/* Wrapper takes the fixed positioning. r3f's <Canvas> injects
           width: 100%; height: 100% on its own wrapper div, which
           would override any bottom/inset positioning we put on
           Canvas directly. So we constrain the wrapper instead and
-          let the Canvas fill it. */}
+          let the Canvas fill it. Transparent so the platform image
+          behind it shows through. */}
       <div
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          bottom: 'var(--routemap-h, 160px)',
-          background: '#bfd8e8',
+          bottom: 'var(--routemap-h, 96px)',
           touchAction: 'pan-y pinch-zoom',
           zIndex: 1,
         }}
@@ -66,11 +86,11 @@ export default function JourneyClient() {
           camera={{ position: [0, 22, 36], zoom: 30, near: 0.1, far: 200 }}
           gl={{
             antialias: true,
+            alpha: true,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.05,
             outputColorSpace: THREE.SRGBColorSpace,
           }}
-          style={{ background: '#bfd8e8' }}
         >
           <Suspense fallback={null}>
             <Diorama />
@@ -86,6 +106,11 @@ export default function JourneyClient() {
           <section key={s.id} className="h-screen" />
         ))}
       </main>
+
+      {/* Contact station — final-stop overlay. Self-contained banner
+          + headline + actions. Fades in alongside the bg crossfade
+          curve as the user scrolls into the last viewport. */}
+      <ContactStation scrollT={scrollT} index={CONTACT_IDX} />
 
       {/* Bottom route-map (station cards) — fixed bottom dock.
           Top hoarding (Section A) is temporarily disabled while we

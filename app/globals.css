@@ -67,6 +67,48 @@
    Journey page — Saurabh Express design
    ============================================================ */
 
+/* ---------- Section-A backdrop (3D platform image) ----------
+   Fixed-position image behind the Canvas. Spans from the top of
+   the viewport down to the route-map's top edge — same vertical
+   slot as the Canvas wrapper. The Canvas above is transparent so
+   the image shows through, with the 3D train rendered on top. */
+
+/* Base layer — sky-blue. Always rendered for stations that don't
+   ship their own image. Behind the per-station image layer below. */
+.journey-platform-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--routemap-h, 96px);
+  background-color: #bfd8e8;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Per-station image layer. Stacked above the base sky-blue, fades
+   in/out via opacity when the active station changes. Uses a real
+   <img> with object-fit so any image quirks (cache, position) are
+   easier to reason about than CSS background-image. */
+.journey-platform-bg-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--routemap-h, 96px));
+  object-fit: cover;
+  /* Bottom-anchor — station buildings (lower band of the image)
+     sit at the bottom of the visible area where the train rides. */
+  object-position: center bottom;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  display: block;
+  /* Opacity is driven inline (per-frame distance to scroll position)
+     for a continuous crossfade between adjacent stations. No CSS
+     transition — JS sets the precise blend each frame. */
+}
+
 /* ---------- Top hoarding (Section A) ---------- */
 
 .journey-hoarding {

@@ -5,7 +5,7 @@
 //
 // Per-station fields:
 //   id      — short slug (also React key)
-//   stop    — display number (1..N)
+//   stop    — display number (00..N), shown on the medallion
 //   p       — normalised position 0..1 along the route (drives medallion left%)
 //   name    — English station name
 //   deva    — Devanagari station name
@@ -15,14 +15,33 @@
 
 export const STATIONS = [
   {
-    id: 'origin',
-    stop: 1,
+    // 00 — The pre-departure platform.
+    id: 'platform',
+    stop: 0,
     p: 0.0,
-    name: 'Origin',
-    deva: 'मूळ',
+    name: 'The Platform',
+    deva: 'प्लॅटफॉर्म',
     km: '000',
+    plat: 'PF 0',
+    departure: '05:30',
+    bgImage: '/assets/platform_bg.jpg?v=2',
+    panel: {
+      type: 'intro',
+      lede:
+        'A platform somewhere along the Konkan line. Distant horn, mist on the rails, the Sahyadri ridges in soft pre-dawn blue. The 06:00 to Mumbai Central is pulling in. Stand still — when you scroll, you board.',
+      meta: 'Pre-departure · 05:30 AM IST',
+    },
+  },
+  {
+    id: 'story',
+    stop: 1,
+    p: 0.25,
+    name: 'The Story',
+    deva: 'कथा',
+    km: '235',
     plat: 'PF 1',
     departure: '06:00',
+    bgImage: '/assets/story_bg.jpg?v=2',
     panel: {
       type: 'intro',
       lede:
@@ -31,76 +50,39 @@ export const STATIONS = [
     },
   },
   {
-    id: 'journey',
+    id: 'skills',
     stop: 2,
-    p: 0.25,
-    name: 'Journey',
-    deva: 'प्रवास',
-    km: '164',
-    plat: 'PF 2',
-    departure: '07:38',
-    panel: {
-      type: 'journey',
-      cards: [
-        {
-          year: '2014–17',
-          role: 'Frontend Engineer',
-          org: 'Mumbai agency',
-          notes: ['Shipped first commercial site', 'Learnt to estimate'],
-        },
-        {
-          year: '2018–20',
-          role: 'Full-stack Engineer',
-          org: 'Product start-up',
-          notes: ['0→10k MAU', 'Wore every hat'],
-        },
-        {
-          year: '2021–23',
-          role: 'Lead Engineer',
-          org: 'SaaS team',
-          notes: ['Hired & mentored 4', 'Shipped v2 platform'],
-        },
-        {
-          year: '2024 →',
-          role: 'Senior Product Engineer',
-          org: 'Available',
-          notes: ['Looking for senior role', 'Or co-founding'],
-        },
-      ],
-    },
-  },
-  {
-    id: 'offduty',
-    stop: 3,
     p: 0.5,
-    name: 'Off-Duty',
-    deva: 'विश्रांती',
-    km: '412',
-    plat: 'PF 3',
+    name: 'Skills',
+    deva: 'कौशल्ये',
+    km: '471',
+    plat: 'PF 2',
     departure: '09:12',
+    bgImage: '/assets/skills_bg.jpg?v=2',
     panel: {
-      type: 'hobbies',
+      type: 'skills',
       items: [
-        { icon: '✦', name: 'Cycling', note: 'Konkan coastal rides' },
-        { icon: '★', name: 'Photography', note: '35mm film, mostly trains' },
-        { icon: '◈', name: 'Reading', note: 'Mostly non-fiction' },
-        { icon: '✺', name: 'Cooking', note: 'Maharashtrian + experiments' },
-        { icon: '◆', name: 'Music', note: 'Hindustani classical, lo-fi' },
-        { icon: '✧', name: 'Sketching', note: 'Architecture, faces' },
-        { icon: '❋', name: 'Trekking', note: 'Sahyadri hills' },
-        { icon: '◉', name: 'Open source', note: 'Small tools, occasional PRs' },
+        { icon: '⚛', name: 'React', note: 'Years of production work' },
+        { icon: 'TS', name: 'TypeScript', note: 'Strict mode, always' },
+        { icon: '◆', name: 'Next.js', note: 'App router, RSC' },
+        { icon: '⬢', name: 'Node.js', note: 'APIs, scripts, CLI tools' },
+        { icon: '⚙', name: 'Postgres', note: 'Schema, perf, migrations' },
+        { icon: '☁', name: 'Cloudflare', note: 'Workers, R2, KV' },
+        { icon: '✦', name: 'Three.js', note: 'r3f — this site' },
+        { icon: '★', name: 'Tailwind', note: 'v4 with design tokens' },
       ],
     },
   },
   {
     id: 'projects',
-    stop: 4,
+    stop: 3,
     p: 0.75,
     name: 'Projects',
     deva: 'कार्य',
-    km: '720',
-    plat: 'PF 4',
+    km: '706',
+    plat: 'PF 3',
     departure: '11:24',
+    bgImage: '/assets/projects_bg.jpg?v=2',
     panel: {
       type: 'projects',
       cards: [
@@ -145,13 +127,16 @@ export const STATIONS = [
   },
   {
     id: 'contact',
-    stop: 5,
+    stop: 4,
     p: 1.0,
     name: 'Contact',
     deva: 'संपर्क',
     km: '942',
-    plat: 'PF 18',
+    plat: 'PF 4',
     departure: '13:50',
+    // No bgImage — Contact has a dedicated full-overlay component
+    // (ContactStation.jsx) that supplies its own banner backdrop +
+    // headline + contact actions. Avoids double-stacking bg layers.
     panel: {
       type: 'terminus',
       heading: 'Now boarding the next route.',

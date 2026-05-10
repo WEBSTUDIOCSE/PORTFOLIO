@@ -25,26 +25,51 @@ const GROUND_Y_OFFSET = -14.8;
 
 export default function Diorama() {
   const trainGroup = useRef(null);
+  // Damped X position the train chases each frame. Seed with X_START
+  // so the first frame doesn't lerp out of mid-screen.
+  const currentX = useRef(TRAIN_X_START);
+  // Scroll-direction tracking. The train INSTANTLY flips 180° on
+  // direction change (no rotation animation — the previous damped
+  // spin felt like a teleport). Seeded to "down" so the engine starts
+  // facing +X on first paint.
+  const lastScrollY = useRef(0);
+  const facing = useRef(0); // 0 = forward (+X), Math.PI = reverse (-X)
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!trainGroup.current || typeof window === 'undefined') return;
-    // PER-VIEWPORT motion — each viewport of scroll is one station's
-    // screen-traversal. Train moves L→R inside the current viewport
-    // and SNAPS back to X_START at the boundary so the next station's
-    // sweep starts clean from the left.
-    const t = window.scrollY / window.innerHeight;
-    const idx = Math.min(
-      STATIONS.length - 1,
-      Math.max(0, Math.floor(t))
-    );
-    const localProgress = clamp01(t - idx);
-    const eased = smoothstep(localProgress);
-    trainGroup.current.position.x = lerp(TRAIN_X_START, TRAIN_X_END, eased);
+    // CONTINUOUS motion — train traverses X_START → X_END across the
+    // entire scroll runway as one unbroken arc.
+    const scrollY = window.scrollY;
+    const total = Math.max(1, STATIONS.length - 1);
+    const tGlobal = clamp01(scrollY / window.innerHeight / total);
+    const eased = smoothstep(tGlobal);
+    const targetX = lerp(TRAIN_X_START, TRAIN_X_END, eased);
+
+    // Detect scroll-direction change and snap the engine to the new
+    // direction. Threshold of 0.5px keeps micro-jitter from spinning.
+    const dy = scrollY - lastScrollY.current;
+    if (Math.abs(dy) > 0.5) {
+      const newFacing = dy < 0 ? Math.PI : 0;
+      if (newFacing !== facing.current) {
+        facing.current = newFacing;
+        trainGroup.current.rotation.y = newFacing;
+      }
+    }
+    lastScrollY.current = scrollY;
+
+    // Frame-rate-independent exponential damping. Higher coefficient
+    // = snappier follow; lower = silkier but laggier. 8 keeps the
+    // train tightly tied to scroll while filtering out micro-jitter.
+    const smoothing = 1 - Math.exp(-delta * 8);
+    currentX.current += (targetX - currentX.current) * smoothing;
+    trainGroup.current.position.x = currentX.current;
   });
 
   return (
     <>
-      <color attach="background" args={['#bfd8e8']} />
+      {/* No <color attach="background"> — the canvas is transparent
+          (alpha=true) so the .journey-platform-bg DOM image behind
+          the Canvas shows through. */}
 
       {/* Lighting — warm key + cool fill + soft ambient/hemisphere
           for proper 3D form on the train body. No shadows being

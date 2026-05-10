@@ -10,6 +10,9 @@ const PANEL_BY_TYPE = {
   intro: PanelIntro,
   journey: PanelJourney,
   hobbies: PanelHobbies,
+  // 'skills' reuses the hobbies grid layout — same data shape
+  // (icon + name + note), different semantic label.
+  skills: PanelHobbies,
   projects: PanelProjects,
   terminus: PanelTerminus,
 };
