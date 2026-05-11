@@ -382,7 +382,27 @@ const COMPONENTS_IN_USE = [
   {
     name: "Press",
     path: "components/sections/press.tsx",
-    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf). Full embeds wait for /work/[slug].",
+    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf).",
+  },
+  {
+    name: "SiteNav",
+    path: "components/site-nav.tsx",
+    note: "Global sticky nav. Fade-in on scroll on /; always visible elsewhere. Mobile hamburger overlay. Hosts the ThemeToggle.",
+  },
+  {
+    name: "Project detail page",
+    path: "app/work/[slug]/page.tsx",
+    note: "Problem → Approach → Outcome → Lessons template. Reads from lib/projects.ts. Prev/next navigation.",
+  },
+  {
+    name: "Writing index + detail",
+    path: "app/writing/page.tsx · app/writing/[slug]/page.tsx",
+    note: "Long-form posts. Reads from lib/writing.ts. Body is plain-text array; \"## \" lines become h2.",
+  },
+  {
+    name: "OG image",
+    path: "app/opengraph-image.tsx",
+    note: "1200×630 social-share image rendered via next/og at request time. Auto-wired to og:image meta.",
   },
   {
     name: "Currently",
@@ -419,6 +439,9 @@ const ROUTES = [
   { path: "/#experience", role: "Experience anchor (within /)" },
   { path: "/#press", role: "Press / LinkedIn posts anchor (within /)" },
   { path: "/#contact", role: "Contact anchor (within /)" },
+  { path: "/work/[slug]", role: "Project detail — Problem · Approach · Outcome · Lessons" },
+  { path: "/writing", role: "Index of long-form posts" },
+  { path: "/writing/[slug]", role: "Individual post" },
   { path: "/journey", role: "3D diorama — Saurabh Express story" },
   { path: "/style-guide", role: "This page — design system reference" },
 ];

@@ -11,6 +11,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
+import SiteNav from "@/components/site-nav";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
 // variable axis as a single woff2. Adding an array of static weights
@@ -90,6 +91,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <SiteNav />
           {children}
         </ThemeProvider>
       </body>
