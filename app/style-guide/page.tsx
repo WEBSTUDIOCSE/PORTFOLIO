@@ -375,6 +375,16 @@ const COMPONENTS_IN_USE = [
     note: "Bio section. Portrait, three-paragraph bio, meta row (location/timezone/availability).",
   },
   {
+    name: "Experience",
+    path: "components/sections/experience.tsx",
+    note: "Work history (Livlong, Hapinee) + Education + Certifications. Vertical timeline, most recent first. Logo cell with monogram fallback.",
+  },
+  {
+    name: "Press",
+    path: "components/sections/press.tsx",
+    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf). Full embeds wait for /work/[slug].",
+  },
+  {
     name: "Currently",
     path: "components/sections/currently.tsx",
     note: "Soft signals — building / listening / reading. Manual fortnightly refresh.",
@@ -403,9 +413,11 @@ const TECH_STACK = [
 ];
 
 const ROUTES = [
-  { path: "/", role: "Landing — hero → work → about → currently → contact" },
+  { path: "/", role: "Landing — hero → work → about → experience → press → currently → contact" },
   { path: "/#work", role: "Selected work anchor (within /)" },
   { path: "/#about", role: "About anchor (within /)" },
+  { path: "/#experience", role: "Experience anchor (within /)" },
+  { path: "/#press", role: "Press / LinkedIn posts anchor (within /)" },
   { path: "/#contact", role: "Contact anchor (within /)" },
   { path: "/journey", role: "3D diorama — Saurabh Express story" },
   { path: "/style-guide", role: "This page — design system reference" },
