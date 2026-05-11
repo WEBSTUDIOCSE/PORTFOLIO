@@ -18,9 +18,13 @@
    |                    |                           |                       | section number stamps. ≤ 2 slots/page.
    | --font-hand-note   | Architects Daughter       | Sketchbook annotation | Sidenotes/arrows ("← this one"),
    |                    |                           |                       | sketch labels. ≤ 2 slots/page.
+   | --font-greet       | Dancing Script            | Greeting cursive      | Apple-hello flowing-script moment.
+   |                    |                           |                       | Eyebrow welcome (नमस्कार · Hello),
+   |                    |                           |                       | section openers, sign-offs. Visible
+   |                    |                           |                       | only at big sizes — avoid < 18px.
 
    Tailwind classes available: font-sans, font-display, font-deva,
-   font-mono, font-hand, font-hand-stamp, font-hand-note.
+   font-mono, font-hand, font-hand-stamp, font-hand-note, font-greet.
 
    Discipline rationale (2026 typography research): mixing handwritten
    fonts requires *distinct roles* — otherwise they compete and the
@@ -71,6 +75,7 @@
   --font-hand: var(--font-hand);
   --font-hand-stamp: var(--font-hand-stamp);
   --font-hand-note: var(--font-hand-note);
+  --font-greet: var(--font-greet);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);

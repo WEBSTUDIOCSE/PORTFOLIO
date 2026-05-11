@@ -131,8 +131,22 @@ export default function CharacterScroll() {
       className="relative bg-background"
     >
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-background">
+        {/* TL;DR overlay — always visible, including during the loading
+            screen (z-40, above the z-30 overlay). This is the
+            "recruiter sees you in <1s" layer: SSR-rendered plain text
+            so a 7-second-scan visitor gets name + role + location
+            even before the 119 frames preload. */}
+        <header className="absolute left-6 top-6 z-40 max-w-[60%] sm:left-10 sm:top-8">
+          <h1 className="font-display text-lg font-medium leading-tight tracking-tight text-foreground sm:text-xl">
+            Saurabh Jadhav
+          </h1>
+          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-[11px]">
+            Frontend &amp; AI Engineer · Mumbai
+          </p>
+        </header>
+
         {/* Mode toggle — pill above the character. Reads/writes global theme. */}
-        <ThemeToggle className="absolute left-1/2 top-6 z-40 -translate-x-1/2" />
+        <ThemeToggle className="absolute right-6 top-6 z-40 sm:right-10 sm:top-8" />
 
         {/* Loading overlay */}
         <div
@@ -170,17 +184,18 @@ export default function CharacterScroll() {
           }`}
         />
 
-        {/* Beat 1 — eyebrow hello (0-15%). Devanagari in font-deva
-            (Caveat is Latin-only), English greeting in font-hand. */}
+        {/* Beat 1 — greeting eyebrow (0-15%). Devanagari in font-deva
+            (Tiro), English greeting in font-greet (Dancing Script) —
+            the Apple-hello flowing-cursive moment. */}
         <div
           ref={beat1Ref}
-          className="absolute inset-x-0 top-[14%] z-10 flex justify-center px-6"
+          className="absolute inset-x-0 top-[18%] z-20 flex justify-center px-6"
           style={{ opacity: 0 }}
         >
           <p className="flex items-baseline gap-2 text-primary sm:gap-3">
             <span className="font-deva text-base sm:text-lg">नमस्कार</span>
             <span className="text-muted-foreground">·</span>
-            <span className="font-hand text-2xl sm:text-3xl">Hello</span>
+            <span className="font-greet text-3xl sm:text-4xl">Hello</span>
           </p>
         </div>
 
@@ -191,32 +206,32 @@ export default function CharacterScroll() {
           style={{ opacity: 0 }}
         >
           <h1 className="font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Frontend Developer
+            Frontend &amp; AI Engineer
           </h1>
           <p className="text-base text-muted-foreground sm:text-lg">
-            Based in Maharashtra
+            3+ years · Mumbai
           </p>
         </div>
 
         {/* Beat 3 — orbital skill tags (30-55%) */}
         <div ref={beat3Ref} className="absolute inset-0 z-10" style={{ opacity: 0 }}>
           <SkillTag className="absolute left-[8%] top-[18%] sm:left-[12%]">
-            React
+            Next.js 16
           </SkillTag>
           <SkillTag className="absolute right-[8%] top-[26%] sm:right-[12%]">
-            Next.js
+            React 19
           </SkillTag>
           <SkillTag className="absolute left-[6%] top-[58%] sm:left-[10%]">
             TypeScript
           </SkillTag>
           <SkillTag className="absolute right-[6%] top-[64%] sm:right-[10%]">
-            Tailwind
+            Firebase
           </SkillTag>
           <SkillTag className="absolute bottom-[18%] left-[15%] sm:left-[20%]">
-            JavaScript
+            Tailwind v4
           </SkillTag>
           <SkillTag className="absolute bottom-[14%] right-[15%] sm:right-[20%]">
-            Framer Motion
+            Multi-agent AI
           </SkillTag>
         </div>
 
@@ -228,11 +243,14 @@ export default function CharacterScroll() {
           style={{ opacity: 0 }}
         >
           <p className="font-hand text-xl text-primary sm:text-2xl">
-            Things I&apos;ve shipped
+            the pitch
           </p>
           <h2 className="font-display text-2xl font-light tracking-tight text-foreground sm:text-3xl md:text-4xl">
-            12 projects · 1k+ downloads · 4 years
+            I build systems that replace headcount.
           </h2>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
+            One developer. Infinite leverage.
+          </p>
         </div>
 
         {/* Beat 5 — final reveal (85-100%) */}

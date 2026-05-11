@@ -7,6 +7,7 @@ import {
   Caveat,
   Permanent_Marker,
   Architects_Daughter,
+  Dancing_Script,
 } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
@@ -36,6 +37,14 @@ const caveat = Caveat({
   display: "swap",
 });
 
+// Greeting cursive — the Apple-hello flowing-script moment. ONE per
+// page max (eyebrow welcome only). Variable weight, omit weight.
+const dancingScript = Dancing_Script({
+  variable: "--font-greet",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 // Non-variable fonts — single weight string per docs.
 const tiroDevanagari = Tiro_Devanagari_Marathi({
   variable: "--font-deva",
@@ -58,8 +67,9 @@ const architectsDaughter = Architects_Daughter({
 });
 
 export const metadata: Metadata = {
-  title: "Saurabh Jadhav",
-  description: "Frontend developer based in Maharashtra.",
+  title: "Saurabh Jadhav — Frontend & AI Engineer",
+  description:
+    "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
 };
 
 export default function RootLayout({
@@ -70,7 +80,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} ${caveat.variable} ${permanentMarker.variable} ${architectsDaughter.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} ${caveat.variable} ${permanentMarker.variable} ${architectsDaughter.variable} ${dancingScript.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
