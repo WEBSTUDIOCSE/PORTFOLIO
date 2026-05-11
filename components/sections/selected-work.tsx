@@ -118,19 +118,14 @@ function CardShell({
     variant === "featured" ? "p-6 sm:p-10" : "p-5 sm:p-6";
   const cls = `group block rounded-lg border border-border bg-card text-card-foreground transition-colors hover:border-primary/40 ${padding}`;
 
-  if (project.href) {
-    return (
-      <Link
-        href={project.href}
-        target={project.href.startsWith("http") ? "_blank" : undefined}
-        rel={project.href.startsWith("http") ? "noopener noreferrer" : undefined}
-        className={cls}
-      >
-        {children}
-      </Link>
-    );
-  }
-  return <div className={cls}>{children}</div>;
+  // Card always links to the project detail page — the live demo
+  // (if any) is exposed inside the detail page header so visitors
+  // read the case study first.
+  return (
+    <Link href={`/work/${project.slug}`} className={cls}>
+      {children}
+    </Link>
+  );
 }
 
 function ProjectNumber({ project }: { project: Project }) {

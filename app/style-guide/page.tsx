@@ -382,7 +382,57 @@ const COMPONENTS_IN_USE = [
   {
     name: "Press",
     path: "components/sections/press.tsx",
-    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf). Full embeds wait for /work/[slug].",
+    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf).",
+  },
+  {
+    name: "SiteNav",
+    path: "components/site-nav.tsx",
+    note: "Global sticky nav. Fade-in on scroll on /; always visible elsewhere. Mobile hamburger overlay. Hosts the ThemeToggle.",
+  },
+  {
+    name: "Project detail page",
+    path: "app/work/[slug]/page.tsx",
+    note: "Problem → Approach → Outcome → Lessons template. Reads from lib/projects.ts. Prev/next navigation.",
+  },
+  {
+    name: "Writing index + detail",
+    path: "app/writing/page.tsx · app/writing/[slug]/page.tsx",
+    note: "Long-form posts. Reads from lib/writing.ts. Body is plain-text array; \"## \" lines become h2.",
+  },
+  {
+    name: "OG image",
+    path: "app/opengraph-image.tsx",
+    note: "1200×630 social-share image rendered via next/og at request time. Auto-wired to og:image meta.",
+  },
+  {
+    name: "ContactForm",
+    path: "components/forms/contact-form.tsx",
+    note: "Native form + Server Action. useTransition for pending state, Zod errors inline, honeypot anti-spam.",
+  },
+  {
+    name: "ResumeForm",
+    path: "components/forms/resume-form.tsx",
+    note: "Inline-expanding gated form. Soft-gates /resume.pdf — captures name/email/role/company, then auto-triggers download.",
+  },
+  {
+    name: "Firebase Admin SDK",
+    path: "lib/firebase/admin.ts",
+    note: "Server-only singleton (poisoned with server-only). Reads base64 service account from env. Used by Server Actions for trusted Firestore writes.",
+  },
+  {
+    name: "Resend email",
+    path: "lib/email/resend.ts",
+    note: "Transactional email via Resend. Replies route back to sender via Reply-To. Uses onboarding@resend.dev sandbox until domain verified.",
+  },
+  {
+    name: "submitContact action",
+    path: "app/actions/contact.ts",
+    note: "Server Action: Zod validate → 60s rate-limit check → Firestore write → Resend email. Email failure doesn't fail submission.",
+  },
+  {
+    name: "requestResume action",
+    path: "app/actions/resume.ts",
+    note: "Server Action: same pipeline as contact, returns the download URL on success.",
   },
   {
     name: "Currently",
@@ -419,6 +469,9 @@ const ROUTES = [
   { path: "/#experience", role: "Experience anchor (within /)" },
   { path: "/#press", role: "Press / LinkedIn posts anchor (within /)" },
   { path: "/#contact", role: "Contact anchor (within /)" },
+  { path: "/work/[slug]", role: "Project detail — Problem · Approach · Outcome · Lessons" },
+  { path: "/writing", role: "Index of long-form posts" },
+  { path: "/writing/[slug]", role: "Individual post" },
   { path: "/journey", role: "3D diorama — Saurabh Express story" },
   { path: "/style-guide", role: "This page — design system reference" },
 ];

@@ -1,0 +1,33 @@
+// Firebase Storage Security Rules — portfolio project.
+//
+// DEPLOY: copy into Firebase Console:
+//   Build → Storage → Rules → paste → Publish
+//
+// Or via CLI:
+//   npx firebase-tools deploy --only storage
+//
+// Default posture: DENY ALL reads and writes. We don't currently
+// store user uploads. If/when we add a feature that does (e.g. an
+// avatar upload, a resume request workflow), open a SPECIFIC path
+// here with size + MIME validators — never replace the deny-all.
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // ─── Future: file upload example (DO NOT enable as-is) ──────
+    //
+    // match /uploads/{userId}/{fileName} {
+    //   allow create: if request.auth != null
+    //                 && request.auth.uid == userId
+    //                 && request.resource.size < 5 * 1024 * 1024  // 5 MB
+    //                 && request.resource.contentType.matches('image/.*');
+    //   allow read: if request.auth != null;
+    //   allow update, delete: if false;
+    // }
+  }
+}
