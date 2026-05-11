@@ -24,6 +24,14 @@ export type Project = {
   highlight?: string;
   /** Surface on the homepage SelectedWork reel. */
   featured?: boolean;
+  /** LinkedIn post URN for embedding in /work/[slug] later.
+   *  Format: "urn:li:ugcPost:<id>" or "urn:li:share:<id>" — full embed
+   *  URL constructed as https://www.linkedin.com/embed/feed/update/<urn> */
+  linkedinPostUrn?: string;
+  /** Reach metric for the LinkedIn launch post — shown in the Press
+   *  section. Separated from `metric` because that's the project's
+   *  primary recruiter-bait, not the social-proof number. */
+  linkedinImpressions?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -39,6 +47,10 @@ export const PROJECTS: Project[] = [
     metric: "15 agents · 3 agencies · 0 headcount",
     highlight: "← my favourite system",
     featured: true,
+    // TODO(saurabh): verify URN mapping — assumed OpenClaw based on
+    // newest-post ordering. Swap if it's actually a Mindset Forge post.
+    linkedinPostUrn: "urn:li:ugcPost:7450077524145078272",
+    linkedinImpressions: "841 launch-day impressions",
   },
   {
     slug: "cinematictale",
@@ -65,6 +77,9 @@ export const PROJECTS: Project[] = [
     metric: "856 launch-day impressions · 100% AI-generated",
     href: "https://elitemindsetforge.com",
     featured: true,
+    // TODO(saurabh): verify URN mapping — assumed Mindset Forge.
+    linkedinPostUrn: "urn:li:ugcPost:7449521566910062592",
+    linkedinImpressions: "856 launch-day impressions",
   },
   {
     slug: "livlong-migration",
@@ -77,6 +92,9 @@ export const PROJECTS: Project[] = [
     stack: ["Next.js 16", "React Router v7", "TypeScript", "Tailwind", "shadcn/ui"],
     metric: "~45% LCP improvement · green Core Web Vitals",
     featured: true,
+    // Third LinkedIn post the user shared — likely Livlong-related
+    // (older URN). TODO(saurabh): verify and swap if unrelated.
+    linkedinPostUrn: "urn:li:share:7436138816458973184",
   },
   {
     slug: "konkan-diorama",

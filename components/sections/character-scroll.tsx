@@ -136,17 +136,18 @@ export default function CharacterScroll() {
             "recruiter sees you in <1s" layer: SSR-rendered plain text
             so a 7-second-scan visitor gets name + role + location
             even before the 119 frames preload. */}
-        <header className="absolute left-6 top-6 z-40 max-w-[60%] sm:left-10 sm:top-8">
-          <h1 className="font-display text-lg font-medium leading-tight tracking-tight text-foreground sm:text-xl">
+        <header className="absolute left-4 top-5 z-40 max-w-[52%] sm:left-10 sm:top-8 sm:max-w-[60%]">
+          <h1 className="font-display text-base font-medium leading-tight tracking-tight text-foreground sm:text-xl">
             Saurabh Jadhav
           </h1>
-          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-[11px]">
-            Frontend &amp; AI Engineer · Mumbai
+          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px] sm:tracking-[0.2em]">
+            <span className="sm:hidden">FE &amp; AI · Mumbai</span>
+            <span className="hidden sm:inline">Frontend &amp; AI Engineer · Mumbai</span>
           </p>
         </header>
 
-        {/* Mode toggle — pill above the character. Reads/writes global theme. */}
-        <ThemeToggle className="absolute right-6 top-6 z-40 sm:right-10 sm:top-8" />
+        {/* Mode toggle — top-right. Reads/writes global theme. */}
+        <ThemeToggle className="absolute right-4 top-5 z-40 sm:right-10 sm:top-8" />
 
         {/* Loading overlay */}
         <div
