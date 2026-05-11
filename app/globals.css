@@ -1,59 +1,176 @@
 @import "tailwindcss";
 
+/* ============================================================
+   FONT ROLE MATRIX — read before adding any font usage anywhere.
+
+   Multiple handwritten fonts only read as one notebook if each has a
+   distinct, narrow role. The matrix below is the contract.
+
+   | CSS var            | Family                    | Role                  | Where to use
+   |--------------------|---------------------------|-----------------------|----------------------------------
+   | --font-sans        | Geist Sans                | Body workhorse        | Default. Body, UI, nav, labels.
+   | --font-display     | Fraunces                  | Serif display         | Section headlines, formal moments.
+   | --font-deva        | Tiro Devanagari Marathi   | Bilingual Devanagari  | Hindi/Marathi text only.
+   | --font-mono        | Geist Mono                | Tabular / code        | Project meta (years, KM, PF#), code.
+   | --font-hand        | Caveat                    | Warm prose hand       | Short eyebrows, captions, friendly
+   |                    |                           |                       | callouts. ≤ 3 slots/page, ≤ 10 wds.
+   | --font-hand-stamp  | Permanent Marker          | Bold stamp            | ONE-WORD badges only: NEW, OPEN,
+   |                    |                           |                       | section number stamps. ≤ 2 slots/page.
+   | --font-hand-note   | Architects Daughter       | Sketchbook annotation | Sidenotes/arrows ("← this one"),
+   |                    |                           |                       | sketch labels. ≤ 2 slots/page.
+   | --font-greet       | Dancing Script            | Greeting cursive      | Apple-hello flowing-script moment.
+   |                    |                           |                       | Eyebrow welcome (नमस्कार · Hello),
+   |                    |                           |                       | section openers, sign-offs. Visible
+   |                    |                           |                       | only at big sizes — avoid < 18px.
+
+   Tailwind classes available: font-sans, font-display, font-deva,
+   font-mono, font-hand, font-hand-stamp, font-hand-note, font-greet.
+
+   Discipline rationale (2026 typography research): mixing handwritten
+   fonts requires *distinct roles* — otherwise they compete and the
+   page reads as visual chaos. The role discipline is what makes the
+   "different pens in one notebook" effect land.
+   ============================================================ */
+
+/* shadcn-style class-based dark mode. next-themes (attribute="class")
+   adds `class="dark"` to <html>; this @custom-variant makes the
+   `dark:` Tailwind utility key off that class. */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* shadcn semantic color tokens — paired background/foreground.
+     Components address these via Tailwind utilities like:
+       bg-background  text-foreground
+       bg-card        text-card-foreground
+       bg-primary     text-primary-foreground
+       bg-secondary   text-secondary-foreground
+       bg-muted       text-muted-foreground
+       bg-accent      text-accent-foreground
+     The values themselves are defined in :root (light) and .dark. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Fonts — see the FONT ROLE MATRIX above for usage rules. */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
+  --font-deva: var(--font-deva);
+  --font-hand: var(--font-hand);
+  --font-hand-stamp: var(--font-hand-stamp);
+  --font-hand-note: var(--font-hand-note);
+  --font-greet: var(--font-greet);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
 }
 
+/* ============================================================
+   Brand palette — Saurabh Express. Fixed hues, theme-independent.
+   Referenced directly by /journey internals (var(--rail-maroon),
+   var(--cream), etc.) and used to derive the semantic tokens below.
+   ============================================================ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-
-  /* Saurabh Express palette (journey page). */
   --rail-maroon: #7a1f2b;
   --rail-maroon-dk: #4f1219;
-  --cream: #f4ead4;
+  --cream: #efe8d8;
   --cream-dk: #e2d4ad;
   --paper: #f7efd9;
   --ink: #2a1a14;
   --ink-soft: #5a4435;
+  --ink-deep: #0d0805;
   --brass: #b88c3f;
   --brass-dk: #8a6526;
   --teak: #6b3f2a;
+
   --shadow: 0 6px 24px rgba(58, 35, 22, 0.18),
             0 2px 6px rgba(58, 35, 22, 0.10);
   --shadow-deep: 0 18px 48px rgba(58, 35, 22, 0.32),
                  0 4px 10px rgba(58, 35, 22, 0.18);
 
+  --radius: 0.625rem;
+
   /* Route-map height. Drives both the dock height AND the Canvas's
-     `bottom` offset so the two stay in lockstep across viewports.
-     Fixed 96px keeps the dock thin and predictable. */
+     `bottom` offset on /journey so the two stay in lockstep. */
   --routemap-h: 96px;
+
+  /* ──────────────────────────────────────────────────────────
+     Semantic tokens — LIGHT mode (shadcn convention, OKLCH).
+     Hues approximate the brand palette above:
+       background  ≈ cream
+       foreground  ≈ ink
+       primary     ≈ rail-maroon (the brand identity colour)
+       secondary   ≈ paper (subtle elevated surfaces)
+       muted       ≈ cream-dk (chip / disabled backgrounds)
+       accent      ≈ brass (interactive hover, highlights)
+       destructive ≈ red (error states; one universal red across themes)
+     ────────────────────────────────────────────────────────── */
+  --background: oklch(0.929 0.018 80);          /* #efe8d8 cream */
+  --foreground: oklch(0.220 0.025 35);          /* #2a1a14 ink */
+  --card: oklch(0.948 0.022 86);                /* #f7efd9 paper */
+  --card-foreground: oklch(0.220 0.025 35);
+  --popover: oklch(0.948 0.022 86);
+  --popover-foreground: oklch(0.220 0.025 35);
+  --primary: oklch(0.380 0.120 18);             /* #7a1f2b rail-maroon */
+  --primary-foreground: oklch(0.929 0.018 80);  /* cream on maroon */
+  --secondary: oklch(0.860 0.045 88);           /* #e2d4ad cream-dk */
+  --secondary-foreground: oklch(0.220 0.025 35);
+  --muted: oklch(0.890 0.030 84);
+  --muted-foreground: oklch(0.400 0.035 50);    /* #5a4435 ink-soft */
+  --accent: oklch(0.660 0.100 75);              /* #b88c3f brass */
+  --accent-foreground: oklch(0.220 0.025 35);
+  --destructive: oklch(0.550 0.200 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.220 0.025 35 / 0.15);
+  --input: oklch(0.220 0.025 35 / 0.15);
+  --ring: oklch(0.380 0.120 18 / 0.5);
 }
 
+/* ──────────────────────────────────────────────────────────
+   Semantic tokens — DARK mode. Triggered by `.dark` on <html>
+   (added by next-themes when attribute="class"). On near-black,
+   maroon disappears; brass becomes the dominant accent.
+   ────────────────────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --ring: oklch(0.556 0 0);
+  --background: oklch(0.080 0.008 50);          /* #0d0805 ink-deep */
+  --foreground: oklch(0.929 0.018 80);          /* cream */
+  --card: oklch(0.220 0.025 35);                /* ink */
+  --card-foreground: oklch(0.929 0.018 80);
+  --popover: oklch(0.220 0.025 35);
+  --popover-foreground: oklch(0.929 0.018 80);
+  --primary: oklch(0.660 0.100 75);             /* brass */
+  --primary-foreground: oklch(0.080 0.008 50);
+  --secondary: oklch(0.300 0.025 40);
+  --secondary-foreground: oklch(0.929 0.018 80);
+  --muted: oklch(0.260 0.020 40);
+  --muted-foreground: oklch(0.929 0.018 80 / 0.6);
+  --accent: oklch(0.380 0.120 18);              /* maroon as accent on dark */
+  --accent-foreground: oklch(0.929 0.018 80);
+  --destructive: oklch(0.620 0.220 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.929 0.018 80 / 0.12);
+  --input: oklch(0.929 0.018 80 / 0.12);
+  --ring: oklch(0.660 0.100 75 / 0.5);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   html {
     @apply font-sans;
     scroll-behavior: smooth;
