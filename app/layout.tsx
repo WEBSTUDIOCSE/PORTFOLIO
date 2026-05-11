@@ -9,9 +9,11 @@ import {
   Architects_Daughter,
   Dancing_Script,
 } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
+import { FirebaseAnalytics } from "@/lib/firebase/analytics";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
 // variable axis as a single woff2. Adding an array of static weights
@@ -73,6 +75,28 @@ export const metadata: Metadata = {
     "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
 };
 
+// Runs on initial HTML parse, BEFORE React hydration, BEFORE first
+// paint. Applies the stored / system theme to <html> so the user
+// never sees a flash of the wrong theme on reload.
+//
+// Rendered via next/script with strategy="beforeInteractive" — per
+// the Next.js docs, this routes through their injection pipeline
+// (bypassing React 19's "script in component" warning) and is
+// guaranteed to land in <head> of the initial HTML, regardless of
+// where the component is placed.
+//   docs: node_modules/next/dist/docs/01-app/03-api-reference/02-components/script.md
+const NO_FLASH_THEME_SCRIPT = `
+(function(){
+  try {
+    var t = localStorage.getItem('sj-theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -85,14 +109,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Script id="no-flash-theme" strategy="beforeInteractive">
+          {NO_FLASH_THEME_SCRIPT}
+        </Script>
+        <ThemeProvider>
           <SiteNav />
           {children}
+          <FirebaseAnalytics />
         </ThemeProvider>
       </body>
     </html>

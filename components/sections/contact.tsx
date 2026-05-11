@@ -1,42 +1,29 @@
 // Contact — final beat of the homepage. Third and last greeting
-// moment (Hola). Multiple channels per research consensus — never
-// rely on a single contact path.
+// moment (Hola). The form is the primary action; secondary channels
+// (GitHub / LinkedIn / Resume) sit below.
 //
-// TODO(saurabh): drop /resume.pdf into public/ before going live.
+// Resume is the only one that's interactive — clicking it opens an
+// inline form that captures recruiter intent before serving the PDF.
 
 import Link from "next/link";
-
-type ChannelKind = "primary" | "secondary";
+import ContactForm from "@/components/forms/contact-form";
+import ResumeForm from "@/components/forms/resume-form";
 
 type Channel = {
   label: string;
   href: string;
-  kind: ChannelKind;
   external?: boolean;
 };
 
-const CHANNELS: Channel[] = [
-  {
-    label: "Email",
-    href: "mailto:saurabhjadhav.cse@gmail.com",
-    kind: "primary",
-  },
+const SECONDARY_CHANNELS: Channel[] = [
   {
     label: "GitHub",
-    href: "https://github.com/SAURABHRJADHAVCSE",
-    kind: "secondary",
+    href: "https://github.com/saurabhrjadhavcse",
     external: true,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/saurabhjadhav-cse",
-    kind: "secondary",
-    external: true,
-  },
-  {
-    label: "Resume PDF",
-    href: "/resume.pdf",
-    kind: "secondary",
     external: true,
   },
 ];
@@ -47,37 +34,47 @@ export default function Contact() {
       id="contact"
       className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
     >
-      <div className="mx-auto max-w-3xl text-center">
+      <div className="mx-auto max-w-3xl">
         {/* Greeting */}
-        <p className="font-greet text-5xl text-primary sm:text-6xl md:text-7xl">
-          Hola.
-        </p>
+        <div className="text-center">
+          <p className="font-greet text-5xl text-primary sm:text-6xl md:text-7xl">
+            Hola.
+          </p>
+          <h2 className="mt-4 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            Let&rsquo;s build something.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Available for senior product-engineer roles, technical
+            co-founding, and design-engineering work. The form below
+            lands in my inbox directly — fastest way to reach me.
+          </p>
+        </div>
 
-        {/* Headline */}
-        <h2 className="mt-4 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl md:text-5xl">
-          Let&rsquo;s build something.
-        </h2>
+        {/* Primary: contact form */}
+        <div className="mt-10">
+          <ContactForm />
+        </div>
 
-        <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Open to senior frontend and AI engineering roles, technical
-          co-founding, and design-engineering work. Direct messages get
-          fastest replies.
-        </p>
-
-        {/* CTAs */}
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center">
-          {CHANNELS.map((c) => (
-            <ChannelButton key={c.label} channel={c} />
-          ))}
+        {/* Secondary: alternative channels */}
+        <div className="mt-12 border-t border-border pt-8">
+          <p className="text-center font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            or reach me at
+          </p>
+          <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+            {SECONDARY_CHANNELS.map((c) => (
+              <ChannelLink key={c.label} channel={c} />
+            ))}
+            <ResumeForm />
+          </div>
         </div>
 
         {/* Meta */}
-        <p className="mt-10 font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+        <p className="mt-12 text-center font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
           Mumbai · India · GMT +5:30
         </p>
 
         {/* Signature */}
-        <p className="font-hand mt-8 text-3xl text-primary">
+        <p className="mt-6 text-center font-hand text-3xl text-primary">
           — Saurabh
         </p>
       </div>
@@ -85,27 +82,13 @@ export default function Contact() {
   );
 }
 
-function ChannelButton({ channel }: { channel: Channel }) {
-  const base =
-    "inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-medium transition-colors";
-
-  // Primary CTA (Email) spans both columns on mobile so it reads as
-  // THE action. The `sm:col-span-1` keeps it normal-width once the
-  // outer container flips to flex layout on sm+.
-  const span =
-    channel.kind === "primary" ? "col-span-2 sm:col-span-1" : "";
-
-  const cls =
-    channel.kind === "primary"
-      ? `${base} ${span} bg-primary text-primary-foreground hover:bg-primary/90`
-      : `${base} border border-border bg-card text-card-foreground hover:border-primary/40 hover:text-primary`;
-
+function ChannelLink({ channel }: { channel: Channel }) {
   return (
     <Link
       href={channel.href}
       target={channel.external ? "_blank" : undefined}
       rel={channel.external ? "noopener noreferrer" : undefined}
-      className={cls}
+      className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-3 text-sm font-medium text-card-foreground transition-colors hover:border-primary/40 hover:text-primary"
     >
       {channel.label}
     </Link>

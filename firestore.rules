@@ -1,0 +1,59 @@
+// Firestore Security Rules — portfolio project (portfolio-443a0).
+//
+// DEPLOY: copy this file's contents into the Firebase Console:
+//   Build → Firestore Database → Rules → paste → Publish
+//
+// Or via CLI:
+//   npx firebase-tools deploy --only firestore:rules
+//
+// Default posture: DENY ALL. Each feature opens a specific path with
+// strict validators. Never replace the deny-all match with an open
+// rule — that's how data leaks happen.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Catch-all: deny every read and write that isn't explicitly
+    // granted below. This is the safety net — leave it in place.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ─── Future: contact form submissions ───────────────────────
+    // When the contact form ships, uncomment this block. It allows
+    // ANYONE to CREATE a submission with strictly-shaped data, but
+    // no one can read, update, or delete from the client. Reading
+    // submissions happens server-side via Cloud Functions or the
+    // Admin SDK.
+    //
+    // match /contactSubmissions/{id} {
+    //   allow create: if
+    //        request.resource.data.keys().hasOnly(['name','email','message','createdAt'])
+    //     && request.resource.data.name is string
+    //     && request.resource.data.name.size() > 0
+    //     && request.resource.data.name.size() <= 100
+    //     && request.resource.data.email is string
+    //     && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+    //     && request.resource.data.email.size() <= 200
+    //     && request.resource.data.message is string
+    //     && request.resource.data.message.size() > 0
+    //     && request.resource.data.message.size() <= 5000
+    //     && request.resource.data.createdAt == request.time;
+    //   allow read, update, delete: if false;
+    // }
+
+    // ─── Future: newsletter subscribers ─────────────────────────
+    //
+    // match /newsletterSubscribers/{id} {
+    //   allow create: if
+    //        request.resource.data.keys().hasOnly(['email','subscribedAt'])
+    //     && request.resource.data.email is string
+    //     && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+    //     && request.resource.data.email.size() <= 200
+    //     && request.resource.data.subscribedAt == request.time;
+    //   allow read, update, delete: if false;
+    // }
+  }
+}
