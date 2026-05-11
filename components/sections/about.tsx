@@ -57,7 +57,7 @@ export default function About() {
                 illustrates, and auto-publishes multilingual content
                 across Instagram and Facebook, all of it AI-driven.
               </p>
-              <p className="font-display text-xl text-primary sm:text-2xl">
+              <p className="font-display text-lg text-primary sm:text-xl md:text-2xl">
                 I build systems that replace headcount. One developer.
                 Infinite leverage.
               </p>

@@ -88,9 +88,16 @@ export default function Contact() {
 function ChannelButton({ channel }: { channel: Channel }) {
   const base =
     "inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-medium transition-colors";
+
+  // Primary CTA (Email) spans both columns on mobile so it reads as
+  // THE action. The `sm:col-span-1` keeps it normal-width once the
+  // outer container flips to flex layout on sm+.
+  const span =
+    channel.kind === "primary" ? "col-span-2 sm:col-span-1" : "";
+
   const cls =
     channel.kind === "primary"
-      ? `${base} bg-primary text-primary-foreground hover:bg-primary/90`
+      ? `${base} ${span} bg-primary text-primary-foreground hover:bg-primary/90`
       : `${base} border border-border bg-card text-card-foreground hover:border-primary/40 hover:text-primary`;
 
   return (
