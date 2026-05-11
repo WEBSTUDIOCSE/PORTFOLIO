@@ -1,13 +1,22 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { getDb } from "@/lib/firebase/client";
 import {
-  submitContact,
+  notifyContact,
   type ContactResult,
 } from "@/app/actions/contact";
+import {
+  contactSchema,
+  type ContactField,
+} from "@/lib/validation/forms";
 
-// Form pattern notes:
-// - Native <form> + FormData → Server Action. No react-hook-form.
+// Form pattern:
+// - Native <form> + FormData → Web SDK Firestore write → email-only
+//   Server Action. The Firestore write happens client-side, gated by
+//   Firestore Security Rules (see firestore.rules). Resend's API key
+//   is a real secret, so emailing stays server-side in the action.
 // - useTransition gives us a `pending` flag without manual state.
 // - Submit button stays clickable while pending — we show a spinner
 //   inside the button label instead of disabling. Disabled buttons
@@ -25,12 +34,64 @@ export default function ContactForm() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     startTransition(async () => {
-      const r = await submitContact(fd);
+      const honeypot = fd.get("company_url");
+      if (typeof honeypot === "string" && honeypot.length > 0) {
+        // Honeypot — silent success.
+        setResult({ ok: true });
+        formRef.current?.reset();
+        return;
+      }
+
+      // Validate on client. Rules re-validate the same shape.
+      const parsed = contactSchema.safeParse({
+        name: fd.get("name"),
+        email: fd.get("email"),
+        message: fd.get("message"),
+        company_url: honeypot,
+      });
+      if (!parsed.success) {
+        const fields: Partial<Record<ContactField, string>> = {};
+        for (const issue of parsed.error.issues) {
+          const key = issue.path[0]?.toString();
+          if (
+            (key === "name" || key === "email" || key === "message") &&
+            !fields[key]
+          ) {
+            fields[key] = issue.message;
+          }
+        }
+        setResult({
+          ok: false,
+          error: "Please fix the highlighted fields.",
+          fields,
+        });
+        return;
+      }
+
+      const { name, email, message } = parsed.data;
+
+      // 1. Firestore write via Web SDK — rules enforce the shape.
+      try {
+        await addDoc(collection(getDb(), "contactSubmissions"), {
+          name,
+          email,
+          message,
+          createdAt: serverTimestamp(),
+        });
+      } catch (err) {
+        console.error("[contact] firestore write failed:", err);
+        setResult({
+          ok: false,
+          error: "Something went wrong saving your message. Try again.",
+        });
+        return;
+      }
+
+      // 2. Email notification via Server Action.
+      const r = await notifyContact(fd);
       setResult(r);
       if (r.ok) {
         formRef.current?.reset();
-        // Move focus to the success message so screen readers
-        // announce it without the user having to scan back.
         document.getElementById("contact-success")?.focus();
       }
     });

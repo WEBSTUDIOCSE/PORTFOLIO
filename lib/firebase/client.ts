@@ -12,15 +12,16 @@
 //   3. Authentication state
 //   4. App Check (optional, anti-abuse — not enabled here yet)
 //
-// LAZY INIT — config is read inside getFirebaseApp(), NOT at module
-// load time. This way importing this file from a Server Component
-// never throws (the import path is server-only during SSR even
-// though the module is "client" semantically). The error only
-// surfaces when something actually tries to USE Firebase.
+// IMPORTANT — STATIC ENV ACCESS:
+// Each `process.env.NEXT_PUBLIC_*` reference below MUST be a static
+// dotted access. Next.js replaces these at build time by literal
+// scanning of the source; dynamic access (process.env[name]) is not
+// replaced and returns undefined on the client. Do NOT refactor
+// these into a helper that takes the name as a variable.
 //
 // References:
 //   • https://firebase.google.com/docs/projects/api-keys
-//   • https://firebase.google.com/docs/web/setup
+//   • https://nextjs.org/docs/app/guides/environment-variables
 // ─────────────────────────────────────────────────────────────
 
 import {
@@ -29,29 +30,46 @@ import {
   type FirebaseApp,
   type FirebaseOptions,
 } from "firebase/app";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
-function readEnv(name: string): string {
-  const v = process.env[name];
-  if (!v) {
-    throw new Error(
-      `Firebase config error: env var "${name}" is missing. ` +
-        `Add it to .env.local (see .env.example for the full list). ` +
-        `If you just added it, restart \`npm run dev\` — env vars are read on startup.`,
-    );
-  }
-  return v;
+function missing(name: string): Error {
+  return new Error(
+    `Firebase config error: env var "${name}" is missing. ` +
+      `Add it to .env.local (see .env.example for the full list). ` +
+      `If you just added it, restart \`npm run dev\` — env vars are baked into the client bundle at startup.`,
+  );
 }
 
 function buildConfig(): FirebaseOptions {
+  // Each reference here is a STATIC dotted access — Next.js replaces
+  // them with literal strings at build time. The local `const` lets
+  // us validate after the replacement happens.
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  const messagingSenderId =
+    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+  const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+  // measurementId is optional (Analytics only).
+  const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+
+  if (!apiKey) throw missing("NEXT_PUBLIC_FIREBASE_API_KEY");
+  if (!authDomain) throw missing("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN");
+  if (!projectId) throw missing("NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+  if (!storageBucket) throw missing("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET");
+  if (!messagingSenderId)
+    throw missing("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID");
+  if (!appId) throw missing("NEXT_PUBLIC_FIREBASE_APP_ID");
+
   return {
-    apiKey: readEnv("NEXT_PUBLIC_FIREBASE_API_KEY"),
-    authDomain: readEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"),
-    projectId: readEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID"),
-    storageBucket: readEnv("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"),
-    messagingSenderId: readEnv("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"),
-    appId: readEnv("NEXT_PUBLIC_FIREBASE_APP_ID"),
-    // measurementId is optional (Analytics only).
-    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+    measurementId,
   };
 }
 
@@ -62,4 +80,12 @@ export function getFirebaseApp(): FirebaseApp {
   const existing = getApps();
   if (existing.length > 0) return existing[0];
   return initializeApp(buildConfig());
+}
+
+// Firestore Web SDK handle. Used by client components to write to
+// Firestore directly (e.g. form submissions). Reads/writes are
+// gated by Firestore Security Rules — see firestore.rules at the
+// repo root. NO service account / admin SDK needed.
+export function getDb(): Firestore {
+  return getFirestore(getFirebaseApp());
 }

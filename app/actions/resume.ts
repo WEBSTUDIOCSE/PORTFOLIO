@@ -1,19 +1,21 @@
 "use server";
 
 import "server-only";
-import { headers } from "next/headers";
-import { FieldValue } from "firebase-admin/firestore";
-import { adminDb } from "@/lib/firebase/admin";
 import { sendResumeRequestEmail } from "@/lib/email/resend";
 import {
   resumeRequestSchema,
   type ResumeField,
 } from "@/lib/validation/forms";
 
-// Same shape as ContactResult — but with the addition of
-// `downloadUrl` on success so the client can reveal a download link.
-// "Soft gating": the URL is just /resume.pdf (public asset). The
-// gate is psychological/intent-capture, not access control.
+// Server Action's only job now is to email me when someone requests
+// the resume. The Firestore write happens client-side via the Web
+// SDK (see ResumeForm) — rules in firestore.rules enforce shape +
+// validation server-side, so we don't need the Admin SDK.
+//
+// Why keep the Server Action at all? Because emailing requires the
+// Resend API key, which IS a real secret (unlike the Firebase web
+// config). The key has to live in a server-only environment.
+
 export type ResumeResult =
   | { ok: true; downloadUrl: string }
   | {
@@ -22,20 +24,20 @@ export type ResumeResult =
       fields?: Partial<Record<ResumeField, string>>;
     };
 
-const RATE_LIMIT_MS = 60_000;
-const COLLECTION = "resumeRequests";
-const RESUME_URL = "/resume.pdf";
+const RESUME_URL =
+  process.env.NEXT_PUBLIC_RESUME_URL ?? "/resume.pdf";
 
-export async function requestResume(
+export async function notifyResumeRequest(
   formData: FormData,
 ): Promise<ResumeResult> {
   const honeypot = formData.get("company_url");
   if (typeof honeypot === "string" && honeypot.length > 0) {
-    // Silent success — don't tell the bot we caught it. They also
-    // don't get the download URL, but a real user never trips this.
+    // Silent success — bot doesn't get told it was caught.
     return { ok: true, downloadUrl: RESUME_URL };
   }
 
+  // Re-validate on the server (defense in depth — client can be
+  // tampered with, but Firestore rules + this Zod parse catch it).
   const parsed = resumeRequestSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -66,61 +68,13 @@ export async function requestResume(
 
   const { name, email, role, company } = parsed.data;
 
-  let db;
-  try {
-    db = adminDb();
-  } catch (err) {
-    console.error("[resume] admin SDK init failed:", err);
-    return {
-      ok: false,
-      error: "We hit a glitch on our side. Try again in a moment.",
-    };
-  }
-
-  try {
-    const recent = await db
-      .collection(COLLECTION)
-      .where("email", "==", email)
-      .orderBy("createdAt", "desc")
-      .limit(1)
-      .get();
-    if (!recent.empty) {
-      const last = recent.docs[0].data();
-      const lastMs = last.createdAt?.toMillis?.() ?? 0;
-      if (Date.now() - lastMs < RATE_LIMIT_MS) {
-        // Within rate limit — still let them download (their info
-        // is already captured), just don't double-write or re-email.
-        return { ok: true, downloadUrl: RESUME_URL };
-      }
-    }
-  } catch (err) {
-    console.error("[resume] rate limit check failed:", err);
-  }
-
-  const hdrs = await headers();
-  const userAgent = hdrs.get("user-agent") ?? null;
-
-  try {
-    await db.collection(COLLECTION).add({
-      name,
-      email,
-      role,
-      company,
-      userAgent,
-      createdAt: FieldValue.serverTimestamp(),
-    });
-  } catch (err) {
-    console.error("[resume] firestore write failed:", err);
-    return {
-      ok: false,
-      error: "Something went wrong. Try again in a moment.",
-    };
-  }
-
+  // Email send is best-effort. Firestore already has the record
+  // (written client-side), so if Resend hiccups, the lead isn't lost.
   try {
     await sendResumeRequestEmail({ name, email, role, company });
   } catch (err) {
     console.error("[resume] email send failed:", err);
+    // Don't fail the user — the download is the primary outcome.
   }
 
   return { ok: true, downloadUrl: RESUME_URL };

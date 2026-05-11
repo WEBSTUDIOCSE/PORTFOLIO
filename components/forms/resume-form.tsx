@@ -1,17 +1,25 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { getDb } from "@/lib/firebase/client";
 import {
-  requestResume,
+  notifyResumeRequest,
   type ResumeResult,
 } from "@/app/actions/resume";
+import {
+  resumeRequestSchema,
+  type ResumeField,
+} from "@/lib/validation/forms";
 
-// Pattern: button on the Contact section → user clicks → form expands
-// inline (slide in). After submit, the form swaps to a success state
-// with a download link and triggers download automatically.
+// Pattern: button on Contact section → click → form expands inline.
+// On submit, two parallel writes:
+//   1. Firestore (lead capture) via Web SDK — gated by Firestore Rules
+//   2. Server Action (email notification) — Resend API key is server-only
+// Then reveal the Firebase Storage URL + auto-download.
 //
-// "Soft gating": the download URL is /resume.pdf (public asset). The
-// form captures intent + lead info; it doesn't hard-protect the PDF.
+// Web SDK + rules is the Firebase-standard pattern for public form
+// submissions. No service-account credential required on this path.
 
 type Mode = "closed" | "open" | "done";
 
@@ -42,11 +50,74 @@ export default function ResumeForm() {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     startTransition(async () => {
-      const r = await requestResume(fd);
+      const honeypot = fd.get("company_url");
+      if (typeof honeypot === "string" && honeypot.length > 0) {
+        // Honeypot tripped — silent-success and skip both writes.
+        setResult({
+          ok: true,
+          downloadUrl: process.env.NEXT_PUBLIC_RESUME_URL ?? "/resume.pdf",
+        });
+        setMode("done");
+        return;
+      }
+
+      // Client-side validate. Rules will re-validate server-side.
+      const parsed = resumeRequestSchema.safeParse({
+        name: fd.get("name"),
+        email: fd.get("email"),
+        role: fd.get("role"),
+        company: fd.get("company"),
+        company_url: honeypot,
+      });
+      if (!parsed.success) {
+        const fields: Partial<Record<ResumeField, string>> = {};
+        for (const issue of parsed.error.issues) {
+          const key = issue.path[0]?.toString();
+          if (
+            (key === "name" ||
+              key === "email" ||
+              key === "role" ||
+              key === "company") &&
+            !fields[key]
+          ) {
+            fields[key] = issue.message;
+          }
+        }
+        setResult({
+          ok: false,
+          error: "Please fix the highlighted fields.",
+          fields,
+        });
+        return;
+      }
+
+      const { name, email, role, company } = parsed.data;
+
+      // 1. Firestore write via Web SDK — rules validate the shape.
+      //    Must match exactly what firestore.rules expects, no extras.
+      try {
+        await addDoc(collection(getDb(), "resumeRequests"), {
+          name,
+          email,
+          role,
+          company,
+          createdAt: serverTimestamp(),
+        });
+      } catch (err) {
+        console.error("[resume] firestore write failed:", err);
+        setResult({
+          ok: false,
+          error: "Something went wrong. Try again in a moment.",
+        });
+        return;
+      }
+
+      // 2. Email notification via Server Action (Resend key is secret).
+      //    Best-effort — Firestore already has the record.
+      const r = await notifyResumeRequest(fd);
       setResult(r);
       if (r.ok) {
         setMode("done");
-        // Auto-trigger download — recruiter doesn't have to click again.
         triggerDownload(r.downloadUrl);
       }
     });
