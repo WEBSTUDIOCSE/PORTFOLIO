@@ -38,7 +38,6 @@ const ROLES: Role[] = [
     location: "Thane, Maharashtra · On-site",
     current: true,
     logo: "/logos/livlong.jpg",
-    logoBg: "#ffffff",
     companyTagline: "Backed by the IIFL Group",
     bullets: [
       "Strategic UI overhaul: Spearheaded the complete revamp of livlong.com, migrating the platform to Next.js 16. Improved Core Web Vitals (~45% LCP win) and user interactivity.",
@@ -54,8 +53,9 @@ const ROLES: Role[] = [
     dates: "Jan 2021 — Jun 2021",
     duration: "6 mos",
     location: "Remote",
-    logo: "/logos/hapinee.jpg",
-    logoBg: "#ffffff",
+    // Hapinee's LinkedIn logo is a low-quality placeholder, not a
+    // brand mark. Monogram fallback ("H") reads cleaner. Drop a
+    // proper logo at public/logos/hapinee.jpg to enable it.
     bullets: [
       "Led a team of 6 developers to design and build a custom CRM-based Android application from scratch.",
       "Built with Java + Firebase — real-time database integration and user authentication.",
@@ -255,7 +255,7 @@ function Logo({
       {src && (
         <div
           aria-hidden
-          className="absolute inset-1.5 bg-contain bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${src})` }}
         />
       )}
