@@ -213,16 +213,14 @@ export default function ResumeForm() {
           error={fieldErrors?.email}
         />
         <Field
-          label="Company"
+          label="Company (optional)"
           name="company"
           autoComplete="organization"
-          required
           error={fieldErrors?.company}
         />
         <Field
-          label="Role you're hiring for"
+          label="Role you're hiring for (optional)"
           name="role"
-          required
           error={fieldErrors?.role}
         />
       </div>
