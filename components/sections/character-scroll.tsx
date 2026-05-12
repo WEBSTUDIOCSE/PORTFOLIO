@@ -36,6 +36,16 @@ export default function CharacterScroll() {
   const beat3Ref = useRef<HTMLDivElement>(null);
   const beat4Ref = useRef<HTMLDivElement>(null);
   const beat5Ref = useRef<HTMLDivElement>(null);
+  // Beat 5 sub-parts so we can morph "I'm Saurabh." into the navbar:
+  // the "I'm " prefix and "." suffix fade out, leaving "Saurabh"
+  // intact while the whole container shrinks + slides up to where
+  // the navbar's brand text sits.
+  const beat5PrefixRef = useRef<HTMLSpanElement>(null);
+  const beat5SuffixRef = useRef<HTMLSpanElement>(null);
+  const beat5CtaRef = useRef<HTMLAnchorElement>(null);
+  // TL;DR overlay (top-left name + role). Faded out near the end of
+  // the hero scroll so it doesn't overlap with the SiteNav fading in.
+  const tldrRef = useRef<HTMLElement>(null);
 
   const [frames, setFrames] = useState<number[]>(DESKTOP_FRAMES);
   const framesRef = useRef<number[]>(DESKTOP_FRAMES);
@@ -194,6 +204,110 @@ export default function CharacterScroll() {
       if (beat3Ref.current) beat3Ref.current.style.opacity = String(o3);
       if (beat4Ref.current) beat4Ref.current.style.opacity = String(o4);
       if (beat5Ref.current) beat5Ref.current.style.opacity = String(o5);
+
+      // TL;DR fades OUT as scroll progresses past 75%, fully gone
+      // by 88%. The SiteNav fades IN at ~80% (320vh of 400vh). They
+      // crossfade across that window, so the brand name is never
+      // visible in both places at once.
+      const tldrOpacity =
+        p < 0.75 ? 1 : p > 0.88 ? 0 : 1 - (p - 0.75) / 0.13;
+      if (tldrRef.current) {
+        tldrRef.current.style.opacity = String(tldrOpacity);
+      }
+
+      // Beat 5 "morph INTO the navbar".
+      //
+      // CRITICAL — TIMING: the hero section is 400vh tall with a
+      // sticky child of 100vh. CSS sticky unsticks when the section
+      // bottom reaches the sticky bottom, i.e. at scrollY = 300vh.
+      // From 300vh onward, the sticky (and Beat 5 inside it) scroll
+      // UP naturally with the page — adding extra upward motion on
+      // top of any transform we apply. To avoid this stacking up,
+      // we run the morph ENTIRELY inside the locked range:
+      //
+      //   exitP 0 at scrollY = 276vh (Beat 5 just fully faded in)
+      //   exitP 1 at scrollY = 300vh (sticky still locked)
+      //
+      // Beat 5 must be opacity 0 by exitP = 1, otherwise it gets
+      // dragged off-screen as the sticky unsticks past 300vh.
+      //
+      //   exitP 0.00 → 0.30   "Take the Journey →" CTA fades out
+      //                       fast. The H2 starts traveling up,
+      //                       all three words still visible.
+      //   exitP 0.00 → 0.70   "I'm " prefix and "." suffix fade
+      //                       out — they don't belong in the nav.
+      //                       The word "Saurabh" stays solid.
+      //   exitP 0.70 → 1.00   Container fully traveled (-28vh)
+      //                       and shrunk to 0.18× (≈ nav text size).
+      //                       The SiteNav fades in over this same
+      //                       window, also showing "Saurabh" in
+      //                       the same visual spot — the swap is
+      //                       invisible because both render the
+      //                       same word at the same place.
+      //
+      // Throughout the entire morph, the container opacity stays at
+      // 1 (multiplied by o5 so the band-fade-in still works for
+      // reverse scroll). Visibility is controlled per-part via the
+      // refs below.
+      const vh = window.innerHeight;
+      const exitP = Math.max(
+        0,
+        Math.min(1, (window.scrollY - vh * 2.76) / (vh * 0.24)),
+      );
+
+      if (beat5Ref.current) {
+        // Morph travels from the H2's home (top 26vh) up to where
+        // the navbar's brand text sits (top ~4vh). 22vh of travel
+        // plus a 1 → 0.15 scale collapse makes the big headline
+        // visually shrink into the nav pill.
+        //
+        // Travel is ease-in (quadratic): slow start while user is
+        // still reading, then accelerates into the dock. Combined
+        // with the dockFade below, the text is barely visible by
+        // the time it's near the nav — what the eye actually
+        // perceives is the H2 launching upward and dissolving into
+        // the navbar exactly as the nav pill materializes.
+        const eased = exitP * exitP;
+        const scale = 1 - eased * 0.85;          // 1 → 0.15
+        const translateYvh = eased * -22;        // lands at top ~4vh = navbar row
+
+        beat5Ref.current.style.transform = `translate3d(0, ${translateYvh}vh, 0) scale(${scale})`;
+        beat5Ref.current.style.transformOrigin = "50% 0%";
+
+        // Crossfade with the nav. Text is fully invisible by
+        // exitP 0.85 (scrollY ≈ 296vh) — JUST before the sticky
+        // unsticks at 300vh. If any opacity remained past 1.0,
+        // the sticky's natural upward motion would drag a ghost
+        // of the text past the top of the viewport.
+        const dockFade =
+          exitP < 0.4 ? 1 : exitP > 0.85 ? 0 : 1 - (exitP - 0.4) / 0.45;
+        beat5Ref.current.style.opacity = String(o5 * dockFade);
+      }
+
+      // The navbar brand reads "I'm Saurabh" (no period), matching
+      // the H2's "I'm Saurabh." minus the trailing dot. So during
+      // the morph we keep "I'm " visible the whole way down — it's
+      // part of the destination string — and only fade out the
+      // period. To the eye, the full H2 string shrinks into the
+      // nav, with the period dissolving along the way.
+      const periodFade =
+        exitP <= 0
+          ? 1
+          : exitP >= 0.5
+            ? 0
+            : 1 - exitP / 0.5;
+      if (beat5SuffixRef.current) {
+        beat5SuffixRef.current.style.opacity = String(periodFade);
+      }
+
+      // "Take the Journey →" CTA — disappears fast. The button isn't
+      // part of the morph; it just clears the stage so the H2 can
+      // travel cleanly.
+      const ctaFade =
+        exitP <= 0 ? 1 : exitP >= 0.25 ? 0 : 1 - exitP / 0.25;
+      if (beat5CtaRef.current) {
+        beat5CtaRef.current.style.opacity = String(ctaFade);
+      }
     };
 
     const onScroll = () => {
@@ -231,8 +345,15 @@ export default function CharacterScroll() {
       className="relative bg-background"
     >
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-background">
-        {/* TL;DR overlay — name + role + location, always visible. */}
-        <header className="absolute left-4 top-5 z-40 max-w-[52%] sm:left-10 sm:top-8 sm:max-w-[60%]">
+        {/* TL;DR overlay — name + role + location. Visible at hero
+            start; fades out near the end of the scroll so the
+            SiteNav (which fades IN at the same point) doesn't
+            double-show the brand. Opacity driven imperatively in
+            the scroll handler, same as the beats. */}
+        <header
+          ref={tldrRef}
+          className="absolute left-4 top-5 z-40 max-w-[52%] sm:left-10 sm:top-8 sm:max-w-[60%]"
+        >
           <h1 className="font-display text-base font-medium leading-tight tracking-tight text-foreground sm:text-xl">
             Saurabh Jadhav
           </h1>
@@ -330,10 +451,20 @@ export default function CharacterScroll() {
           className="absolute inset-x-0 top-[26%] z-10 flex flex-col items-center gap-8 px-6 text-center"
           style={{ opacity: 0 }}
         >
+          {/* Split into spans so only the "I'm " prefix + "." suffix
+              fade during the morph — the word "Saurabh" stays solid
+              all the way up to the navbar position. */}
           <h2 className="font-display text-5xl font-light tracking-tight text-foreground sm:text-6xl md:text-7xl">
-            I&apos;m Saurabh.
+            <span ref={beat5PrefixRef} className="inline-block">
+              I&apos;m{" "}
+            </span>
+            Saurabh
+            <span ref={beat5SuffixRef} className="inline-block">
+              .
+            </span>
           </h2>
           <Link
+            ref={beat5CtaRef}
             href="/journey"
             className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/15 px-6 py-3 text-sm text-primary backdrop-blur-md transition-colors hover:bg-primary/25 sm:text-base"
           >
