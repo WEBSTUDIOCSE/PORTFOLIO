@@ -35,6 +35,10 @@ export type ContactField = "name" | "email" | "message";
 
 // ─── Resume request ───────────────────────────────────────────
 
+// Only `name` and `email` are required. `role` and `company` are
+// optional — recruiters in a hurry can grab the resume with minimal
+// friction. Empty strings are coerced for missing optional fields so
+// the Firestore shape stays consistent (rules expect all 5 keys).
 export const resumeRequestSchema = z.object({
   name: z.string().trim().min(1, "Required").max(100),
   email: z
@@ -46,9 +50,15 @@ export const resumeRequestSchema = z.object({
   role: z
     .string()
     .trim()
-    .min(1, "Required")
-    .max(200, "Keep it under 200 characters"),
-  company: z.string().trim().min(1, "Required").max(200),
+    .max(200, "Keep it under 200 characters")
+    .optional()
+    .default(""),
+  company: z
+    .string()
+    .trim()
+    .max(200, "Keep it under 200 characters")
+    .optional()
+    .default(""),
   company_url: z.string().max(0).optional(), // honeypot
 });
 

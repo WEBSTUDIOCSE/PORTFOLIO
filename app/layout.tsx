@@ -69,10 +69,115 @@ const architectsDaughter = Architects_Daughter({
   display: "swap",
 });
 
+// metadataBase resolves any relative URLs in this object (e.g. the
+// og:image route returned by app/opengraph-image.tsx) to absolute
+// URLs at build time. Set to the production origin so social
+// previews work everywhere.
 export const metadata: Metadata = {
+  metadataBase: new URL("https://saurabhjadhav.in"),
   title: "Saurabh Jadhav — Frontend & AI Engineer",
   description:
     "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+  keywords: [
+    "Saurabh Jadhav",
+    "Frontend Developer",
+    "AI Engineer",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Firebase",
+    "Mumbai",
+    "Maharashtra",
+    "Portfolio",
+  ],
+  authors: [{ name: "Saurabh Jadhav", url: "https://saurabhjadhav.in" }],
+  creator: "Saurabh Jadhav",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://saurabhjadhav.in",
+    siteName: "Saurabh Jadhav",
+    title: "Saurabh Jadhav — Frontend & AI Engineer",
+    description:
+      "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Saurabh Jadhav — Frontend & AI Engineer",
+    description:
+      "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+    creator: "@saurabhjadhav",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://saurabhjadhav.in",
+  },
+};
+
+// JSON-LD Person schema. Per Next.js docs (node_modules/next/dist/
+// docs/01-app/02-guides/json-ld.md): "a native <script> tag is the
+// right choice here" — NOT next/script. The browser doesn't execute
+// JSON-LD as JavaScript; it's structured data for crawlers.
+//
+// XSS guard: JSON.stringify can produce strings containing `</script>`
+// when fed user data. Replacing `<` with the unicode escape `<`
+// neutralizes any HTML-injection inside the payload.
+const PERSON_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Saurabh Jadhav",
+  alternateName: "सौरभ जाधव",
+  jobTitle: "Frontend & AI Engineer",
+  url: "https://saurabhjadhav.in",
+  image: "https://saurabhjadhav.in/opengraph-image",
+  email: "mailto:saurabhjadhav.cse@gmail.com",
+  description:
+    "Frontend & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Mumbai",
+    addressRegion: "Maharashtra",
+    addressCountry: "IN",
+  },
+  sameAs: [
+    "https://github.com/SAURABHRJADHAVCSE",
+    "https://www.linkedin.com/in/saurabhjadhav-cse",
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Gharda Institute of Technology",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Ratnagiri",
+      addressRegion: "Maharashtra",
+      addressCountry: "IN",
+    },
+  },
+  worksFor: {
+    "@type": "Organization",
+    name: "Livlong 365",
+  },
+  knowsAbout: [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Firebase",
+    "Tailwind CSS",
+    "shadcn/ui",
+    "Multi-agent AI systems",
+    "Generative AI",
+    "Frontend Engineering",
+    "Web Performance",
+  ],
 };
 
 // Runs on initial HTML parse, BEFORE React hydration, BEFORE first
@@ -112,6 +217,13 @@ export default function RootLayout({
         <Script id="no-flash-theme" strategy="beforeInteractive">
           {NO_FLASH_THEME_SCRIPT}
         </Script>
+        {/* Native <script> for JSON-LD per Next.js docs. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(PERSON_JSON_LD).replace(/</g, "\\u003c"),
+          }}
+        />
         <ThemeProvider>
           <SiteNav />
           {children}
