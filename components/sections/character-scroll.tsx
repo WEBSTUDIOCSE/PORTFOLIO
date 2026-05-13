@@ -152,8 +152,15 @@ export default function CharacterScroll() {
       drawnIdxRef.current = -1;
     };
 
-    // Object-contain math: scale the image to fit inside the canvas
-    // while preserving aspect ratio, centered.
+    // Fit math:
+    // - Desktop (≥640px): object-contain — character sits as a
+    //   "tabletop" portrait with breathing room around it. Matches
+    //   the considered/editorial feel of the rest of the page.
+    // - Mobile (<640px): contain × 1.5 — a moderate zoom over the
+    //   plain contain fit. Plain contain leaves the figure stranded
+    //   in a black void on tall phones; full cover crops the head
+    //   too aggressively. 1.5× is the middle that lets the figure
+    //   feel present without losing the silhouette edges.
     const draw = (targetIdx: number) => {
       // Clamp down to nearest loaded — never call drawImage with null.
       let idx = targetIdx;
@@ -166,7 +173,9 @@ export default function CharacterScroll() {
       const cssH = canvas.clientHeight;
       const iw = img.naturalWidth;
       const ih = img.naturalHeight;
-      const scale = Math.min(cssW / iw, cssH / ih);
+      const isMobile = cssW < 640;
+      const baseScale = Math.min(cssW / iw, cssH / ih);
+      const scale = isMobile ? baseScale * 1.5 : baseScale;
       const dw = iw * scale;
       const dh = ih * scale;
       const dx = (cssW - dw) / 2;
