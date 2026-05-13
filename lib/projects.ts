@@ -26,10 +26,18 @@ export type Project = {
   highlight?: string;
   /** Surface on the homepage SelectedWork reel. */
   featured?: boolean;
-  /** LinkedIn post URN for the launch post. */
-  linkedinPostUrn?: string;
-  /** Reach metric for the LinkedIn launch post — used by Press section. */
-  linkedinImpressions?: string;
+  /**
+   * LinkedIn launch posts. Array because a single project often gets
+   * multiple posts (announcement, demo, follow-up). Each entry renders
+   * as its own card on the detail page.
+   */
+  linkedinPosts?: Array<{
+    urn: string;
+    /** Optional label, e.g. "Launch post", "Workflow demo". */
+    label?: string;
+    /** Reach metric, e.g. "841 launch-day impressions". */
+    impressions?: string;
+  }>;
 
   // ─── Detail-page fields (rendered on /work/[slug]) ───────
   /** The problem this project solves — one paragraph. */
@@ -40,6 +48,16 @@ export type Project = {
   outcome?: string[];
   /** Lessons learned — bullet points. */
   lessons?: string[];
+
+  /**
+   * Mermaid diagram source for the project's architecture. Rendered
+   * by <MermaidDiagram /> on the detail page. Generated per-project
+   * by running the architecture-diagram prompt in each repo's Claude
+   * Code session, then pasting the resulting flowchart here.
+   */
+  diagram?: string;
+  /** Caption that sits beneath the diagram. Plain text. */
+  diagramCaption?: string;
 };
 
 export const PROJECTS: Project[] = [
@@ -48,36 +66,110 @@ export const PROJECTS: Project[] = [
     number: "P-001",
     title: "OpenClaw — 15-agent autonomous system",
     oneLiner:
-      "A multi-agent AI pipeline running on my VPS. Three agencies (Dev, LinkedIn, Creative) reporting to Jarvis the COO, zero human intervention after task input.",
-    role: "Solo · architect & engineer",
+      "A self-hosted AI agency on a $10/month VPS — 15 sub-agents across three agencies (Dev/Shuri, Creative/Maya, LinkedIn/Natasha) reporting to Jarvis the COO. One Telegram message kicks off a full product cycle: build → QA → deploy → post.",
+    role: "Founder · solo engineer",
     year: "2025",
-    stack: ["Next.js", "TypeScript", "Firebase", "GLM-5", "Vercel"],
+    stack: [
+      "Hostinger KVM2 VPS",
+      "Docker",
+      "GLM-5",
+      "Groq",
+      "Gemini 2.5 Flash",
+      "Claude Code",
+      "Telegram Bot",
+      "Firebase",
+      "Vercel",
+    ],
     metric: "15 agents · 3 agencies · 0 headcount",
     highlight: "← my favourite system",
     featured: true,
-    linkedinPostUrn: "urn:li:ugcPost:7450077524145078272",
-    linkedinImpressions: "841 launch-day impressions",
+    linkedinPosts: [
+      {
+        urn: "urn:li:ugcPost:7449521566910062592",
+        label: "Launch post",
+        impressions: "856 launch-day impressions",
+      },
+      {
+        urn: "urn:li:ugcPost:7450077524145078272",
+        label: "Workflow demo",
+        impressions: "841 launch-day impressions",
+      },
+    ],
     problem:
-      "Shipping software solo means context-switching between research, design, code, deploy, QA, content, marketing — every day. One person can't do all of it without dropping balls. I wanted a system that handled the entire pipeline so I could focus on the one thing that matters: deciding what to build next.",
+      "Building AI-powered products solo means orchestrating dozens of moving parts across research, design, code, deploy, QA, content, and marketing — every day. The existing SaaS multi-agent platforms lock you in, leak your data, or stack subscriptions. I wanted a self-hosted agency I owned end-to-end: cheap to run, fork-able, fully customisable. One Telegram message in, a shipped product out.",
     approach: [
-      "Three specialised agencies, each with its own CEO: Shuri (Dev), Natasha (LinkedIn), Maya (Creative).",
-      "One COO agent (Jarvis) above all three — the single point of contact. You give Jarvis a task; Jarvis routes it.",
-      "Each agency has narrow-scope sub-agents (Coder, UI, Research, Git, Deploy, QA for Dev; Research, Content, PDF, Firebase for LinkedIn; Hero images, Short-form video, Voiceover for Creative).",
-      "Shared state in Firebase — agents read and write to the same store rather than passing prompts. Keeps everyone coherent.",
-      "Built on GLM-5 for cost, with hand-tuned prompts per role. The agents don't \"think\" generically — each one is a specialist with a small, well-defined job.",
+      "Three-layer hierarchy on a $10/month Hostinger KVM2 VPS (Docker). Layer 1: Jarvis the COO. Layer 2: agency CEOs — Shuri (Dev), Maya (Creative), Natasha (LinkedIn). Layer 3: 15 specialised sub-agents.",
+      "Jarvis runs a ReAct loop with persistent context in SOUL.md (identity / behaviour), USER.md (preferences), and MEMORY.md (running state). The single point of contact is a Telegram Bot — you message Jarvis, Jarvis routes.",
+      "Routine routing decisions run on Groq's free tier (cheap + fast). Heavier models are invoked only on explicit request. Image and video agents always require user confirmation before firing.",
+      "Dev Agency (Shuri): Coder uses GLM-5 via Claude Code for implementation; UI uses Gemini 2.5 Flash + Stitch MCP for Apple / Vercel / Stripe-grade design; Research uses a Tavily → Gemini → web_fetch fallback chain; Git, Deploy (Vercel CLI), and QA (build / TypeScript / secrets / .gitignore / package.json checks) are rule-based.",
+      "Creative Agency (Maya): hero images, short-form video, voiceover. Brand-check filter sits at the output stage — every visual passes the brand style check before shipping.",
+      "LinkedIn Agency (Natasha): a fully isolated pipeline — Research → Content → PDF Carousel → Firebase → Auto-post. Carousels render via headless Chromium at 1080×1350 with hand-written light/dark templates, then ship straight to LinkedIn.",
+      "OpenClaw Skills — a CLI-loaded skill library — keeps every agent focused, structured, and on-brand across runs. No prompt drift between sessions.",
+      "Shared state in Firebase, not prompt-passing. Agents read and write to the same store — the moment that became true, hallucinations dropped sharply.",
     ],
     outcome: [
       "15 agents across 3 agencies — fully autonomous after task input.",
-      "841 impressions on the launch announcement (LinkedIn).",
-      "Running 24/7 on personal VPS, zero downtime since launch.",
-      "Replaced what would otherwise be a 5-7 person team for a side project.",
+      "Running 24/7 on a $10/month Hostinger KVM2 VPS, zero downtime since launch.",
+      "Replaces what would otherwise be a 5–7 person team for a side project.",
+      "No SaaS subscriptions stacking up, no vendor lock-in, no data leaving the box. Fully customisable agency structure — fork it, rewire it, add your own CEOs.",
     ],
     lessons: [
       "Specialisation beats generalisation. Narrow-scope agents with clear boundaries fail less than one big \"do everything\" model.",
       "Shared state > prompt-passing. The moment agents share a store, hallucinations drop sharply.",
       "One COO > round-robin routing. A single agent deciding who-does-what prevents infinite loops between peer agents.",
       "Brand-check is mandatory — Maya (Creative) has a brand-checker built in so every output passes a visual style filter before shipping.",
+      "Persistent context files (SOUL / USER / MEMORY) beat re-prompting every turn. The agent stays itself across days, not just turns.",
     ],
+    diagram: `flowchart TD
+  User[User]
+  TG[Telegram Bot]
+
+  subgraph L1[Layer 1 · COO]
+    Jarvis[Jarvis · ReAct]
+    Context[(SOUL.md · USER.md · MEMORY.md)]
+    Groq[[Groq · routing, free tier]]
+  end
+
+  subgraph L2[Layer 2 · Agency CEOs]
+    Shuri[Shuri · Dev]
+    Maya[Maya · Creative]
+    Natasha[Natasha · LinkedIn]
+  end
+
+  subgraph DevAgents[Dev specialists]
+    DevPipe[Coder GLM-5 · UI Gemini 2.5 + Stitch · Research Tavily · Git · Deploy · QA]
+  end
+
+  subgraph CreativeAgents[Creative specialists]
+    CreativePipe[Hero images · Short-form video · Voiceover · brand check]
+  end
+
+  subgraph LIAgents[LinkedIn specialists]
+    LIPipe[Research · Content · PDF Carousel headless Chromium 1080×1350 · Auto-post]
+  end
+
+  subgraph Out[External]
+    Vercel[[Vercel]]
+    Firebase[[Firebase]]
+    LinkedIn[[LinkedIn API]]
+  end
+
+  User --message--> TG
+  TG --command--> Jarvis
+  Jarvis --persistent context--> Context
+  Jarvis --route--> Groq
+  Jarvis --dev task--> Shuri
+  Jarvis --creative task--> Maya
+  Jarvis --LI task--> Natasha
+  Shuri --dispatch--> DevAgents
+  Maya --dispatch--> CreativeAgents
+  Natasha --dispatch--> LIAgents
+  DevAgents --deploy--> Vercel
+  DevAgents --shared state--> Firebase
+  LIAgents --carousel PDF--> Firebase
+  LIAgents --auto-post--> LinkedIn`,
+    diagramCaption:
+      "Three-layer agency hierarchy on a $10/month Hostinger VPS. A single Telegram message reaches Jarvis (Layer 1 COO running a ReAct loop with persistent context in SOUL.md / USER.md / MEMORY.md). Jarvis routes through Groq's free tier to one of three agency CEOs — Shuri (Dev), Maya (Creative), Natasha (LinkedIn) — each owning a narrow pipeline of specialists. Heavy models (GLM-5, Gemini 2.5 Flash) are invoked only when needed; image and video agents always confirm with the user before firing. Shared Firebase state, not prompt-passing, is what keeps the whole agency coherent — and what makes a $10/month VPS replace a 5–7 person team.",
   },
   {
     slug: "cinematictale",
@@ -87,12 +179,10 @@ export const PROJECTS: Project[] = [
       "Users create characters, generate narratives, produce AI images via PuLID face-swap. Live and monetised — Razorpay subscriptions, Firebase auth, 7-phase launch playbook.",
     role: "Founder · solo engineer",
     year: "2025",
-    stack: ["Next.js 16", "React 19", "Firebase", "Gemini", "fal.ai", "Razorpay"],
+    stack: ["Next.js 16", "Firebase", "Gemini", "fal.ai", "Razorpay"],
     metric: "Live · cinematictale.com",
     href: "https://cinematictale.com",
     featured: true,
-    linkedinPostUrn: "urn:li:ugcPost:7449521566910062592",
-    linkedinImpressions: "856 launch-day impressions",
     problem:
       "Generating AI imagery for stories has a fundamental coherence problem: every frame produces a different person. Without character consistency, you can generate \"a girl walking down a street\" twenty times and get twenty different girls. That's not storytelling — that's a slideshow.",
     approach: [
@@ -104,7 +194,6 @@ export const PROJECTS: Project[] = [
     ],
     outcome: [
       "Live and monetised at cinematictale.com.",
-      "856 launch-day impressions on the announcement.",
       "Real users generating real stories with consistent characters.",
     ],
     lessons: [
@@ -112,73 +201,147 @@ export const PROJECTS: Project[] = [
       "Subscription requires bulletproof auth. Razorpay integration is straightforward; the hard part is handling the edge cases (cancellation mid-cycle, plan changes, payment failures).",
       "Marketing is a system, not an afterthought. The 7-phase playbook turned launch from \"hit publish and pray\" into a deliberate sequence.",
     ],
+    diagram: `flowchart TD
+  subgraph Client
+    User[User Browser]
+    UI[Next.js App Router]
+  end
+
+  subgraph Server
+    API[API Routes]
+    Adapter[AI Adapter + Circuit Breaker]
+    RWH[Razorpay webhook]
+    KWH[Kie Veo webhook]
+  end
+
+  subgraph External
+    Auth[[Firebase Auth]]
+    Upstash[[Upstash Redis]]
+    Gemini[[Gemini Nano Banana / Imagen / Text]]
+    Kie[[Kie.AI Veo / Flux]]
+    Razorpay[[Razorpay Checkout]]
+  end
+
+  subgraph Data
+    CS[(Cloud Storage)]
+    FS[(Firestore)]
+  end
+
+  User --prompt + reference photo--> UI
+  UI --story request--> API
+  API --verify session--> Auth
+  API --quota check--> Upstash
+  API --dispatch generate--> Adapter
+  Adapter --primary--> Gemini
+  Adapter --fallback on 5xx / 429 / circuit open--> Kie
+  Gemini --story + image bytes--> API
+  Kie --async task id--> API
+  API --image bytes--> CS
+  API --story doc + pages + credit debit--> FS
+  Razorpay --HMAC payment.captured--> RWH
+  Kie --HMAC task.success--> KWH
+  RWH --grant credits--> FS
+  KWH --video URL or credit refund--> FS
+  UI --read story--> FS
+  UI --render image / video--> CS`,
+    diagramCaption:
+      "The AI Adapter is the architectural keystone — every storybook page, comic panel, and video clip flows through a Gemini-primary, Kie.AI-fallback chain guarded by a circuit breaker, so a Gemini rate-limit, content-block, or outage transparently retries on Kie's Veo/Flux without the user seeing failover. Async paths (Video Tale generation, Razorpay subscriptions) close the loop via HMAC-signed webhooks that grant credits and stitch video URLs back into the same Firestore documents the UI is already reading — so the page just re-renders when the work finishes, no polling protocol needed.",
   },
   {
     slug: "elite-mindset-forge",
     number: "P-003",
     title: "Elite Mindset Forge — autonomous content platform",
     oneLiner:
-      "Writes every quote, generates every image and video, auto-posts to Instagram + Facebook. Multilingual (English / Hindi / Marathi). Zero human in the loop.",
-    role: "Solo · architect",
+      "A read-only website fed by a separate Agent Portal: scheduled triggers spin up AI agents that generate every quote, image, and video; Firestore fans them out to Instagram, Facebook, push subscribers, and the site. Multilingual (English / Hindi / Marathi). Zero human in the loop.",
+    role: "Founder · solo engineer",
     year: "2025",
-    stack: ["Next.js 16", "Gemini Pro", "Imagen", "Veo", "Firebase", "PWA"],
-    metric: "856 launch-day impressions · 100% AI-generated",
-    href: "https://elitemindsetforge.com",
+    stack: [
+      "Next.js 16",
+      "Gemini Pro",
+      "Imagen",
+      "Veo",
+      "Firebase",
+      "Instagram API",
+      "PWA",
+    ],
+    metric: "AI-agent driven · runs itself · @elitemindset.forge",
+    href: "https://www.elitemindsetforge.com/",
     featured: true,
     problem:
-      "Running an AI-content brand needs daily output to stay relevant. Manual posting kills the founder — you become an SMM employee for your own product. I wanted the brand to run itself.",
+      "Running a content-driven Instagram brand solo means daily posting becomes the founder's second full-time job — there's no slot in the daily routine to manage multiple pages manually. I wanted the brand to run itself: content generated, expanded, published, and notified without a human in the loop.",
     approach: [
-      "Full content pipeline: Gemini Pro writes quotes, Google Imagen generates static visuals, Google Veo creates short-form video, Kling AI handles variants.",
-      "Auto-publishing to Instagram + Facebook via their respective APIs — OAuth handled once at setup, then it just runs.",
-      "Multi-language (English / Hindi / Marathi) — Gemini handles the translations natively, no separate translator needed.",
-      "PWA so the site is installable on mobile; Firebase FCM for real-time push notifications when new content drops.",
-      "AdSense + GA4 for monetisation. Branch-based CI/CD: GitHub Actions → Vercel.",
-      "Swipe-based quote gallery on the front-end, blog system with categories / SEO / favourites.",
+      "Two-system split: elitemindsetforge.com is purely read-only — it doesn't generate anything. All content generation lives in a separate Agent Portal backend that I run.",
+      "Scheduled Firebase Cloud Functions fire at specific times of day to kick off the Agent Portal's content engine — no human pressing a button.",
+      "Inside the engine: Gemini Pro + RAG writes the motivational quote in three languages (English / Hindi / Marathi); Google Imagen generates the static visual; Google Veo and Kling AI cover short-form video.",
+      "Output lands once in a shared Cloud Firestore (doc + metadata) and Cloud Storage (media bytes). Firestore is the single source of truth for every consumer downstream.",
+      "Fan-out from Firestore happens in parallel: Autogram Poster (my custom auto-publisher) reads the new doc and posts to Instagram + Facebook via their Graph APIs; a Firestore trigger fires a Cloud Function that multicasts FCM push notifications to subscribers; the website renders the same doc as soon as it lands.",
+      "AI-expansion: short Instagram quotes get expanded into longer-form blog posts by AI and surfaced on the site with categories, SEO, and favourites.",
+      "Website stack: Firebase Auth (Email + Google OAuth), AdSense + GA4 monetisation, swipe-based quote gallery, PWA (installable + offline), branch-based CI/CD (GitHub Actions → Vercel).",
     ],
     outcome: [
-      "Live at elitemindsetforge.com. 100% of content is AI-generated.",
-      "856 launch-day impressions on LinkedIn.",
-      "Multi-language reach across three Indian languages — direct from Gemini, no manual translator.",
-      "PWA installable and offline-capable.",
+      "Live at elitemindsetforge.com — every quote, image, and video on the page is AI-generated.",
+      "Daily auto-posting to [@elitemindset.forge](https://www.instagram.com/elitemindset.forge/) on Instagram + Facebook via the Autogram Poster pipeline.",
+      "Three-language reach (English / Hindi / Marathi) on every quote, direct from Gemini.",
+      "PWA installable and offline-capable; FCM keeps returning users in the loop the moment new content drops.",
     ],
     lessons: [
-      "Auto-publishing requires real OAuth — Instagram's Graph API has rate limits but is workable if you respect them.",
-      "Multi-language AI translation is now table-stakes for India. Gemini handles Indian languages well enough to ship without human review for short content.",
-      "AdSense + GA4 is a 30-minute setup that pays for the VPS forever. There's no reason to skip it.",
+      "The real product isn't the website — it's the pipeline. The site is just one of three surfaces where the same AI-generated content lands; Autogram Poster is the connective tissue.",
+      "Instagram's Graph API rate limits look scary on paper but are easy to respect once you batch and queue. Auto-publishing only needs OAuth wired once.",
+      "Multi-language AI translation is table-stakes for India now. Gemini handles Indian languages well enough to ship short content without human review.",
+      "AdSense + GA4 is a 30-minute setup that pays for the VPS forever. No reason to skip it.",
     ],
-  },
-  {
-    slug: "konkan-diorama",
-    number: "P-004",
-    title: "Konkan diorama — this site",
-    oneLiner:
-      "The Saurabh Express. A scroll-driven 3D toy railway built with react-three-fiber. Five stations, one journey, lots of small details.",
-    role: "Solo · personal",
-    year: "2025",
-    stack: ["Next.js 16", "three.js", "react-three-fiber"],
-    metric: "60fps on laptop-class hardware",
-    href: "/journey",
-    highlight: "← scroll for the experience",
-    featured: true,
-    problem:
-      "Most developer portfolios look identical: hero photo, project grid, contact form, send. I wanted mine to feel like a place — somewhere you'd remember, not somewhere you'd close.",
-    approach: [
-      "Built /journey as a scroll-driven 3D diorama — an Indian Railways WAP-7 locomotive moving along procedural rails.",
-      "Five stations (Platform, Story, Skills, Projects, Contact) — each one a scroll viewport. Scroll position drives both the train motion and which station's content is active.",
-      "Orthographic camera with an AutoFitOrtho helper so the scene fits the viewport on every aspect ratio.",
-      "Konkan railway aesthetic — Studio Ghibli meets architectural maquette. Maroon enamel station signs, brass route-map medallions, golden-hour lighting.",
-      "The character-scroll on the landing hero (this homepage) is a separate experiment — same scroll-driven craft, different medium (image sequence on canvas).",
-    ],
-    outcome: [
-      "60fps on M-class laptops and modern Androids.",
-      "~13MB GLB after gltf-transform optimisation.",
-      "Unique among developer portfolios — recognisable as Konkan railway craft.",
-    ],
-    lessons: [
-      "3D doesn't have to be heavy. Careful GLB optimisation, DRACO compression, and instanced meshes keep it under 13MB.",
-      "Scroll-driven > play-button. Visitors don't realise it's 3D until they scroll, which removes the \"is this going to be slow?\" hesitation.",
-      "The hero of a portfolio is a place, not a banner. Build somewhere people want to walk through.",
-    ],
+    diagram: `flowchart TD
+  subgraph Portal[Agent Portal · backend]
+    Cron[Scheduled trigger · daily times]
+    Engine[Content engine]
+    Cron --invoke--> Engine
+  end
+
+  subgraph AI[AI Models]
+    GeminiText[[Gemini Pro + RAG]]
+    Imagen[[Google Imagen]]
+    Veo[[Google Veo]]
+    Kling[[Kling AI]]
+  end
+
+  subgraph Data[Shared Data]
+    FS[(Cloud Firestore)]
+    Storage[(Cloud Storage)]
+  end
+
+  subgraph Pub[Fan-out Surfaces]
+    Poster[Autogram Poster]
+    IG[[Instagram Graph API]]
+    FB[[Facebook Graph API]]
+    Func[Firestore trigger]
+    FCM[[FCM push]]
+  end
+
+  subgraph Web[elitemindsetforge.com · read-only]
+    Site[Next.js · swipe gallery · PWA]
+    Auth[[Firebase Auth]]
+  end
+
+  Engine --text prompt--> GeminiText
+  GeminiText --quote · 3 languages--> Engine
+  Engine --media prompt--> Imagen
+  Engine --media prompt--> Veo
+  Engine --media prompt--> Kling
+  Imagen --image--> Engine
+  Veo --video--> Engine
+  Kling --image / video--> Engine
+  Engine --doc + metadata--> FS
+  Engine --media bytes--> Storage
+  FS --new doc--> Poster
+  Poster --post + media--> IG
+  Poster --post + media--> FB
+  FS --new doc--> Func
+  Func --multicast--> FCM
+  Site --read quotes--> FS
+  Site --render media--> Storage
+  Site --session--> Auth`,
+    diagramCaption:
+      "The website is a pure read-only consumer — content originates in a separate Agent Portal backend, kicked off by scheduled Firebase triggers at specific times of day. The Engine calls the AI models (Gemini Pro + RAG for trilingual text; Imagen / Veo / Kling for visuals) and writes the result to a shared Firestore. From there it fans out in parallel: Autogram Poster auto-posts to Instagram + Facebook, a Firestore trigger multicasts FCM push notifications to subscribers, and elitemindsetforge.com just renders whatever's already in the database. Nothing is generated on the website itself.",
   },
 ];
 

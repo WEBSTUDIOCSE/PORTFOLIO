@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PROJECTS, type Project } from "@/lib/projects";
+import MermaidDiagram from "@/components/mermaid-diagram";
 
 type Params = Promise<{ slug: string }>;
 
@@ -32,9 +33,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
   const prev = idx > 0 ? PROJECTS[idx - 1] : null;
   const next = idx < PROJECTS.length - 1 ? PROJECTS[idx + 1] : null;
 
-  const linkedinUrl = project.linkedinPostUrn
-    ? `https://www.linkedin.com/feed/update/${project.linkedinPostUrn}/`
-    : null;
+  const linkedinPosts = project.linkedinPosts ?? [];
 
   return (
     <main className="bg-background text-foreground">
@@ -117,6 +116,15 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           </Block>
         )}
 
+        {project.diagram && (
+          <Block kicker="Architecture">
+            <MermaidDiagram
+              chart={project.diagram}
+              caption={project.diagramCaption}
+            />
+          </Block>
+        )}
+
         {project.outcome && project.outcome.length > 0 && (
           <Block kicker="Outcome">
             <Bullets items={project.outcome} />
@@ -129,27 +137,36 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           </Block>
         )}
 
-        {/* LinkedIn post link (no iframe — performance) */}
-        {linkedinUrl && (
-          <Block kicker="On LinkedIn">
-            <Link
-              href={linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-baseline gap-2 rounded-lg border border-border bg-card px-5 py-4 text-card-foreground transition-colors hover:border-primary/40"
-            >
-              <span className="font-display text-lg">
-                Read the launch post
-              </span>
-              {project.linkedinImpressions && (
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  · {project.linkedinImpressions}
-                </span>
-              )}
-              <span aria-hidden className="text-primary">
-                →
-              </span>
-            </Link>
+        {/* LinkedIn posts (no iframes — performance). Renders one
+            card per post; projects with multiple posts (e.g.
+            announcement + demo + follow-up) get stacked cards. */}
+        {linkedinPosts.length > 0 && (
+          <Block
+            kicker={linkedinPosts.length > 1 ? "On LinkedIn" : "On LinkedIn"}
+          >
+            <div className="flex flex-col gap-3">
+              {linkedinPosts.map((post) => (
+                <Link
+                  key={post.urn}
+                  href={`https://www.linkedin.com/feed/update/${post.urn}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-baseline gap-2 rounded-lg border border-border bg-card px-5 py-4 text-card-foreground transition-colors hover:border-primary/40"
+                >
+                  <span className="font-display text-lg">
+                    {post.label ?? "Read the launch post"}
+                  </span>
+                  {post.impressions && (
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      · {post.impressions}
+                    </span>
+                  )}
+                  <span aria-hidden className="text-primary">
+                    →
+                  </span>
+                </Link>
+              ))}
+            </div>
           </Block>
         )}
       </article>
