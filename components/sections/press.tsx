@@ -7,13 +7,34 @@
 //   paint. We instead link out to the posts and let /work/[slug]
 //   detail pages embed the full iframe in context (deferred).
 //
-// Reads from lib/projects.ts — only renders projects that have
-// linkedinPostUrn set. Order matches the PROJECTS array.
+// Reads from lib/projects.ts. Each project's `linkedinPosts` array
+// can hold multiple posts (announcement / demo / follow-up), so we
+// flatten across all projects into a single grid — every post gets
+// its own card, labeled with the parent project's title + number
+// and (when present) the post's specific label like "Workflow demo".
 
 import Link from "next/link";
 import { PROJECTS } from "@/lib/projects";
 
-const POSTS = PROJECTS.filter((p) => p.linkedinPostUrn);
+type CardData = {
+  key: string;
+  projectNumber: string;
+  projectTitle: string;
+  postLabel?: string;
+  urn: string;
+  impressions?: string;
+};
+
+const POSTS: CardData[] = PROJECTS.flatMap((p) =>
+  (p.linkedinPosts ?? []).map((post, i) => ({
+    key: `${p.slug}-${i}`,
+    projectNumber: p.number,
+    projectTitle: p.title.split(" — ")[0],
+    postLabel: post.label,
+    urn: post.urn,
+    impressions: post.impressions,
+  })),
+);
 
 const linkedinPostUrl = (urn: string) =>
   `https://www.linkedin.com/feed/update/${urn}/`;
@@ -33,34 +54,42 @@ export default function Press() {
             Posts that traveled.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Launch posts and project announcements. Numbers below are
-            launch-day reach — click any to read on LinkedIn.
+            Launch posts, demos, and project announcements. Numbers
+            below are launch-day reach — click any to read on LinkedIn.
           </p>
         </header>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {POSTS.map((p) => (
+          {POSTS.map((post) => (
             <Link
-              key={p.slug}
-              href={linkedinPostUrl(p.linkedinPostUrn!)}
+              key={post.key}
+              href={linkedinPostUrl(post.urn)}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex flex-col rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors hover:border-primary/40"
             >
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {p.number}
+                {post.projectNumber}
               </p>
               <h3 className="mt-2 font-display text-lg font-light leading-snug tracking-tight text-foreground">
-                {p.title.split(" — ")[0]} launch
+                {post.projectTitle}
+                {post.postLabel && (
+                  <span className="block text-sm font-normal text-muted-foreground">
+                    {post.postLabel}
+                  </span>
+                )}
               </h3>
-              {p.linkedinImpressions && (
+              {post.impressions && (
                 <p className="mt-2 font-display text-xl font-medium tracking-tight text-primary">
-                  {p.linkedinImpressions}
+                  {post.impressions}
                 </p>
               )}
               <p className="mt-auto flex items-center gap-1.5 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground group-hover:text-primary">
                 Read on LinkedIn
-                <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
+                <span
+                  aria-hidden
+                  className="transition-transform group-hover:translate-x-0.5"
+                >
                   →
                 </span>
               </p>
