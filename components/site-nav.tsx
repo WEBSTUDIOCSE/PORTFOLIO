@@ -27,6 +27,10 @@ const LINKS: NavLink[] = [
 export default function SiteNav() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  // /journey is a full-bleed 3D experience — the floating nav pill
+  // breaks the immersion and competes with the diorama's framing.
+  // Browser back / the in-page UI handle navigation off the page.
+  const isJourney = pathname === "/journey";
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -60,6 +64,9 @@ export default function SiteNav() {
   }, [pathname]);
 
   const visible = !isHome || scrolled;
+
+  // Hard-hide on /journey — the page is its own immersive context.
+  if (isJourney) return null;
 
   return (
     <>
