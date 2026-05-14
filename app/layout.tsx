@@ -14,6 +14,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
+import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
 // variable axis as a single woff2. Adding an array of static weights
@@ -121,62 +122,87 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://saurabhjadhav.in",
   },
+  // Google Search Console site verification. The token is fetched
+  // from GSC → Settings → Ownership verification → HTML tag, and
+  // stored as an env var so it doesn't leak in PRs. Without GSC
+  // verification we can't see indexing errors, query data, or
+  // sitemap status.
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+  },
 };
 
-// JSON-LD Person schema. Per Next.js docs (node_modules/next/dist/
-// docs/01-app/02-guides/json-ld.md): "a native <script> tag is the
-// right choice here" — NOT next/script. The browser doesn't execute
-// JSON-LD as JavaScript; it's structured data for crawlers.
+// JSON-LD graph — single @graph with Person + WebSite. Per
+// Next.js docs (node_modules/next/dist/docs/01-app/02-guides/
+// json-ld.md): "a native <script> tag is the right choice here" —
+// NOT next/script. The browser doesn't execute JSON-LD as JS; it's
+// structured data for crawlers.
 //
-// XSS guard: JSON.stringify can produce strings containing `</script>`
-// when fed user data. Replacing `<` with the unicode escape `<`
-// neutralizes any HTML-injection inside the payload.
-const PERSON_JSON_LD = {
+// The @id values let project / blog pages reference the SAME Person
+// node via `author: { "@id": PERSON_ID }` rather than duplicating
+// fields. See lib/seo.ts. This gives Google's knowledge graph a
+// clean entity model: one Saurabh authoring many projects + posts.
+const ROOT_JSON_LD = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Saurabh Jadhav",
-  alternateName: "सौरभ जाधव",
-  jobTitle: "Frontend & AI Engineer",
-  url: "https://saurabhjadhav.in",
-  image: "https://saurabhjadhav.in/opengraph-image",
-  email: "mailto:saurabhjadhav.cse@gmail.com",
-  description:
-    "Frontend & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Mumbai",
-    addressRegion: "Maharashtra",
-    addressCountry: "IN",
-  },
-  sameAs: [
-    "https://github.com/SAURABHRJADHAVCSE",
-    "https://www.linkedin.com/in/saurabhjadhav-cse",
-  ],
-  alumniOf: {
-    "@type": "CollegeOrUniversity",
-    name: "Gharda Institute of Technology",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Ratnagiri",
-      addressRegion: "Maharashtra",
-      addressCountry: "IN",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": PERSON_ID,
+      name: "Saurabh Jadhav",
+      alternateName: "सौरभ जाधव",
+      jobTitle: "Frontend & AI Engineer",
+      url: SITE_URL,
+      image: `${SITE_URL}/opengraph-image`,
+      email: "mailto:saurabhjadhav.cse@gmail.com",
+      description:
+        "Frontend & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Mumbai",
+        addressRegion: "Maharashtra",
+        addressCountry: "IN",
+      },
+      sameAs: [
+        "https://github.com/SAURABHRJADHAVCSE",
+        "https://www.linkedin.com/in/saurabhjadhav-cse",
+      ],
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "Gharda Institute of Technology",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Ratnagiri",
+          addressRegion: "Maharashtra",
+          addressCountry: "IN",
+        },
+      },
+      worksFor: {
+        "@type": "Organization",
+        name: "Livlong 365",
+      },
+      knowsAbout: [
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Firebase",
+        "Tailwind CSS",
+        "shadcn/ui",
+        "Multi-agent AI systems",
+        "Generative AI",
+        "Frontend Engineering",
+        "Web Performance",
+      ],
     },
-  },
-  worksFor: {
-    "@type": "Organization",
-    name: "Livlong 365",
-  },
-  knowsAbout: [
-    "React",
-    "Next.js",
-    "TypeScript",
-    "Firebase",
-    "Tailwind CSS",
-    "shadcn/ui",
-    "Multi-agent AI systems",
-    "Generative AI",
-    "Frontend Engineering",
-    "Web Performance",
+    {
+      "@type": "WebSite",
+      "@id": WEBSITE_ID,
+      url: SITE_URL,
+      name: "Saurabh Jadhav",
+      description:
+        "Portfolio of Saurabh Jadhav — Frontend & AI Engineer based in Mumbai.",
+      publisher: { "@id": PERSON_ID },
+      inLanguage: "en-IN",
+    },
   ],
 };
 
@@ -220,9 +246,7 @@ export default function RootLayout({
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(PERSON_JSON_LD).replace(/</g, "\\u003c"),
-          }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(ROOT_JSON_LD) }}
         />
         <ThemeProvider>
           <SiteNav />
