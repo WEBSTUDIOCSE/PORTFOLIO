@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PROJECTS, type Project } from "@/lib/projects";
 import MermaidDiagram from "@/components/mermaid-diagram";
+import { PERSON_ID, SITE_URL, jsonLd } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -18,9 +19,31 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = PROJECTS.find((p) => p.slug === slug);
   if (!project) return { title: "Project not found" };
+
+  const title = `${project.title} — Saurabh Jadhav`;
+  const url = `${SITE_URL}/work/${slug}`;
+  // Next.js wires app/work/[slug]/opengraph-image.tsx as the
+  // og:image automatically — we just need to set the rest of the
+  // OG / Twitter metadata so the card content matches the image.
   return {
-    title: `${project.title} — Saurabh Jadhav`,
+    title,
     description: project.oneLiner,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description: project.oneLiner,
+      siteName: "Saurabh Jadhav",
+      locale: "en_IN",
+      authors: ["Saurabh Jadhav"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: project.oneLiner,
+      creator: "@saurabhjadhav",
+    },
   };
 }
 
@@ -35,8 +58,76 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
 
   const linkedinPosts = project.linkedinPosts ?? [];
 
+  const url = `${SITE_URL}/work/${project.slug}`;
+  const image = `${url}/opengraph-image`;
+  // SoftwareApplication is the most precise schema for these
+  // projects — every entry in PROJECTS is software built by
+  // Saurabh. We reference the canonical Person node from the
+  // root layout via @id (PERSON_ID) so Google's knowledge graph
+  // attributes every project to the same identity rather than
+  // creating duplicate Person nodes per page.
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: project.title.split(" — ")[0],
+    alternateName: project.title,
+    description: project.oneLiner,
+    url,
+    image,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web",
+    creator: { "@id": PERSON_ID },
+    author: { "@id": PERSON_ID },
+    dateCreated: project.year,
+    keywords: project.stack.join(", "),
+    ...(project.href ? { sameAs: project.href } : {}),
+    // Required by Google for richer SoftwareApplication results.
+    // Free portfolio projects → offer with price 0.
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Selected Work",
+        item: `${SITE_URL}/#work`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: project.title.split(" — ")[0],
+        item: url,
+      },
+    ],
+  };
+
   return (
     <main className="bg-background text-foreground">
+      {/* Page-scoped JSON-LD. Two graphs: the project itself
+          (SoftwareApplication) and the breadcrumb trail. Both link
+          back to the Person node declared in app/layout.tsx via @id. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(softwareSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbSchema) }}
+      />
+
       {/* Back link */}
       <div className="mx-auto max-w-3xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link

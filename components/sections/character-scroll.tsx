@@ -16,8 +16,47 @@ const ALL_FRAMES: number[] = Array.from({ length: 119 }, (_, i) =>
 const DESKTOP_FRAMES = ALL_FRAMES;
 const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
-const framePath = (n: number) =>
-  `/assets/saurabh/ezgif-frame-${String(n).padStart(3, "0")}.webp`;
+// Adaptive quality serving — two folders of the same 119 frames:
+//
+//   /assets/saurabh/        1920×1080 originals, ~100 KB each, 12 MB total
+//   /assets/saurabh-lite/    960×540   re-encoded, ~30 KB each, 3.5 MB total
+//
+// Default is the hi-res set. Lite kicks in when ANY of:
+//   1. `navigator.connection.saveData === true`   (user opted into Data Saver)
+//   2. `effectiveType` is "slow-2g", "2g", or "3g"
+//   3. Viewport width < 640px                     (mobile — small screen
+//      can't resolve hi-res pixels anyway, so the perceptual difference
+//      is zero while the bandwidth difference is 3-4×)
+//
+// Network Information API is well-supported on Chromium browsers
+// (the majority of mobile traffic in India). Safari doesn't expose
+// `navigator.connection` — those users default to the hi-res set,
+// which on iOS is generally fine because Apple's networking is
+// optimized and most users are on wifi or 4G+ LTE.
+type FrameDir = "saurabh" | "saurabh-lite";
+
+const HI = "saurabh" as const;
+const LITE = "saurabh-lite" as const;
+
+type NetworkConn = {
+  effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
+  saveData?: boolean;
+};
+
+function pickFrameDir(): FrameDir {
+  if (typeof window === "undefined") return HI;
+  if (window.matchMedia("(max-width: 640px)").matches) return LITE;
+  const conn = (navigator as Navigator & { connection?: NetworkConn })
+    .connection;
+  if (!conn) return HI;
+  if (conn.saveData) return LITE;
+  if (conn.effectiveType && conn.effectiveType !== "4g") return LITE;
+  return HI;
+}
+
+function framePath(dir: FrameDir, n: number) {
+  return `/assets/${dir}/ezgif-frame-${String(n).padStart(3, "0")}.webp`;
+}
 
 // Trapezoid window: 0 outside [a, d], ramps up over [a, b],
 // holds at 1 over [b, c], ramps down over [c, d].
@@ -51,6 +90,12 @@ export default function CharacterScroll() {
   const framesRef = useRef<number[]>(DESKTOP_FRAMES);
   framesRef.current = frames;
 
+  // Hi-res default; flipped to lite on mount if the visitor's network
+  // / device profile asks for it. We start at HI because that's the
+  // SSR-safe default — flickering one extra HTTP request on mount is
+  // cheaper than rendering a low-res canvas momentarily.
+  const [frameDir, setFrameDir] = useState<FrameDir>(HI);
+
   // HTMLImageElement[] indexed by position in `frames`. null until
   // loaded. We draw whatever's loaded; targets without a loaded image
   // fall back to the nearest lower-index loaded frame (no blank).
@@ -68,15 +113,19 @@ export default function CharacterScroll() {
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
 
-  // Mobile detection — swap to smaller frame list on phones.
+  // On mount, decide:
+  //   1. Frame count   (mobile = every-other, desktop = all)
+  //   2. Source folder (lite vs hi-res — see pickFrameDir comment)
+  // Both can flip if the viewport resizes across the 640px boundary.
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
-    setFrames(mq.matches ? MOBILE_FRAMES : DESKTOP_FRAMES);
-    const onChange = (e: MediaQueryListEvent) => {
-      setFrames(e.matches ? MOBILE_FRAMES : DESKTOP_FRAMES);
+    const sync = () => {
+      setFrames(mq.matches ? MOBILE_FRAMES : DESKTOP_FRAMES);
+      setFrameDir(pickFrameDir());
     };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   // Preload frames into HTMLImageElement objects. Each load fires
@@ -96,7 +145,7 @@ export default function CharacterScroll() {
         imagesRef.current[i] = img;
         requestDrawRef.current?.();
       };
-      img.src = framePath(frames[i]);
+      img.src = framePath(frameDir, frames[i]);
     };
 
     // Eager-load the first 8 (covers ~first viewport of scroll).
@@ -125,7 +174,7 @@ export default function CharacterScroll() {
     return () => {
       cancelled = true;
     };
-  }, [frames]);
+  }, [frames, frameDir]);
 
   // Canvas rendering + scroll handler. drawImage is atomic — there
   // is no blank frame between the previous and next paint, which
