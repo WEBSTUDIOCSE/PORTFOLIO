@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { POSTS, PUBLISHED_POSTS } from "@/lib/writing";
+import { PERSON_ID, SITE_URL, jsonLd } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -17,9 +18,35 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = POSTS.find((p) => p.slug === slug);
   if (!post) return { title: "Post not found" };
+
+  const title = `${post.title} — Saurabh Jadhav`;
+  const url = `${SITE_URL}/writing/${slug}`;
   return {
-    title: `${post.title} — Saurabh Jadhav`,
+    title,
     description: post.excerpt,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description: post.excerpt,
+      siteName: "Saurabh Jadhav",
+      locale: "en_IN",
+      publishedTime: post.date,
+      authors: ["Saurabh Jadhav"],
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: post.excerpt,
+      creator: "@saurabhjadhav",
+    },
+    // ISO date string → makes Google's freshness signal pick this
+    // post up as a dated article instead of an evergreen page.
+    other: {
+      "article:published_time": post.date,
+    },
   };
 }
 
@@ -37,8 +64,70 @@ export default async function WritingDetailPage({
   const next =
     idx < PUBLISHED_POSTS.length - 1 ? PUBLISHED_POSTS[idx + 1] : null;
 
+  const url = `${SITE_URL}/writing/${post.slug}`;
+  const image = `${url}/opengraph-image`;
+  // BlogPosting is the most specific schema for short technical
+  // posts. `author` references the root Person via @id so Google
+  // doesn't create a duplicate Person node for every blog page.
+  // `wordCount` is approximate — joining body paragraphs and
+  // splitting on whitespace is enough for the freshness signal
+  // Google uses for ranking long-form content.
+  const wordCount = post.body.join(" ").split(/\s+/).filter(Boolean).length;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    headline: post.title,
+    description: post.excerpt,
+    url,
+    image,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { "@id": PERSON_ID },
+    publisher: { "@id": PERSON_ID },
+    keywords: post.tags.join(", "),
+    inLanguage: "en-IN",
+    wordCount,
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Writing",
+        item: `${SITE_URL}/writing`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: url,
+      },
+    ],
+  };
+
   return (
     <main className="bg-background text-foreground">
+      {/* Page-scoped JSON-LD — BlogPosting + BreadcrumbList. Both
+          reference the root Person node via @id rather than
+          duplicating identity fields. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbSchema) }}
+      />
+
       {/* Back link */}
       <div className="mx-auto max-w-2xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link

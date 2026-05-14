@@ -39,13 +39,25 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Long-cache the hero canvas frame sequence. These 119 WebP
-      // files are content-hashed in their filenames? — they're not
-      // (ezgif-frame-NNN.webp), so we use a moderate max-age with
-      // must-revalidate. Once cached by the browser, subsequent
-      // home-page visits skip the network entirely.
+      // Long-cache the hero canvas frame sequences. There are two
+      // folders — saurabh/ (1920×1080 originals) and saurabh-lite/
+      // (960×540 compressed) — served adaptively based on the
+      // visitor's network / device profile (see character-scroll.tsx).
+      // Files aren't content-hashed in their names (ezgif-frame-NNN
+      // is the original ezgif export pattern), so we use 24h max-age
+      // with must-revalidate. Once cached, repeat home visits skip
+      // the network entirely.
       {
         source: "/assets/saurabh/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/assets/saurabh-lite/:path*",
         headers: [
           {
             key: "Cache-Control",
