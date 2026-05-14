@@ -144,18 +144,44 @@ export default function TCInvite() {
         <Link
           href="/journey"
           aria-label="Take the journey — meet the Ticket Checker"
+          // prefetch=false: the /journey chunk is ~256 KB of
+          // three.js + r3f. Default Next.js Link auto-prefetches it
+          // the moment this widget intersects the viewport, dragging
+          // the entire 3D bundle onto every home-page session even
+          // for visitors who never click. Visitors who DO click pay
+          // a one-time fetch on navigation, which Next.js Loader UI
+          // already handles. See /journey JourneyClient mount-gate.
+          prefetch={false}
           className="block transition-transform duration-300 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none"
         >
+          {/* `mix-blend-mode: screen` blends the pure black background
+              of the video into whatever's behind — on light bg, black
+              pixels become white-ish (invisible); on dark bg, they
+              stay dark and match the page. The TC's mid-tones survive
+              well; the dark uniform fades slightly on light theme but
+              still reads as a silhouette. This is the practical fix
+              because Picsart's "background remover" only painted the
+              bg solid black instead of actually adding an alpha
+              channel — and libvpx-vp9 won't encode VP9-with-alpha on
+              Windows ffmpeg builds, so there's no clean codec-level
+              path. drop-shadow removed because shadow on a rectangular
+              video element gives away the bounding box. */}
+          {/* Lazy-mount the <video src>: the 1.76 MB webm only starts
+              fetching once `visible` flips to true (user scrolled past
+              hero). Before then, the video element renders empty with
+              preload="none" so initial mobile payload stays light.
+              The `play()` effect above kicks in the moment src lands. */}
           <video
             ref={videoRef}
-            src="/assets/tc-wave.webm"
+            src={visible ? "/assets/tc-wave.webm" : undefined}
             autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             aria-hidden="true"
-            className="h-24 w-24 object-contain drop-shadow-lg sm:h-32 sm:w-32 md:h-36 md:w-36"
+            style={{ mixBlendMode: "screen" }}
+            className="h-24 w-24 object-contain sm:h-32 sm:w-32 md:h-36 md:w-36"
           />
         </Link>
 

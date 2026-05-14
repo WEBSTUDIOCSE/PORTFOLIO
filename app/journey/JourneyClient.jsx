@@ -2,6 +2,7 @@
 
 import * as THREE from 'three';
 import { Suspense, useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
@@ -160,17 +161,33 @@ export default function JourneyClient() {
       {/* Per-station image layers — continuous crossfade. Each image
           is opaque when scrollT == its index, fades to 0 by the time
           scrollT is one full viewport away. Adjacent stations blend
-          smoothly throughout the in-between scroll. */}
+          smoothly throughout the in-between scroll.
+
+          next/image with fill auto-serves AVIF/WebP at responsive
+          widths via Vercel's image optimization, cutting per-image
+          payload from ~250 KB down to ~80–120 KB on mobile. The
+          first station's image is the LCP candidate, so it gets
+          `priority` for the <link rel=preload>. */}
       {STATIONS.map((s, i) =>
         s.bgImage ? (
-          <img
+          <div
             key={`bg-${s.id}`}
-            src={s.bgImage}
-            alt=""
             aria-hidden="true"
-            className="journey-platform-bg-img"
-            style={{ opacity: Math.max(0, 1 - Math.abs(scrollT - i)) }}
-          />
+            className="pointer-events-none fixed left-0 top-0 z-0 w-full"
+            style={{
+              height: 'calc(100vh - var(--routemap-h, 96px))',
+              opacity: Math.max(0, 1 - Math.abs(scrollT - i)),
+            }}
+          >
+            <Image
+              src={s.bgImage}
+              alt=""
+              fill
+              sizes="100vw"
+              priority={i === 0}
+              style={{ objectFit: 'cover', objectPosition: 'center bottom' }}
+            />
+          </div>
         ) : null
       )}
 
