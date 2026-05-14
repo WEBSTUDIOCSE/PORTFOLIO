@@ -24,11 +24,42 @@ export default function MermaidDiagram({
   caption?: string;
 }) {
   const id = useId().replace(/:/g, "_");
+  const figureRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const [error, setError] = useState<string | null>(null);
+  // `inView` gates the dynamic import. Mermaid is ~700 KB even
+  // tree-shaken, and blocks the main thread ~600 ms while rendering
+  // a flowchart. On a long project-detail page where the diagram
+  // sits below Approach (often below the fold), there's no reason
+  // to pay that cost during initial load — IntersectionObserver
+  // flips this to true once the user scrolls within 200 px of the
+  // figure, then the import + render fires.
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
+    const el = figureRef.current;
+    if (!el) return;
+    // SSR-safety: IntersectionObserver is browser-only.
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
     let cancelled = false;
     (async () => {
       try {
@@ -57,16 +88,25 @@ export default function MermaidDiagram({
     return () => {
       cancelled = true;
     };
-  }, [chart, id, resolvedTheme]);
+  }, [chart, id, resolvedTheme, inView]);
 
   return (
-    <figure className="overflow-x-auto rounded-xl border border-border bg-card p-4 sm:p-6">
+    <figure
+      ref={figureRef}
+      className="overflow-x-auto rounded-xl border border-border bg-card p-4 sm:p-6"
+    >
       <div
         ref={containerRef}
         role="img"
         aria-label="Architecture diagram"
-        className="mermaid-container flex justify-center [&_svg]:max-w-full [&_svg]:!h-auto"
-      />
+        className="mermaid-container flex min-h-[200px] items-center justify-center [&_svg]:max-w-full [&_svg]:!h-auto"
+      >
+        {!inView && (
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            Diagram · loads on scroll
+          </span>
+        )}
+      </div>
       {error && (
         <p className="mt-3 font-mono text-xs text-destructive">
           Diagram render failed: {error}

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { getDb } from "@/lib/firebase/client";
+import { getDb } from "@/lib/firebase/db";
 import {
   notifyContact,
   type ContactResult,
