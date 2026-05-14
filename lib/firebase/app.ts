@@ -1,5 +1,17 @@
 // ─────────────────────────────────────────────────────────────
-// Firebase client SDK initialization.
+// Firebase app singleton.
+//
+// This file is the BUNDLE BOUNDARY between Firebase Analytics and
+// Firebase Firestore. Both products need the same FirebaseApp
+// instance, but if Analytics' module graph reaches `firebase/firestore`
+// (even transitively), webpack bundles ~100 KB of Firestore code into
+// the same chunk that loads on every page via the root layout's
+// <FirebaseAnalytics /> component.
+//
+// To keep the firestore client out of the root layout chunk, this
+// module ONLY imports `firebase/app`. The Firestore handle lives in
+// `./db.ts`, which is imported lazily by the form components that
+// actually use it.
 //
 // SECURITY NOTE — the NEXT_PUBLIC_FIREBASE_* env vars below are
 // PUBLIC by design. The "apiKey" is a project identifier that
@@ -30,7 +42,6 @@ import {
   type FirebaseApp,
   type FirebaseOptions,
 } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
 
 function missing(name: string): Error {
   return new Error(
@@ -80,12 +91,4 @@ export function getFirebaseApp(): FirebaseApp {
   const existing = getApps();
   if (existing.length > 0) return existing[0];
   return initializeApp(buildConfig());
-}
-
-// Firestore Web SDK handle. Used by client components to write to
-// Firestore directly (e.g. form submissions). Reads/writes are
-// gated by Firestore Security Rules — see firestore.rules at the
-// repo root. NO service account / admin SDK needed.
-export function getDb(): Firestore {
-  return getFirestore(getFirebaseApp());
 }

@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ffmpeg -y -i tc-wave.webm -vf \"colorkey=0x000000:0.08:0.0,format=rgba\" -plays 0 -f apng tc-wave.apng)",
+      "Bash(rm -f tc-wave.apng)",
+      "Bash(ffmpeg -y -i tc-wave.webm -vf \"colorkey=0x000000:0.08:0.0,format=yuva420p\" -loop 0 -quality 70 -compression_level 6 tc-wave.webp)",
+      "Bash(curl -s \"https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https%3A%2F%2Fsaurabhjadhav.in&strategy=mobile&category=performance\" --max-time 90)",
+      "Bash(grep -oE '\"id\":\"[^\"]*\",\"title\":\"[^\"]*\",\"description\":\"[^\"]{0,80}' /tmp/psi-mobile.json)",
+      "Bash(npm ls *)",
+      "Bash(lighthouse https://saurabhjadhav.in --quiet --chrome-flags=\"--headless=new\" --form-factor=mobile --throttling-method=simulate --output=json --output-path=lh-mobile.json --only-categories=performance --max-wait-for-load=45000)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Performance:', round\\(d['categories']['performance']['score']*100\\)\\); [print\\(f\\\\\"  {a['title']}: {a.get\\('displayValue',''\\)}\\\\\"\\) for k,a in d['audits'].items\\(\\) if a.get\\('score'\\) is not None and a.get\\('score',1\\) < 0.9 and a.get\\('displayValue'\\)][:15]\")",
+      "Bash(rm -f tc-wave.webp)",
+      "Bash(mv tc-wave-alpha.webm tc-wave.webm)",
+      "Bash(PORT=3001 npm run start)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/ --max-time 10)",
+      "Bash(python -c ' *)",
+      "Bash(ffmpeg -y -i platform_bg.jpg -q:v 6 platform_bg_new.jpg)",
+      "Bash(ffmpeg -i ezgif-frame-001.webp)",
+      "Bash(cwebp -version)",
+      "Bash(mkdir -p ../saurabh-original-backup)",
+      "Bash(cp -n *.webp ../saurabh-original-backup/)",
+      "Read(//d/DEVSTUDIO/WEBSTUDIO/DEVELOPMENT/**)",
+      "Bash(awk '$5 > 200000 {print $5/1024 \"KB \" $9}')",
+      "Bash(ffmpeg -i public/assets/saurabh/ezgif-frame-001.webp)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/ --max-time 8)"
+    ]
+  }
+}
