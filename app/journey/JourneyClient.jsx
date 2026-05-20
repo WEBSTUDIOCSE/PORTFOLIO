@@ -30,6 +30,23 @@ export default function JourneyClient() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // globals.css sets `html { scroll-behavior: smooth }` so anchor
+  // links elsewhere on the site feel polished. Here it actively hurts:
+  // a wheel notch becomes a ~150ms browser-animated scroll, which then
+  // collides with Diorama's own 67ms exponential smoothing. The two
+  // systems overshoot each other and the train reads as "shaking" on
+  // manual scroll while autoplay (which sets `scrollBehavior = 'auto'`)
+  // stays glassy-smooth. Disable browser smoothing for the whole
+  // /journey session and restore on unmount.
+  useEffect(() => {
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    return () => {
+      html.style.scrollBehavior = prev;
+    };
+  }, []);
+
   const scrollT = useScrollProgress();
   const activeIdx = Math.min(
     STATIONS.length - 1,

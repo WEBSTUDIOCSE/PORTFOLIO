@@ -24,7 +24,7 @@ export const STATIONS = [
     km: '000',
     plat: 'PF 0',
     departure: '05:30',
-    bgImage: '/assets/platform_bg.jpg?v=2',
+    bgImage: '/assets/platform_bg.jpg',
     panel: {
       type: 'intro',
       lede:
@@ -41,7 +41,7 @@ export const STATIONS = [
     km: '235',
     plat: 'PF 1',
     departure: '06:00',
-    bgImage: '/assets/story_bg.jpg?v=2',
+    bgImage: '/assets/story_bg.jpg',
     panel: {
       type: 'intro',
       lede:
@@ -83,7 +83,7 @@ export const STATIONS = [
     km: '706',
     plat: 'PF 3',
     departure: '11:24',
-    bgImage: '/assets/projects_bg.jpg?v=2',
+    bgImage: '/assets/projects_bg.jpg',
     panel: {
       type: 'projects',
       cards: [
