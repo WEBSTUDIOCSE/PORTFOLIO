@@ -19,12 +19,14 @@
 
 import Link from "next/link";
 import ResumeForm from "@/components/forms/resume-form";
+import { SOCIAL_ICONS, type SocialIconName } from "@/components/social-icons";
 
 const EMAIL = "saurabhjadhav.cse@gmail.com";
 
 type Channel = {
   label: string;
   href: string;
+  icon: SocialIconName;
   external?: boolean;
 };
 
@@ -32,11 +34,31 @@ const SECONDARY_CHANNELS: Channel[] = [
   {
     label: "GitHub",
     href: "https://github.com/saurabhrjadhavcse",
+    icon: "github",
     external: true,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/saurabhjadhav-cse",
+    icon: "linkedin",
+    external: true,
+  },
+  {
+    label: "X / Twitter",
+    href: "https://x.com/saurabhjadhvcse",
+    icon: "x",
+    external: true,
+  },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/@Saurabhjadhav.cse11",
+    icon: "youtube",
+    external: true,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/saurabhjadhav.cse",
+    icon: "instagram",
     external: true,
   },
 ];
@@ -58,8 +80,9 @@ export default function Contact() {
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             Available for senior product-engineer roles, technical
-            co-founding, and design-engineering work. Email is the
-            fastest way to reach me — I usually reply within a day or two.
+            co-founding, and design-engineering work — anywhere, remote
+            or on-site. Email is the fastest way to reach me — I usually
+            reply within a day or two.
           </p>
         </div>
 
@@ -101,7 +124,7 @@ export default function Contact() {
 
         {/* Meta */}
         <p className="mt-14 text-center font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
-          Mumbai · India · GMT +5:30
+          Mumbai, India · GMT +5:30 · Available anywhere
         </p>
 
         {/* Signature */}
@@ -114,13 +137,15 @@ export default function Contact() {
 }
 
 function ChannelLink({ channel }: { channel: Channel }) {
+  const Icon = SOCIAL_ICONS[channel.icon];
   return (
     <Link
       href={channel.href}
       target={channel.external ? "_blank" : undefined}
       rel={channel.external ? "noopener noreferrer" : undefined}
-      className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-3 text-sm font-medium text-card-foreground transition-colors hover:border-primary/40 hover:text-primary"
+      className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium text-card-foreground transition-colors hover:border-primary/40 hover:text-primary"
     >
+      <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
       {channel.label}
     </Link>
   );

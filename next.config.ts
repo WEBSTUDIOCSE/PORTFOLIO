@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Emit source maps for production client bundles so Lighthouse's
+  // "valid source maps" best-practice passes and prod stack traces
+  // are debuggable. Trade-off: ships .map files (source is visible),
+  // which is acceptable for a portfolio.
+  productionBrowserSourceMaps: true,
+
   // Image optimization config.
   // - `formats` order = preferred → fallback. AVIF is ~30% smaller
   //   than WebP at the same quality; serving it first cuts mobile

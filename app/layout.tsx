@@ -163,8 +163,11 @@ const ROOT_JSON_LD = {
         addressCountry: "IN",
       },
       sameAs: [
-        "https://github.com/SAURABHRJADHAVCSE",
+        "https://github.com/saurabhrjadhavcse",
         "https://www.linkedin.com/in/saurabhjadhav-cse",
+        "https://x.com/saurabhjadhvcse",
+        "https://www.youtube.com/@Saurabhjadhav.cse11",
+        "https://www.instagram.com/saurabhjadhav.cse",
       ],
       alumniOf: {
         "@type": "CollegeOrUniversity",

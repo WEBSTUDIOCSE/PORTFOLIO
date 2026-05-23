@@ -1,0 +1,16 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* Light theme tokens: cream surface, rail-maroon mark. */
+    .bg { fill: #efe8d8; }
+    .fg { fill: #7a1f2b; }
+    /* Dark theme tokens: ink-deep surface, brass mark. */
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d0805; }
+      .fg { fill: #c9a45c; }
+    }
+  </style>
+  <rect class="bg" width="64" height="64" rx="14"/>
+  <text class="fg" x="32" y="33" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-size="34"
+        font-weight="700" letter-spacing="-1">SJ</text>
+</svg>

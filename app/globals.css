@@ -295,8 +295,12 @@
    Double-class selector beats the base `.journey-platform-bg` rule
    on specificity, regardless of CSS-cascade order. */
 .journey-platform-bg.journey-platform-bg-dotted {
-  background: #fafafa;
-  background-image: radial-gradient(circle, #cbd5e1 1.2px, transparent 1.2px);
+  background: var(--background);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--foreground) 22%, transparent) 1.2px,
+    transparent 1.2px
+  );
   background-size: 22px 22px;
 }
 
