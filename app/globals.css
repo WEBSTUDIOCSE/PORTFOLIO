@@ -287,6 +287,20 @@
   }
 }
 
+/* Global reduced-motion guard — neutralise animations + transitions
+   app-wide (not just the journey diorama) for users who ask for less
+   motion. Near-zero durations keep state changes instant but lossless. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Dotted-grid backdrop variant — used behind the train at Skills /
    Contact stations so the strip below the content panel matches
    the panel's own dotted background. Flat dots only, no vignette
