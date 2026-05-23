@@ -10,6 +10,7 @@ import RouteMap from './components/RouteMap.jsx';
 import ContactStation from './components/ContactStation.jsx';
 import SkillsStation from './components/SkillsStation.jsx';
 import ProjectsStation from './components/ProjectsStation.jsx';
+import ExperienceStation from './components/ExperienceStation.jsx';
 import StoryStation from './components/StoryStation.jsx';
 import useScrollProgress from './components/useScrollProgress.js';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
@@ -19,6 +20,7 @@ const CONTACT_IDX = STATIONS.findIndex((s) => s.id === 'contact');
 const SKILLS_IDX = STATIONS.findIndex((s) => s.id === 'skills');
 const STORY_IDX = STATIONS.findIndex((s) => s.id === 'story');
 const PROJECTS_IDX = STATIONS.findIndex((s) => s.id === 'projects');
+const EXPERIENCE_IDX = STATIONS.findIndex((s) => s.id === 'experience');
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
 
@@ -262,7 +264,7 @@ export default function JourneyClient() {
       {/* Dotted-grid bg behind the train at Skills/Contact stations,
           matching the SkillsStation/ContactStation panel backdrop so
           the strip behind the train doesn't pop as sky-blue. */}
-      {[SKILLS_IDX, PROJECTS_IDX, CONTACT_IDX].map((idx) => (
+      {[EXPERIENCE_IDX, SKILLS_IDX, PROJECTS_IDX, CONTACT_IDX].map((idx) => (
         <div
           key={`stationbg-${idx}`}
           className="journey-platform-bg journey-platform-bg-dotted"
@@ -324,6 +326,9 @@ export default function JourneyClient() {
         complete={storyComplete}
         onComplete={() => setStoryComplete(true)}
       />
+
+      {/* Experience station overlay — work history (lib/experience.ts). */}
+      <ExperienceStation scrollT={scrollT} index={EXPERIENCE_IDX} />
 
       {/* Skills station overlay — three-column stack list with
           dotted backdrop. Fades in around scrollT = SKILLS_IDX. */}
