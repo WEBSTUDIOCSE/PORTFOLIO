@@ -242,6 +242,7 @@ function Logo({
   // gracefully to the monogram without any runtime check.
   return (
     <div
+      role="img"
       className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border bg-muted sm:h-14 sm:w-14"
       style={bg ? { backgroundColor: bg } : undefined}
       aria-label={company}
