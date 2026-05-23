@@ -32,13 +32,17 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
     }
   }, [active, complete, sceneIdx]);
 
+  // Fires on the video's `ended` event (a real event, not render), so
+  // advancing the scene or calling onComplete here is safe. Note:
+  // onComplete must NOT live inside a setState updater — React runs
+  // updaters during render and a parent setState there throws.
   const handleEnded = useCallback(() => {
-    setSceneIdx((i) => {
-      if (i < STORY_SCENES.length - 1) return i + 1;
+    if (sceneIdx < STORY_SCENES.length - 1) {
+      setSceneIdx(sceneIdx + 1);
+    } else {
       onComplete?.();
-      return i;
-    });
-  }, [onComplete]);
+    }
+  }, [sceneIdx, onComplete]);
 
   const togglePlay = () => {
     const v = videoRef.current;

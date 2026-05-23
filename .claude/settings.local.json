@@ -8,7 +8,9 @@
       "Bash(ffmpeg -y -i scene__TRACKED_VAR__.mp4 -c:v libx264 -preset medium -crf 26 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k opt/scene__TRACKED_VAR__.mp4)",
       "Bash(awk '{printf \"%-10s %6.1f MB\\\\n\", $NF, $5/1048576}')",
       "Bash(mv -f opt/scene__TRACKED_VAR__.mp4 scene__TRACKED_VAR__.mp4)",
-      "Bash(rmdir opt *)"
+      "Bash(rmdir opt *)",
+      "Bash(grep -viE 'saurabh$|saurabh-lite$|journey$')",
+      "Bash(ffprobe -v error -select_streams v:0 -show_entries stream=width,height \"public/assets/saurabh/ezgif-frame-120.webp\")"
     ]
   }
 }

@@ -35,10 +35,10 @@ export const STATIONS = [
   {
     id: 'story',
     stop: 1,
-    p: 0.25,
+    p: 0.2,
     name: 'The Story',
     deva: 'कथा',
-    km: '235',
+    km: '188',
     plat: 'PF 1',
     departure: '06:00',
     bgImage: '/assets/story_bg.jpg',
@@ -50,13 +50,29 @@ export const STATIONS = [
     },
   },
   {
-    id: 'skills',
+    // 02 — Where I've worked.
+    id: 'experience',
     stop: 2,
-    p: 0.5,
+    p: 0.4,
+    name: 'Experience',
+    deva: 'अनुभव',
+    km: '377',
+    plat: 'PF 2',
+    departure: '07:45',
+    // No bgImage — Experience is a content stop with a dedicated
+    // overlay (ExperienceStation.jsx) on the dotted-grid backdrop.
+    panel: {
+      type: 'experience',
+    },
+  },
+  {
+    id: 'skills',
+    stop: 3,
+    p: 0.6,
     name: 'Skills',
     deva: 'कौशल्ये',
-    km: '471',
-    plat: 'PF 2',
+    km: '565',
+    plat: 'PF 3',
     departure: '09:12',
     // No bgImage — Skills has a dedicated full-overlay component
     // (SkillsStation.jsx) with its own dotted-grid backdrop.
@@ -76,12 +92,12 @@ export const STATIONS = [
   },
   {
     id: 'projects',
-    stop: 3,
-    p: 0.75,
+    stop: 4,
+    p: 0.8,
     name: 'Projects',
     deva: 'कार्य',
-    km: '706',
-    plat: 'PF 3',
+    km: '754',
+    plat: 'PF 4',
     departure: '11:24',
     // No bgImage — Projects is a content stop with a dedicated overlay
     // (ProjectsStation.jsx) on the dotted-grid backdrop, like Skills.
@@ -129,12 +145,12 @@ export const STATIONS = [
   },
   {
     id: 'contact',
-    stop: 4,
+    stop: 5,
     p: 1.0,
     name: 'Contact',
     deva: 'संपर्क',
     km: '942',
-    plat: 'PF 4',
+    plat: 'PF 5',
     departure: '13:50',
     // No bgImage — Contact has a dedicated full-overlay component
     // (ContactStation.jsx) that supplies its own banner backdrop +
