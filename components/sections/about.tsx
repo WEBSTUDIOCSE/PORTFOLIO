@@ -3,10 +3,11 @@
 // then the person" — recruiters who reached this point already
 // like what they saw and now want context.
 //
-// Uses an existing PNG frame as a placeholder portrait. Swap to a
-// proper headshot later by replacing the src path.
+// Uses an existing hero WebP frame as a placeholder portrait. Swap
+// to a proper headshot later by replacing the src path.
 
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
+
 export default function About() {
   return (
     <section
@@ -18,10 +19,12 @@ export default function About() {
           {/* Portrait */}
           <div className="flex flex-col items-center md:col-span-2 md:items-start">
             <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border bg-muted sm:h-64 sm:w-64">
-              <img
-                src="/assets/saurabh/ezgif-frame-120.png"
+              <Image
+                src="/assets/saurabh/ezgif-frame-120.webp"
                 alt="Saurabh Jadhav"
-                className="h-full w-full object-cover"
+                fill
+                sizes="(max-width: 640px) 224px, 256px"
+                className="object-cover"
                 style={{ objectPosition: "center 18%" }}
               />
             </div>

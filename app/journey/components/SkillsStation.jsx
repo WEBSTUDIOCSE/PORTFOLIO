@@ -2,9 +2,10 @@
 
 // Skills station overlay — fixed-position card above the Canvas
 // (z=10) listing the stack across three columns: Frontend, Backend
-// & Tools, and Also In The Toolbox. Same dotted-grid backdrop and
-// crossfade behaviour as ContactStation so the journey reads as a
-// coherent sequence of "stops".
+// & Tools, and Also In The Toolbox. Theme-aware via design tokens
+// (foreground / muted / card / border / primary) so it matches the
+// app's light + dark themes. Same crossfade behaviour as the other
+// station overlays.
 //
 // Designed to fit `100vh - var(--routemap-h)` without scrolling on
 // any laptop-class viewport.
@@ -49,7 +50,7 @@ function SkillColumn({ title, accent, skills }) {
           className="inline-block w-2 h-2 rounded-full"
           style={{ background: accent }}
         />
-        <h3 className="text-slate-900 text-xs font-semibold tracking-[0.2em] uppercase">
+        <h3 className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           {title}
         </h3>
       </div>
@@ -57,7 +58,7 @@ function SkillColumn({ title, accent, skills }) {
         {skills.map((s) => (
           <span
             key={s}
-            className="px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-medium hover:border-slate-400 hover:text-slate-900 transition-colors cursor-default"
+            className="px-2.5 py-1 rounded-full bg-card border border-border text-foreground text-xs font-medium hover:border-primary/40 hover:text-primary transition-colors cursor-default"
           >
             {s}
           </span>
@@ -78,16 +79,10 @@ export default function SkillsStation({ scrollT, index }) {
         top: 0,
         left: 0,
         right: 0,
-        // Leave a strip above the route-map for the 3D train to show
-        // through, so the journey metaphor stays visible while the
-        // skills panel is open.
         bottom: 'calc(var(--routemap-h, 96px) + 110px)',
         zIndex: 10,
         opacity,
         pointerEvents: opacity > 0.5 ? 'auto' : 'none',
-        // Transparent bg — the dotted-grid layer at z=0 covers the
-        // whole canvas height, so the panel area and the train strip
-        // share identical surface during scroll fades (no seam).
       }}
       aria-hidden={opacity < 0.5}
     >
@@ -97,13 +92,13 @@ export default function SkillsStation({ scrollT, index }) {
 
           {/* Header */}
           <div className="text-center mb-6">
-            <p className="text-amber-700 text-[11px] tracking-[0.3em] uppercase font-medium mb-2">
+            <p className="text-primary text-[11px] tracking-[0.3em] uppercase font-medium mb-2">
               कौशल्ये · Skills
             </p>
-            <h2 className="text-slate-900 text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight mb-2">
+            <h2 className="text-foreground text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight mb-2">
               The toolbox I reach for.
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
               Languages, frameworks, and tools I use to ship — grouped
               by where they live in the stack.
             </p>
@@ -129,7 +124,7 @@ export default function SkillsStation({ scrollT, index }) {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-slate-400 text-[11px] tracking-wide mt-6">
+          <p className="text-center text-muted-foreground text-[11px] tracking-wide mt-6">
             Always learning · Open to picking up whatever the project needs
           </p>
 

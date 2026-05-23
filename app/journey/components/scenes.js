@@ -83,7 +83,8 @@ export const STATIONS = [
     km: '706',
     plat: 'PF 3',
     departure: '11:24',
-    bgImage: '/assets/projects_bg.jpg',
+    // No bgImage — Projects is a content stop with a dedicated overlay
+    // (ProjectsStation.jsx) on the dotted-grid backdrop, like Skills.
     panel: {
       type: 'projects',
       cards: [

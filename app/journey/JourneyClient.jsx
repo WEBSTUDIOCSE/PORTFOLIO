@@ -1,7 +1,7 @@
 'use client';
 
 import * as THREE from 'three';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF } from '@react-three/drei';
@@ -9,12 +9,16 @@ import Diorama from './components/Diorama.jsx';
 import RouteMap from './components/RouteMap.jsx';
 import ContactStation from './components/ContactStation.jsx';
 import SkillsStation from './components/SkillsStation.jsx';
+import ProjectsStation from './components/ProjectsStation.jsx';
+import StoryStation from './components/StoryStation.jsx';
 import useScrollProgress from './components/useScrollProgress.js';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
 import { STATIONS } from './components/scenes.js';
 
 const CONTACT_IDX = STATIONS.findIndex((s) => s.id === 'contact');
 const SKILLS_IDX = STATIONS.findIndex((s) => s.id === 'skills');
+const STORY_IDX = STATIONS.findIndex((s) => s.id === 'story');
+const PROJECTS_IDX = STATIONS.findIndex((s) => s.id === 'projects');
 
 useGLTF.preload(GLB_PATH, DRACO_DECODER_PATH);
 
@@ -60,12 +64,45 @@ export default function JourneyClient() {
   const total = Math.max(1, STATIONS.length - 1);
   const progress = Math.min(1, Math.max(0, scrollT / total));
 
+  // Story gate: the train is held at the story station until every
+  // story scene has finished playing. `storyComplete` flips once
+  // StoryStation reports done; the ref lets the rAF autoplay loop read
+  // the latest value without re-subscribing.
+  const [storyComplete, setStoryComplete] = useState(false);
+  const storyCompleteRef = useRef(false);
+  storyCompleteRef.current = storyComplete;
+
   // Autoplay: train auto-advances through stations with a short halt
   // at each. Any user-initiated scroll cancels playback.
   const [isPlaying, setIsPlaying] = useState(false);
   const togglePlay = useCallback(() => {
     setIsPlaying((p) => !p);
   }, []);
+
+  // Hold the train at the story station until the story finishes:
+  // clamp manual scroll so it can't pass the story stop. Route-map
+  // jumps and prev/next also get snapped back here. Lifts once done.
+  useEffect(() => {
+    if (storyComplete || STORY_IDX < 0) return;
+    const clamp = () => {
+      const gateY = STORY_IDX * window.innerHeight;
+      if (window.scrollY > gateY + 1) {
+        window.scrollTo({ top: gateY, left: 0 });
+      }
+    };
+    window.addEventListener('scroll', clamp, { passive: true });
+    clamp();
+    return () => window.removeEventListener('scroll', clamp);
+  }, [storyComplete]);
+
+  // When the story finishes, the train pulls out on its own: resume
+  // autoplay so it cruises on to the next station. (Any user
+  // wheel/touch still cancels it, handing control back.)
+  useEffect(() => {
+    if (!storyComplete) return;
+    const t = setTimeout(() => setIsPlaying(true), 700);
+    return () => clearTimeout(t);
+  }, [storyComplete]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -112,6 +149,20 @@ export default function JourneyClient() {
         // the middle. Real trains cruise at steady speed.
         const t = Math.min(1, elapsed / AUTOPLAY_MOVE_MS);
         const targetT = fromIdx + (toIdx - fromIdx) * t;
+
+        // Story gate: stop autoplay exactly at the story station until
+        // the story has finished. The StoryStation overlay plays on its
+        // own; the user (or a future auto-resume) continues afterwards.
+        if (
+          STORY_IDX >= 0 &&
+          !storyCompleteRef.current &&
+          targetT >= STORY_IDX
+        ) {
+          window.scrollTo({ top: STORY_IDX * window.innerHeight, left: 0 });
+          setIsPlaying(false);
+          return;
+        }
+
         window.scrollTo({ top: targetT * window.innerHeight, left: 0 });
 
         if (t >= 1) {
@@ -211,7 +262,7 @@ export default function JourneyClient() {
       {/* Dotted-grid bg behind the train at Skills/Contact stations,
           matching the SkillsStation/ContactStation panel backdrop so
           the strip behind the train doesn't pop as sky-blue. */}
-      {[SKILLS_IDX, CONTACT_IDX].map((idx) => (
+      {[SKILLS_IDX, PROJECTS_IDX, CONTACT_IDX].map((idx) => (
         <div
           key={`stationbg-${idx}`}
           className="journey-platform-bg journey-platform-bg-dotted"
@@ -264,9 +315,22 @@ export default function JourneyClient() {
         ))}
       </main>
 
+      {/* Story station overlay — plays the story scene videos when the
+          train arrives, and holds the train here (via the gate effect
+          + autoplay guard above) until every scene has finished. */}
+      <StoryStation
+        scrollT={scrollT}
+        index={STORY_IDX}
+        complete={storyComplete}
+        onComplete={() => setStoryComplete(true)}
+      />
+
       {/* Skills station overlay — three-column stack list with
           dotted backdrop. Fades in around scrollT = SKILLS_IDX. */}
       <SkillsStation scrollT={scrollT} index={SKILLS_IDX} />
+
+      {/* Projects station overlay — tiles for shipped work. */}
+      <ProjectsStation scrollT={scrollT} index={PROJECTS_IDX} />
 
       {/* Contact station — final-stop overlay. Self-contained banner
           + headline + actions. Fades in alongside the bg crossfade
