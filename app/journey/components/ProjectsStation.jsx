@@ -89,7 +89,7 @@ export default function ProjectsStation({ scrollT, index }) {
       }}
       aria-hidden={opacity < 0.5}
     >
-      <div className="relative z-10 flex h-full w-full items-center justify-center px-4 py-6 sm:px-6">
+      <div className="relative z-10 flex h-full w-full items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:px-6">
         <div className="mx-auto w-full max-w-4xl">
           {/* Header */}
           <div className="mb-6 text-center">

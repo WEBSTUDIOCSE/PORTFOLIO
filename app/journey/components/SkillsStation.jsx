@@ -87,7 +87,7 @@ export default function SkillsStation({ scrollT, index }) {
       aria-hidden={opacity < 0.5}
     >
 
-      <div className="relative z-10 h-full w-full flex items-center justify-center px-4 sm:px-6 py-6">
+      <div className="relative z-10 h-full w-full flex items-start justify-center overflow-y-auto px-4 sm:px-6 py-6 sm:items-center">
         <div className="w-full max-w-5xl mx-auto">
 
           {/* Header */}

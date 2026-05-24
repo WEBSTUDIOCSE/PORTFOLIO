@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 // TC (Ticket Checker) invite — a small Indian Railways TTE character
@@ -16,10 +16,12 @@ import Link from "next/link";
 // is the literal "gatekeeper" of every Indian train, so the metaphor
 // is honest: he's inviting you onto the journey.
 //
-// Asset: /assets/tc-wave.webm — AI-generated TTE on loop, background
-// removed via Picsart. VP9 + alpha channel for transparency over the
-// page. Muted + playsInline + autoplay are required for mobile
-// autoplay; loop keeps the wave continuous.
+// Asset: /assets/tc-wave.webp — AI-generated TTE on loop. The source
+// was a black-background webm; the solid black was keyed to a real
+// alpha channel (ffmpeg colorkey) and re-encoded as an animated,
+// transparent WebP. Rendered via <img> so it works on iOS Safari,
+// which ignores mix-blend-mode on <video> (the old approach showed a
+// black box on iPhones).
 //
 // Behavior:
 // - Only mounts on / (home). The /journey page is the destination,
@@ -38,7 +40,6 @@ const STORAGE_KEY = "tc-invite-dismissed";
 export default function TCInvite() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Read dismissal flag on mount. We do this in an effect (not
   // useState initializer) because sessionStorage is window-only and
@@ -74,22 +75,6 @@ export default function TCInvite() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, [dismissed]);
-
-  // Pause the video while off-screen — saves decode cycles on
-  // long-scroll pages. The video is decorative so play state
-  // doesn't matter for accessibility.
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (visible && !dismissed) {
-      v.play().catch(() => {
-        // Autoplay blocked. The static first frame still reads as
-        // a TC waving — graceful degradation.
-      });
-    } else {
-      v.pause();
-    }
-  }, [visible, dismissed]);
 
   if (dismissed) return null;
 
@@ -154,33 +139,21 @@ export default function TCInvite() {
           prefetch={false}
           className="block transition-transform duration-300 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none"
         >
-          {/* `mix-blend-mode: screen` blends the pure black background
-              of the video into whatever's behind — on light bg, black
-              pixels become white-ish (invisible); on dark bg, they
-              stay dark and match the page. The TC's mid-tones survive
-              well; the dark uniform fades slightly on light theme but
-              still reads as a silhouette. This is the practical fix
-              because Picsart's "background remover" only painted the
-              bg solid black instead of actually adding an alpha
-              channel — and libvpx-vp9 won't encode VP9-with-alpha on
-              Windows ffmpeg builds, so there's no clean codec-level
-              path. drop-shadow removed because shadow on a rectangular
-              video element gives away the bounding box. */}
-          {/* Lazy-mount the <video src>: the 1.76 MB webm only starts
-              fetching once `visible` flips to true (user scrolled past
-              hero). Before then, the video element renders empty with
-              preload="none" so initial mobile payload stays light.
-              The `play()` effect above kicks in the moment src lands. */}
-          <video
-            ref={videoRef}
-            src={visible ? "/assets/tc-wave.webm" : undefined}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
+          {/* Transparent animated WebP — alpha was keyed out of the
+              source webm's solid-black background (colorkey → rgba).
+              Rendered as <img> (not <video>) on purpose: iOS Safari
+              ignores `mix-blend-mode` on <video>, so the old black box
+              showed on iPhones. An animated WebP with a real alpha
+              channel loops in an <img> on every browser (incl. iOS),
+              with no autoplay/codec caveats. Lazy-mounted: src is set
+              only once `visible` flips, keeping initial payload light. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={visible ? "/assets/tc-wave.webp" : undefined}
+            alt=""
             aria-hidden="true"
-            style={{ mixBlendMode: "screen" }}
+            loading="lazy"
+            decoding="async"
             className="h-24 w-24 object-contain sm:h-32 sm:w-32 md:h-36 md:w-36"
           />
         </Link>
