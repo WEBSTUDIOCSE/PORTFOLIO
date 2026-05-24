@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/theme-toggle";
@@ -35,6 +35,12 @@ export default function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Refs for focus management on the mobile dialog.
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
@@ -51,17 +57,71 @@ export default function SiteNav() {
     // H2 shrinks + dissolves toward the nav while the pill slides
     // down with "I'm Saurabh" materializing where the H2 is
     // heading. The eye reads one continuous motion.
-    const onScroll = () => {
+    // rAF-guarded so the layout read (scrollY/innerHeight) runs at most
+    // once per frame instead of on every scroll tick (mirrors tc-invite).
+    let raf = 0;
+    const update = () => {
+      raf = 0;
       setScrolled(window.scrollY > window.innerHeight * 2.85);
     };
-    onScroll();
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [isHome]);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  // Mobile dialog a11y: focus into the dialog on open, trap Tab within
+  // it, close on Escape, and restore focus to the trigger on close.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    const focusables = () =>
+      Array.from(
+        overlay.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])',
+        ),
+      ).filter((el) => el.offsetParent !== null);
+
+    focusables()[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMobile();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [mobileOpen, closeMobile]);
 
   const visible = !isHome || scrolled;
 
@@ -125,10 +185,12 @@ export default function SiteNav() {
 
           {/* Mobile hamburger — visible only when desktop links hide */}
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
+            aria-controls="site-mobile-menu"
             className="ml-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/5 md:hidden"
           >
             {mobileOpen ? <IconClose /> : <IconMenu />}
@@ -136,14 +198,21 @@ export default function SiteNav() {
         </nav>
       </div>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay — a modal dialog. `inert` when closed removes
+          its links from the tab order + a11y tree (so invisible links
+          aren't keyboard-reachable) while preserving the fade. */}
       <div
+        ref={overlayRef}
+        id="site-mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        inert={!mobileOpen}
         className={`fixed inset-0 z-40 flex flex-col bg-background/95 backdrop-blur-md transition-opacity duration-300 md:hidden ${
           mobileOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
         }`}
-        aria-hidden={!mobileOpen}
       >
         <div className="pt-24" />
         <nav className="flex flex-col items-center justify-center gap-5 px-6 py-12">
@@ -151,7 +220,7 @@ export default function SiteNav() {
             <Link
               key={l.href}
               href={l.href}
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMobile}
               className="font-display text-3xl font-light tracking-tight text-foreground transition-colors hover:text-primary"
               style={{
                 transitionDelay: mobileOpen ? `${i * 40}ms` : "0ms",
