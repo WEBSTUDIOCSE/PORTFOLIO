@@ -2,9 +2,14 @@
 
 // Story station overlay — a full-screen video takeover that plays
 // STORY_SCENES back-to-back as ONE continuous film when the train
-// arrives at the story stop. No pagination/slider chrome: scenes
-// auto-advance on `ended`; after the last one it calls onComplete(),
+// arrives at the story stop. After the last scene it calls onComplete(),
 // which lifts the train gate (logic in JourneyClient).
+//
+// iOS gap fix: every scene's <video> stays MOUNTED (not remounted per
+// scene) and scenes crossfade by opacity. Remounting created a fresh
+// <video> that paints black for a beat on iOS Safari between scenes.
+// Persisting them + opacity crossfade removes that black flash. Only
+// the current + next scene preload to keep memory/bandwidth sane.
 //
 // Audio is on by default (scenes may be narrated). If the browser
 // blocks autoplay-with-sound, a centred play button appears.
@@ -18,38 +23,81 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
 
   const [sceneIdx, setSceneIdx] = useState(0);
   const [paused, setPaused] = useState(true);
-  const videoRef = useRef(null);
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [useCompressed, setUseCompressed] = useState(false);
+  const videoRefs = useRef([]);
+  const waitingTimeout = useRef(null);
 
-  // Drive playback from the active state + current scene.
+  const setWaitingDebounced = (waiting) => {
+    if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
+    if (waiting) {
+      // Only show spinner if we buffer for more than 300ms
+      // This prevents the spinner from flashing locally due to Next.js dev server micro-delays
+      waitingTimeout.current = setTimeout(() => setIsWaiting(true), 300);
+    } else {
+      setIsWaiting(false);
+    }
+  };
+
+  // Network check to determine if we should load compressed videos
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (active && !complete) {
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {}); // autoplay-with-sound may be blocked; play button covers it
-    } else {
-      v.pause();
+    if (typeof navigator !== 'undefined') {
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn && (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.effectiveType === '3g')) {
+        setUseCompressed(true);
+      }
     }
-  }, [active, complete, sceneIdx]);
+  }, []);
 
-  // Fires on the video's `ended` event (a real event, not render), so
-  // advancing the scene or calling onComplete here is safe. Note:
-  // onComplete must NOT live inside a setState updater — React runs
-  // updaters during render and a parent setState there throws.
-  const handleEnded = useCallback(() => {
-    if (sceneIdx < STORY_SCENES.length - 1) {
-      setSceneIdx(sceneIdx + 1);
-    } else {
-      onComplete?.();
-    }
-  }, [sceneIdx, onComplete]);
+  // Play the active scene; pause (and rewind) the others.
+  useEffect(() => {
+    setWaitingDebounced(true);
+
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return;
+      if (i === sceneIdx && active && !complete) {
+        const p = v.play();
+        if (p && p.catch) p.catch(() => {
+          setWaitingDebounced(false); 
+        }); 
+      } else {
+        v.pause();
+        if (i !== sceneIdx) {
+          try {
+            v.currentTime = 0;
+          } catch {
+            /* not seekable yet — ignore */
+          }
+        }
+      }
+    });
+    
+    return () => {
+       if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
+    };
+  }, [sceneIdx, active, complete]);
+
+  const handleEnded = useCallback(
+    (i) => {
+      if (i !== sceneIdx) return; // only the active scene advances
+      if (sceneIdx < STORY_SCENES.length - 1) {
+        setSceneIdx(sceneIdx + 1);
+      } else {
+        onComplete?.();
+      }
+    },
+    [sceneIdx, onComplete],
+  );
 
   const togglePlay = () => {
-    const v = videoRef.current;
+    const v = videoRefs.current[sceneIdx];
     if (!v) return;
     if (v.paused) {
+      setWaitingDebounced(true);
       const p = v.play();
-      if (p && p.catch) p.catch(() => {});
+      if (p && p.catch) p.catch(() => {
+        setWaitingDebounced(false);
+      });
     } else {
       v.pause();
     }
@@ -65,8 +113,7 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
         top: 0,
         left: 0,
         right: 0,
-        // Fill the area ABOVE the train: stop just above the route-map
-        // so the video sits flush over the track/train, no cream gap.
+        // Fill the area above the route-map dock.
         bottom: 'var(--routemap-h, 96px)',
         zIndex: 10,
         opacity,
@@ -74,21 +121,52 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
       }}
       aria-hidden={!active}
     >
-      {/* Full-bleed continuous film */}
-      <video
-        key={sceneIdx}
-        ref={videoRef}
-        src={scene?.src}
-        onEnded={handleEnded}
-        onPlay={() => setPaused(false)}
-        onPause={() => setPaused(true)}
-        playsInline
-        preload="auto"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      {/* All scenes mounted; only the active one is opaque + playing. */}
+      {STORY_SCENES.map((s, i) => {
+        const videoSrc = useCompressed ? s.src.replace('/story/', '/story/compressed/') : s.src;
+        return (
+          <video
+            key={i}
+            ref={(el) => {
+              videoRefs.current[i] = el;
+            }}
+            src={videoSrc}
+            poster={s.src.replace('.mp4', '_poster.jpg')} // Fallback poster pattern
+            onEnded={() => handleEnded(i)}
+            onPlay={() => {
+              if (i === sceneIdx) setPaused(false);
+            }}
+            onPause={() => {
+              if (i === sceneIdx) setPaused(true);
+            }}
+            onPlaying={() => {
+              if (i === sceneIdx) setWaitingDebounced(false);
+            }}
+            onWaiting={() => {
+              if (i === sceneIdx) setWaitingDebounced(true);
+            }}
+            onCanPlay={() => {
+              if (i === sceneIdx) setWaitingDebounced(false);
+            }}
+            playsInline
+            preload={i === sceneIdx || i === sceneIdx + 1 ? 'auto' : 'none'}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+              i === sceneIdx ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ zIndex: i === sceneIdx ? 2 : 1 }}
+          />
+        );
+      })}
+
+      {/* Loading Spinner for slow networks */}
+      {isWaiting && !paused && active && !complete && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
+        </div>
+      )}
 
       {/* Play button — shows when paused (incl. blocked autoplay). */}
-      {paused && active && !complete && (
+      {paused && active && !complete && !isWaiting && (
         <button
           type="button"
           onClick={togglePlay}

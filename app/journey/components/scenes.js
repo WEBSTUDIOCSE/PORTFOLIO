@@ -24,7 +24,7 @@ export const STATIONS = [
     km: '000',
     plat: 'PF 0',
     departure: '05:30',
-    bgImage: '/assets/platform_bg.jpg',
+    // No bgImage — Platform uses the custom GameIntro overlay
     panel: {
       type: 'intro',
       lede:
