@@ -8,11 +8,7 @@
 // iOS gap fix: every scene's <video> stays MOUNTED (not remounted per
 // scene) and scenes crossfade by opacity. Remounting created a fresh
 // <video> that paints black for a beat on iOS Safari between scenes.
-// Persisting them + opacity crossfade removes that black flash. Only
-// the current + next scene preload to keep memory/bandwidth sane.
-//
-// Audio is on by default (scenes may be narrated). If the browser
-// blocks autoplay-with-sound, a centred play button appears.
+// Persisting them + opacity crossfade removes that black flash.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { STORY_SCENES } from './storyScenes.js';
@@ -23,58 +19,25 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
 
   const [sceneIdx, setSceneIdx] = useState(0);
   const [paused, setPaused] = useState(true);
-  const [isWaiting, setIsWaiting] = useState(false);
-  const [useCompressed, setUseCompressed] = useState(false);
   const videoRefs = useRef([]);
-  const waitingTimeout = useRef(null);
 
-  const setWaitingDebounced = (waiting) => {
-    if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
-    if (waiting) {
-      // Only show spinner if we buffer for more than 300ms
-      // This prevents the spinner from flashing locally due to Next.js dev server micro-delays
-      waitingTimeout.current = setTimeout(() => setIsWaiting(true), 300);
-    } else {
-      setIsWaiting(false);
-    }
-  };
-
-  // Network check to determine if we should load compressed videos
+  // Play the active scene; pause the others.
   useEffect(() => {
-    if (typeof navigator !== 'undefined') {
-      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      if (conn && (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.effectiveType === '3g')) {
-        setUseCompressed(true);
-      }
-    }
-  }, []);
-
-  // Play the active scene; pause (and rewind) the others.
-  useEffect(() => {
-    setWaitingDebounced(true);
-
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
       if (i === sceneIdx && active && !complete) {
         const p = v.play();
-        if (p && p.catch) p.catch(() => {
-          setWaitingDebounced(false); 
-        }); 
+        if (p && p.catch) p.catch(() => {});
       } else {
-        v.pause();
-        if (i !== sceneIdx) {
-          try {
-            v.currentTime = 0;
-          } catch {
-            /* not seekable yet — ignore */
-          }
+        // Just pause. DO NOT synchronously set currentTime = 0 here!
+        // Seeking an ended video back to 0 immediately flushes the 
+        // hardware decoder and causes massive frame drops/stuttering 
+        // for the *next* video that is trying to start playing.
+        if (!v.paused) {
+          v.pause();
         }
       }
     });
-    
-    return () => {
-       if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
-    };
   }, [sceneIdx, active, complete]);
 
   const handleEnded = useCallback(
@@ -93,11 +56,8 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
     const v = videoRefs.current[sceneIdx];
     if (!v) return;
     if (v.paused) {
-      setWaitingDebounced(true);
       const p = v.play();
-      if (p && p.catch) p.catch(() => {
-        setWaitingDebounced(false);
-      });
+      if (p && p.catch) p.catch(() => {});
     } else {
       v.pause();
     }
@@ -113,7 +73,6 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
         top: 0,
         left: 0,
         right: 0,
-        // Fill the area above the route-map dock.
         bottom: 'var(--routemap-h, 96px)',
         zIndex: 10,
         opacity,
@@ -123,15 +82,18 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
     >
       {/* All scenes mounted; only the active one is opaque + playing. */}
       {STORY_SCENES.map((s, i) => {
-        const videoSrc = useCompressed ? s.src.replace('/story/', '/story/compressed/') : s.src;
+        // Preload strategy: once preloaded, STAY preloaded.
+        // Changing 'auto' back to 'none' forces the browser to discard the 
+        // buffer, causing re-downloads and massive lag later.
+        const shouldPreload = i <= sceneIdx + 2 ? 'auto' : 'none';
+        
         return (
           <video
             key={i}
             ref={(el) => {
               videoRefs.current[i] = el;
             }}
-            src={videoSrc}
-            poster={s.src.replace('.mp4', '_poster.jpg')} // Fallback poster pattern
+            src={s.src}
             onEnded={() => handleEnded(i)}
             onPlay={() => {
               if (i === sceneIdx) setPaused(false);
@@ -139,17 +101,8 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
             onPause={() => {
               if (i === sceneIdx) setPaused(true);
             }}
-            onPlaying={() => {
-              if (i === sceneIdx) setWaitingDebounced(false);
-            }}
-            onWaiting={() => {
-              if (i === sceneIdx) setWaitingDebounced(true);
-            }}
-            onCanPlay={() => {
-              if (i === sceneIdx) setWaitingDebounced(false);
-            }}
             playsInline
-            preload={i === sceneIdx || i === sceneIdx + 1 ? 'auto' : 'none'}
+            preload={shouldPreload}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
               i === sceneIdx ? 'opacity-100' : 'opacity-0'
             }`}
@@ -158,15 +111,8 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
         );
       })}
 
-      {/* Loading Spinner for slow networks */}
-      {isWaiting && !paused && active && !complete && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
-        </div>
-      )}
-
       {/* Play button — shows when paused (incl. blocked autoplay). */}
-      {paused && active && !complete && !isWaiting && (
+      {paused && active && !complete && (
         <button
           type="button"
           onClick={togglePlay}
