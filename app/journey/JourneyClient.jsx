@@ -12,6 +12,7 @@ import SkillsStation from './components/SkillsStation.jsx';
 import ProjectsStation from './components/ProjectsStation.jsx';
 import ExperienceStation from './components/ExperienceStation.jsx';
 import StoryStation from './components/StoryStation.jsx';
+import GameIntro from './components/GameIntro.jsx';
 import useScrollProgress from './components/useScrollProgress.js';
 import { GLB_PATH, DRACO_DECODER_PATH } from './components/glb.js';
 import { STATIONS } from './components/scenes.js';
@@ -227,6 +228,9 @@ export default function JourneyClient() {
     <>
       {/* Section-A base backdrop — sky-blue. Always rendered. */}
       <div className="journey-platform-bg" aria-hidden="true" />
+
+      {/* Cinematic Game Intro for Station 0 */}
+      <GameIntro scrollT={scrollT} index={0} />
 
       {/* Per-station image layers — continuous crossfade. Each image
           is opaque when scrollT == its index, fades to 0 by the time

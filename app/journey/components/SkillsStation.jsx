@@ -44,21 +44,24 @@ const TOOLBOX = [
 
 function SkillColumn({ title, accent, skills }) {
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-3">
+    <div className="group relative overflow-hidden rounded-xl border border-white/10 bg-black/40 p-6 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-white/30 hover:bg-black/60 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+      {/* Decorative accent line */}
+      <div className="absolute top-0 left-0 h-1 w-full opacity-50" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+      
+      <div className="flex items-center gap-3 mb-6 relative z-10">
         <span
-          className="inline-block w-2 h-2 rounded-full"
-          style={{ background: accent }}
+          className="inline-block w-2.5 h-2.5"
+          style={{ background: accent, boxShadow: `0 0 10px ${accent}` }}
         />
-        <h3 className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
+        <h3 className="text-white text-[11px] font-mono tracking-[0.3em] uppercase">
           {title}
         </h3>
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2 relative z-10">
         {skills.map((s) => (
           <span
             key={s}
-            className="px-2.5 py-1 rounded-full bg-card border border-border text-foreground text-xs font-medium hover:border-primary/40 hover:text-primary transition-colors cursor-default"
+            className="px-3 py-1.5 rounded-sm bg-white/5 border border-white/10 text-white/80 text-[11px] font-mono tracking-wider hover:border-white/30 hover:text-white hover:bg-white/10 transition-colors cursor-default"
           >
             {s}
           </span>
@@ -79,7 +82,7 @@ export default function SkillsStation({ scrollT, index }) {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 'calc(var(--routemap-h, 96px) + 110px)',
+        bottom: 'calc(var(--routemap-h, 96px))',
         zIndex: 10,
         opacity,
         pointerEvents: opacity > 0.5 ? 'auto' : 'none',
@@ -87,25 +90,26 @@ export default function SkillsStation({ scrollT, index }) {
       aria-hidden={opacity < 0.5}
     >
 
-      <div className="relative z-10 h-full w-full flex items-start justify-center overflow-y-auto px-4 sm:px-6 py-6 sm:items-center">
+      <div className="relative z-10 h-full w-full flex items-start justify-center overflow-y-auto px-4 pt-16 pb-32 sm:px-6 sm:pt-24 sm:pb-40">
         <div className="w-full max-w-5xl mx-auto">
 
           {/* Header */}
-          <div className="text-center mb-6">
-            <p className="text-primary text-[11px] tracking-[0.3em] uppercase font-medium mb-2">
-              कौशल्ये · Skills
-            </p>
-            <h2 className="text-foreground text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight mb-2">
-              The toolbox I reach for.
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Languages, frameworks, and tools I use to ship — grouped
-              by where they live in the stack.
+          <div className="mb-12 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-white/10 pb-6">
+            <div>
+              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.4em] text-white/50">
+                SYSTEM LOG · 03
+              </p>
+              <h2 className="text-3xl font-light tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Technical <span className="font-medium italic">Arsenal</span>
+              </h2>
+            </div>
+            <p className="max-w-xs text-sm leading-relaxed text-white/60 text-center sm:text-right font-mono text-[11px] uppercase tracking-wider">
+              Languages, frameworks, and tools I use to ship.
             </p>
           </div>
 
           {/* 3-column skill grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <SkillColumn
               title="Frontend"
               accent="#3b82f6"
@@ -124,9 +128,11 @@ export default function SkillsStation({ scrollT, index }) {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-muted-foreground text-[11px] tracking-wide mt-6">
-            Always learning · Open to picking up whatever the project needs
-          </p>
+          <div className="mt-12 text-center">
+             <p className="text-center text-white/50 font-mono text-[10px] uppercase tracking-[0.3em]">
+              Always learning · Adapting to project needs
+            </p>
+          </div>
 
         </div>
       </div>

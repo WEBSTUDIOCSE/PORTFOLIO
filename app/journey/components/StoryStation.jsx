@@ -23,15 +23,43 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
 
   const [sceneIdx, setSceneIdx] = useState(0);
   const [paused, setPaused] = useState(true);
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [useCompressed, setUseCompressed] = useState(false);
   const videoRefs = useRef([]);
+  const waitingTimeout = useRef(null);
+
+  const setWaitingDebounced = (waiting) => {
+    if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
+    if (waiting) {
+      // Only show spinner if we buffer for more than 300ms
+      // This prevents the spinner from flashing locally due to Next.js dev server micro-delays
+      waitingTimeout.current = setTimeout(() => setIsWaiting(true), 300);
+    } else {
+      setIsWaiting(false);
+    }
+  };
+
+  // Network check to determine if we should load compressed videos
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn && (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.effectiveType === '3g')) {
+        setUseCompressed(true);
+      }
+    }
+  }, []);
 
   // Play the active scene; pause (and rewind) the others.
   useEffect(() => {
+    setWaitingDebounced(true);
+
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
       if (i === sceneIdx && active && !complete) {
         const p = v.play();
-        if (p && p.catch) p.catch(() => {}); // autoplay-with-sound may be blocked
+        if (p && p.catch) p.catch(() => {
+          setWaitingDebounced(false); 
+        }); 
       } else {
         v.pause();
         if (i !== sceneIdx) {
@@ -43,6 +71,10 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
         }
       }
     });
+    
+    return () => {
+       if (waitingTimeout.current) clearTimeout(waitingTimeout.current);
+    };
   }, [sceneIdx, active, complete]);
 
   const handleEnded = useCallback(
@@ -61,8 +93,11 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
     const v = videoRefs.current[sceneIdx];
     if (!v) return;
     if (v.paused) {
+      setWaitingDebounced(true);
       const p = v.play();
-      if (p && p.catch) p.catch(() => {});
+      if (p && p.catch) p.catch(() => {
+        setWaitingDebounced(false);
+      });
     } else {
       v.pause();
     }
@@ -87,31 +122,51 @@ export default function StoryStation({ scrollT, index, complete, onComplete }) {
       aria-hidden={!active}
     >
       {/* All scenes mounted; only the active one is opaque + playing. */}
-      {STORY_SCENES.map((s, i) => (
-        <video
-          key={i}
-          ref={(el) => {
-            videoRefs.current[i] = el;
-          }}
-          src={s.src}
-          onEnded={() => handleEnded(i)}
-          onPlay={() => {
-            if (i === sceneIdx) setPaused(false);
-          }}
-          onPause={() => {
-            if (i === sceneIdx) setPaused(true);
-          }}
-          playsInline
-          preload={i === sceneIdx || i === sceneIdx + 1 ? 'auto' : 'none'}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-            i === sceneIdx ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ zIndex: i === sceneIdx ? 2 : 1 }}
-        />
-      ))}
+      {STORY_SCENES.map((s, i) => {
+        const videoSrc = useCompressed ? s.src.replace('/story/', '/story/compressed/') : s.src;
+        return (
+          <video
+            key={i}
+            ref={(el) => {
+              videoRefs.current[i] = el;
+            }}
+            src={videoSrc}
+            poster={s.src.replace('.mp4', '_poster.jpg')} // Fallback poster pattern
+            onEnded={() => handleEnded(i)}
+            onPlay={() => {
+              if (i === sceneIdx) setPaused(false);
+            }}
+            onPause={() => {
+              if (i === sceneIdx) setPaused(true);
+            }}
+            onPlaying={() => {
+              if (i === sceneIdx) setWaitingDebounced(false);
+            }}
+            onWaiting={() => {
+              if (i === sceneIdx) setWaitingDebounced(true);
+            }}
+            onCanPlay={() => {
+              if (i === sceneIdx) setWaitingDebounced(false);
+            }}
+            playsInline
+            preload={i === sceneIdx || i === sceneIdx + 1 ? 'auto' : 'none'}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+              i === sceneIdx ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ zIndex: i === sceneIdx ? 2 : 1 }}
+          />
+        );
+      })}
+
+      {/* Loading Spinner for slow networks */}
+      {isWaiting && !paused && active && !complete && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
+        </div>
+      )}
 
       {/* Play button — shows when paused (incl. blocked autoplay). */}
-      {paused && active && !complete && (
+      {paused && active && !complete && !isWaiting && (
         <button
           type="button"
           onClick={togglePlay}
