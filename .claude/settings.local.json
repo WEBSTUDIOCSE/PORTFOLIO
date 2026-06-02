@@ -10,7 +10,19 @@
       "Bash(mv -f opt/scene__TRACKED_VAR__.mp4 scene__TRACKED_VAR__.mp4)",
       "Bash(rmdir opt *)",
       "Bash(grep -viE 'saurabh$|saurabh-lite$|journey$')",
-      "Bash(ffprobe -v error -select_streams v:0 -show_entries stream=width,height \"public/assets/saurabh/ezgif-frame-120.webp\")"
+      "Bash(ffprobe -v error -select_streams v:0 -show_entries stream=width,height \"public/assets/saurabh/ezgif-frame-120.webp\")",
+      "Bash(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,pix_fmt,r_frame_rate -show_entries format=duration,size -of default=noprint_wrappers=1 tc-wave.webm)",
+      "Bash(ffmpeg -y -i tc-wave.webm -vf \"select=eq\\(n\\\\,20\\)\" -vframes 1 /tmp/tc_raw.png)",
+      "Bash(ffmpeg -y -i tc-wave.webm -vf \"select=eq\\(n\\\\,20\\),colorkey=0x000000:0.30:0.10\" -vframes 1 /tmp/tc_keyed.png)",
+      "Bash(mkdir -p .tmpframes)",
+      "Bash(ffmpeg -y -i public/assets/tc-wave.webm -vf \"select=eq\\(n\\\\,20\\)\" -vframes 1 .tmpframes/tc_raw.png)",
+      "Bash(ffmpeg -y -i public/assets/tc-wave.webm -vf \"select=eq\\(n\\\\,20\\),colorkey=0x000000:0.30:0.10\" -vframes 1 .tmpframes/tc_keyed.png)",
+      "Bash(ffmpeg -y -i public/assets/tc-wave.webm -vf \"colorkey=0x000000:0.30:0.10,format=rgba,fps=15,scale=440:-1:flags=lanczos\" -c:v libwebp -loop 0 -q:v 65 -compression_level 5 -an public/assets/tc-wave.webp)",
+      "Bash(awk '{printf \"tc-wave.webp  %.2f MB\\\\n\", $5/1048576}')",
+      "Bash(grep -rn \"tc-wave.webm\" --include=*.tsx --include=*.jsx --include=*.ts components app)",
+      "Bash(rm -f public/assets/tc-wave.webm)",
+      "Bash(rm -rf .tmpframes)",
+      "Bash(ls -la public/assets/*.web*)"
     ]
   }
 }
