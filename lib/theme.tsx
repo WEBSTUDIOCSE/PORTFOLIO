@@ -39,9 +39,10 @@ const NO_FLASH_THEME_SCRIPT = `
 `;
 
 export const ThemeScript = React.memo(
-  () => (
+  ({ nonce }: { nonce?: string }) => (
     <script
       id="no-flash-theme"
+      nonce={nonce}
       suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }}
     />

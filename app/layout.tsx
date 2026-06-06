@@ -12,6 +12,7 @@ import {
 import "./globals.css";
 import { ThemeProvider, ThemeScript } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
+import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
 import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
 
@@ -208,11 +209,14 @@ const ROOT_JSON_LD = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const nonce = headersList.get("x-nonce") || "";
+
   return (
     <html
       lang="en"
@@ -220,10 +224,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <ThemeScript />
+        <ThemeScript nonce={nonce} />
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: jsonLd(ROOT_JSON_LD) }}
         />
       </head>
