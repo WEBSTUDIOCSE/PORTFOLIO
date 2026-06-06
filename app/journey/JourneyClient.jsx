@@ -5,7 +5,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useIsMounted } from '@/lib/use-is-mounted';
 import Image from 'next/image';
 import { Canvas } from '@react-three/fiber';
-import { Loader, useGLTF } from '@react-three/drei';
+import { Loader, useGLTF, useProgress } from '@react-three/drei';
 import Diorama from './components/Diorama.jsx';
 import RouteMap from './components/RouteMap.jsx';
 import ContactStation from './components/ContactStation.jsx';
@@ -45,6 +45,21 @@ export default function JourneyClient() {
   // manual scroll while autoplay (which sets `scrollBehavior = 'auto'`)
   // stays glassy-smooth. Disable browser smoothing for the whole
   // /journey session and restore on unmount.
+  // Lock scroll while the 3D scene is loading, otherwise users can
+  // scroll past the first station while the screen is gray.
+  const { active } = useProgress();
+  useEffect(() => {
+    if (!mounted) return;
+    if (active) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [active, mounted]);
+
   useEffect(() => {
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
