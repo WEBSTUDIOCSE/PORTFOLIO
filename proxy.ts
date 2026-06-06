@@ -4,10 +4,14 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
+  const isDev = process.env.NODE_ENV !== "production";
+
   // CSP policy — strict nonce-based script-src
   const csp = [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    isDev 
+      ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline'`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
     `style-src 'self' 'unsafe-inline'`, // Tailwind injects styles
     `img-src 'self' data: blob: https:`,
     `font-src 'self' https://fonts.gstatic.com`,
