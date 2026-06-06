@@ -12,10 +12,11 @@ export function proxy(request: NextRequest) {
     isDev 
       ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline'`
       : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `worker-src 'self' blob: https://www.gstatic.com`,
     `style-src 'self' 'unsafe-inline'`, // Tailwind injects styles
     `img-src 'self' data: blob: https:`,
     `font-src 'self' https://fonts.gstatic.com`,
-    `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com`,
+    `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://www.gstatic.com`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
