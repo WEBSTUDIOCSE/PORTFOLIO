@@ -41,7 +41,6 @@ export const STATIONS = [
     km: '188',
     plat: 'PF 1',
     departure: '06:00',
-    bgImage: '/assets/story_bg.jpg',
     panel: {
       type: 'intro',
       lede:
