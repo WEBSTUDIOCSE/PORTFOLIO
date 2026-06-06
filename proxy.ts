@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
     `default-src 'self'`,
     isDev 
       ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline'`
-      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval' 'wasm-unsafe-eval'`,
     `worker-src 'self' blob: https://www.gstatic.com`,
     `style-src 'self' 'unsafe-inline'`, // Tailwind injects styles
     `img-src 'self' data: blob: https:`,
