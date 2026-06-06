@@ -25,10 +25,15 @@ const NO_FLASH_THEME_SCRIPT = `
 (function(){
   try {
     var t = localStorage.getItem('sj-theme');
-    if (t !== 'light' && t !== 'dark') {
-      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (!t) {
+      t = 'dark';
+      localStorage.setItem('sj-theme', 'dark');
     }
-    if (t === 'dark') document.documentElement.classList.add('dark');
+    if (t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   } catch (e) {}
 })();
 `;
@@ -68,22 +73,22 @@ function readSystem(): ResolvedTheme {
 }
 
 function readStored(): Theme {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   try {
     const v = window.localStorage.getItem(STORAGE_KEY);
     if (v === "light" || v === "dark" || v === "system") return v;
   } catch {
     // localStorage can throw in strict privacy modes.
   }
-  return "system";
+  return "dark";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Server renders with "system" placeholder — the actual theme is
   // already on <html> from the no-flash script, so the user never
   // sees a flash. The first effect syncs React state with reality.
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>("dark");
 
   // One-time bootstrap on mount.
   useEffect(() => {

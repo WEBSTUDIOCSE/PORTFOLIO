@@ -199,7 +199,7 @@ export default function TCInvite() {
               muted
               playsInline
               crossOrigin="anonymous"
-              className="hidden"
+              className="absolute opacity-0 pointer-events-none w-0 h-0"
             />
           )}
           <span className="sr-only">Animated ticket checker character inviting you to take the journey.</span>
