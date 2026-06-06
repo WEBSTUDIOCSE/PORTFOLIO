@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
   // Docs: https://nextjs.org/docs/app/api-reference/components/image
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [25, 50, 75, 90, 100],
   },
 
   // Tree-shake heavy library barrel imports. Next.js generates
