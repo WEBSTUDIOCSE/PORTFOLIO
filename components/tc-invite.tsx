@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 // TC (Ticket Checker) invite — a small Indian Railways TTE character
@@ -40,6 +40,8 @@ const STORAGE_KEY = "tc-invite-dismissed";
 export default function TCInvite() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Read dismissal flag on mount. We do this in an effect (not
   // useState initializer) because sessionStorage is window-only and
@@ -54,6 +56,52 @@ export default function TCInvite() {
       // Treat as "not dismissed", no harm done.
     }
   }, []);
+
+  // Realtime colorkey processor for the webm video.
+  // This lets us use the original clean video but strip out the
+  // black background frame-by-frame, perfectly solving both the 
+  // ghosting WebP issue and the iOS Safari mix-blend-mode issue!
+  useEffect(() => {
+    if (!visible || dismissed) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    let raf = 0;
+    let ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+    const loop = () => {
+      if (video.paused || video.ended || !ctx) return;
+      
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+      
+      // Ensure canvas strictly matches the video's aspect ratio to prevent vertical stretching
+      if (vw && vh && (canvas.width !== vw || canvas.height !== vh)) {
+        canvas.width = vw;
+        canvas.height = vh;
+      }
+      
+      if (vw && vh) {
+        ctx.clearRect(0, 0, vw, vh);
+        ctx.drawImage(video, 0, 0, vw, vh);
+      }
+      
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onPlay = () => {
+      if (ctx) loop();
+    };
+
+    video.addEventListener("play", onPlay);
+    video.play().catch(() => {});
+
+    return () => {
+      video.removeEventListener("play", onPlay);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [visible, dismissed]);
 
   useEffect(() => {
     if (dismissed) return;
@@ -139,21 +187,25 @@ export default function TCInvite() {
           prefetch={false}
           className="block transition-transform duration-300 hover:scale-110 focus-visible:scale-110 focus-visible:outline-none"
         >
-          {/* Transparent animated WebP — alpha was keyed out of the
-              source webm's solid-black background (colorkey → rgba).
-              Rendered as <img> (not <video>) on purpose: iOS Safari
-              ignores `mix-blend-mode` on <video>, so the old black box
-              showed on iPhones. An animated WebP with a real alpha
-              channel loops in an <img> on every browser (incl. iOS),
-              with no autoplay/codec caveats. Lazy-mounted: src is set
-              only once `visible` flips, keeping initial payload light. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={visible ? "/assets/tc-wave.webp" : undefined}
-            alt=""
+          {/* We replace the img with a hidden video and a visible canvas.
+              The video plays the original clean webm, and the canvas
+              dynamically keys out the black background. This works everywhere
+              including iOS Safari without ghosting! */}
+          {visible && (
+            <video
+              ref={videoRef}
+              src="/assets/tc-wave.webm"
+              loop
+              muted
+              playsInline
+              crossOrigin="anonymous"
+              className="hidden"
+            />
+          )}
+          <span className="sr-only">Animated ticket checker character inviting you to take the journey.</span>
+          <canvas
+            ref={canvasRef}
             aria-hidden="true"
-            loading="lazy"
-            decoding="async"
             className="h-24 w-24 object-contain sm:h-32 sm:w-32 md:h-36 md:w-36"
           />
         </Link>

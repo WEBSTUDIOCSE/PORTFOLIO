@@ -1,6 +1,8 @@
 "use server";
 
 import "server-only";
+import { headers } from "next/headers";
+import { rateLimit } from "@/lib/rate-limit";
 import { sendResumeRequestEmail } from "@/lib/email/resend";
 import {
   resumeRequestSchema,
@@ -30,6 +32,13 @@ const RESUME_URL =
 export async function notifyResumeRequest(
   formData: FormData,
 ): Promise<ResumeResult> {
+  const hdrs = await headers();
+  const ip = hdrs.get("x-forwarded-for") ?? "unknown";
+  const limit = rateLimit(ip);
+  if (!limit.ok) {
+    return { ok: false, error: `Too many requests. Try again in ${limit.retryAfter}s.` };
+  }
+
   const honeypot = formData.get("company_url");
   if (typeof honeypot === "string" && honeypot.length > 0) {
     // Silent success — bot doesn't get told it was caught.
@@ -74,7 +83,7 @@ export async function notifyResumeRequest(
     await sendResumeRequestEmail({ name, email, role, company });
   } catch (err) {
     console.error("[resume] email send failed:", err);
-    // Don't fail the user — the download is the primary outcome.
+    return { ok: false, error: "Failed to send email notification. Please try again later." };
   }
 
   return { ok: true, downloadUrl: RESUME_URL };

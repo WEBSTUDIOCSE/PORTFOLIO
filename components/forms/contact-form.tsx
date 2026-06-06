@@ -27,11 +27,15 @@ import {
 
 export default function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
+  const isSubmittingRef = useRef(false);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<ContactResult | null>(null);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+
     const fd = new FormData(e.currentTarget);
     startTransition(async () => {
       const honeypot = fd.get("company_url");
@@ -39,6 +43,7 @@ export default function ContactForm() {
         // Honeypot — silent success.
         setResult({ ok: true });
         formRef.current?.reset();
+        isSubmittingRef.current = false;
         return;
       }
 
@@ -65,6 +70,7 @@ export default function ContactForm() {
           error: "Please fix the highlighted fields.",
           fields,
         });
+        isSubmittingRef.current = false;
         return;
       }
 
@@ -84,16 +90,17 @@ export default function ContactForm() {
           ok: false,
           error: "Something went wrong saving your message. Try again.",
         });
+        isSubmittingRef.current = false;
         return;
       }
 
-      // 2. Email notification via Server Action.
       const r = await notifyContact(fd);
       setResult(r);
       if (r.ok) {
         formRef.current?.reset();
         document.getElementById("contact-success")?.focus();
       }
+      isSubmittingRef.current = false;
     });
   };
 

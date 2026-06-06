@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/lib/theme";
 import ThemeToggle from "@/components/theme-toggle";
+import { useIsMounted } from "@/lib/use-is-mounted";
 
 // Source frame numbers — frame 60 is missing on disk, so we skip it.
 // 119 frames total: 1..59 and 61..120.
@@ -88,7 +89,9 @@ export default function CharacterScroll() {
 
   const [frames, setFrames] = useState<number[]>(DESKTOP_FRAMES);
   const framesRef = useRef<number[]>(DESKTOP_FRAMES);
-  framesRef.current = frames;
+  useEffect(() => {
+    framesRef.current = frames;
+  }, [frames]);
 
   // Hi-res default; flipped to lite on mount if the visitor's network
   // / device profile asks for it. We start at HI because that's the
@@ -108,9 +111,8 @@ export default function CharacterScroll() {
   // currently sitting on (or past) that index.
   const requestDrawRef = useRef<(() => void) | null>(null);
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsMounted();
   const { resolvedTheme } = useTheme();
-  useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
 
   // On mount, decide:
@@ -428,13 +430,11 @@ export default function CharacterScroll() {
             paint, so no blank "in-between" frame during rapid scroll
             swap. mix-blend-mode in light theme hides the dark
             anti-aliased fringe baked into the source frames. */}
+        <span className="sr-only">Interactive 3D animated character responding to scroll position.</span>
         <canvas
           ref={canvasRef}
           aria-hidden="true"
-          style={
-            mounted ? { mixBlendMode: isDark ? "normal" : "multiply" } : undefined
-          }
-          className="absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full mix-blend-multiply dark:mix-blend-normal"
         />
 
         {/* Beat 1 — greeting eyebrow */}
