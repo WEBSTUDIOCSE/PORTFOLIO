@@ -17,7 +17,15 @@ export function proxy(request: NextRequest) {
     `form-action 'self'`,
   ].join("; ");
 
-  const response = NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   // OWASP-recommended headers
   response.headers.set("Content-Security-Policy", csp);
