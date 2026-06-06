@@ -116,15 +116,22 @@ function CardShell({
 }) {
   const padding =
     variant === "featured" ? "p-6 sm:p-10" : "p-5 sm:p-6";
-  const cls = `group block rounded-lg border border-border bg-card text-card-foreground transition-colors hover:border-primary/40 ${padding}`;
+  const cls = `group relative block rounded-lg border border-border bg-card text-card-foreground transition-colors hover:border-primary/40 ${padding}`;
 
-  // Card always links to the project detail page — the live demo
-  // (if any) is exposed inside the detail page header so visitors
-  // read the case study first.
+  // Card uses the clickable block pattern: the actual <a> tag is inside 
+  // the title, but a pseudo-element stretches it to cover the entire card.
+  // This prevents screen readers from reading the entire card contents as a single link.
   return (
-    <Link href={`/work/${project.slug}`} className={cls}>
+    <div className={cls}>
       {children}
-    </Link>
+      <Link 
+        href={`/work/${project.slug}`} 
+        className="absolute inset-0 z-10 rounded-lg"
+        aria-label={`View project details for ${project.title}`}
+      >
+        <span className="sr-only">View project</span>
+      </Link>
+    </div>
   );
 }
 

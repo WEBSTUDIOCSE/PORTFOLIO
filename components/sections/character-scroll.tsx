@@ -431,10 +431,7 @@ export default function CharacterScroll() {
         <canvas
           ref={canvasRef}
           aria-hidden="true"
-          style={
-            mounted ? { mixBlendMode: isDark ? "normal" : "multiply" } : undefined
-          }
-          className="absolute inset-0 h-full w-full"
+          className="absolute inset-0 h-full w-full mix-blend-multiply dark:mix-blend-normal"
         />
 
         {/* Beat 1 — greeting eyebrow */}

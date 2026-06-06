@@ -11,7 +11,7 @@ import {
 } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { ThemeProvider } from "@/lib/theme";
+import { ThemeProvider, ThemeScript } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
 import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
@@ -209,28 +209,6 @@ const ROOT_JSON_LD = {
   ],
 };
 
-// Runs on initial HTML parse, BEFORE React hydration, BEFORE first
-// paint. Applies the stored / system theme to <html> so the user
-// never sees a flash of the wrong theme on reload.
-//
-// Rendered via next/script with strategy="beforeInteractive" — per
-// the Next.js docs, this routes through their injection pipeline
-// (bypassing React 19's "script in component" warning) and is
-// guaranteed to land in <head> of the initial HTML, regardless of
-// where the component is placed.
-//   docs: node_modules/next/dist/docs/01-app/03-api-reference/02-components/script.md
-const NO_FLASH_THEME_SCRIPT = `
-(function(){
-  try {
-    var t = localStorage.getItem('sj-theme');
-    if (t !== 'light' && t !== 'dark') {
-      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    if (t === 'dark') document.documentElement.classList.add('dark');
-  } catch (e) {}
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -242,15 +220,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} ${caveat.variable} ${permanentMarker.variable} ${architectsDaughter.variable} ${dancingScript.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        <Script id="no-flash-theme" strategy="beforeInteractive">
-          {NO_FLASH_THEME_SCRIPT}
-        </Script>
+      <head>
+        <ThemeScript />
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(ROOT_JSON_LD) }}
         />
+      </head>
+      <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <SiteNav />
           {children}

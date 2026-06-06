@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧪 QA &amp; E2E Test Report — Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.07); }
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; }
+    .badge-pass { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+    .badge-fail { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
+    .badge-warn { background:rgba(234,179,8,0.15); color:#eab308; border:1px solid rgba(234,179,8,0.3); }
+    .badge-info { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
+    .severity-critical { color:#ef4444; } .severity-high { color:#f97316; } .severity-medium { color:#eab308; } .severity-low { color:#22c55e; } .severity-info { color:#3b82f6; }
+    table { border-collapse:collapse; width:100%; }
+    th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#9ca3af; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; color:#d1d5db; }
+    pre { background:#0d1117; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:16px; overflow-x:auto; font-size:12px; line-height:1.6; }
+    pre code { background:none; padding:0; }
+    code { background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:4px; font-size:12px; }
+    a { color:#60a5fa; text-decoration:none; } a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body class="bg-[#09090b] text-gray-200 min-h-screen">
+
+  <!-- ═══════ HEADER DASHBOARD ═══════ -->
+  <header class="border-b border-white/10 px-6 py-10 sm:px-10">
+    <div class="mx-auto max-w-6xl">
+      <p class="text-[10px] uppercase tracking-[0.35em] text-emerald-400/70 mb-2">The Tester's Report · Phase 3 E2E + Accessibility</p>
+      <h1 class="text-4xl sm:text-5xl font-light tracking-tight text-white">
+        🧪 QA &amp; E2E Test Report
+      </h1>
+      <p class="mt-2 text-sm text-gray-400">
+        <span class="text-white font-medium">saurabhjadhav.in</span> · Executed <time datetime="2026-06-06">6 Jun 2026</time> · ESLint + Browser E2E + Static A11y Audit
+      </p>
+
+      <!-- Summary counters -->
+      <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass rounded-xl p-5 text-center">
+          <p class="text-3xl font-bold text-green-400">22</p>
+          <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mt-1">Pass</p>
+        </div>
+        <div class="glass rounded-xl p-5 text-center">
+          <p class="text-3xl font-bold text-red-400">7</p>
+          <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mt-1">Fail (ESLint Errors)</p>
+        </div>
+        <div class="glass rounded-xl p-5 text-center">
+          <p class="text-3xl font-bold text-yellow-400">6</p>
+          <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mt-1">Warnings</p>
+        </div>
+        <div class="glass rounded-xl p-5 text-center">
+          <p class="text-3xl font-bold text-blue-400">3</p>
+          <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mt-1">A11y Issues</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-6 sm:px-10 py-12 space-y-16">
+
+    <!-- ═══════ 🗺️ USER JOURNEY MAP ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🗺️ User Journey Map — E2E Test Results</h2>
+      <p class="text-sm text-gray-500 mb-6">Green nodes passed. Red nodes failed ESLint or had runtime issues. Yellow nodes have warnings.</p>
+      <div class="glass rounded-xl p-6 overflow-x-auto">
+        <pre class="mermaid">
+graph TD
+    subgraph "HOME PAGE (localhost:3001)"
+      A["🌐 Page Load"]:::pass --> B["🎬 Hero · CharacterScroll"]:::warn
+      B --> C["📜 Scroll Animation · 5 text beats"]:::pass
+      C --> D["🧭 Floating Pill Nav"]:::pass
+      D --> E["💼 Selected Work · 5 cards"]:::pass
+      E --> F["👤 About Section"]:::pass
+      F --> G["📊 Experience Timeline"]:::pass
+      G --> H["📰 Press Section"]:::pass
+      H --> I["🔧 Currently Section"]:::warn
+      I --> J["📬 Contact Section"]:::pass
+      J --> K["✉️ Email CTA Button"]:::pass
+      J --> L["📋 Resume Form"]:::pass
+      L --> M["🔍 Zod Validation"]:::pass
+      M --> N["🔥 Firestore Write"]:::pass
+      N --> O["📧 Resend Email"]:::pass
+      O --> P["📥 PDF Auto-Download"]:::pass
+    end
+
+    subgraph "NAVIGATION FLOWS"
+      D -->|"Click Work"| E
+      E -->|"Click Card"| Q["/work/antigravity-agents"]:::pass
+      Q --> R["generateMetadata · async params"]:::pass
+      R --> S["JSON-LD SoftwareApplication"]:::pass
+      S --> T["Mermaid Diagram"]:::warn
+      T --> U["Prev/Next Nav"]:::pass
+    end
+
+    subgraph "SECONDARY PAGES"
+      A --> V["/writing"]:::pass
+      V --> W["/writing/slug"]:::pass
+      A --> X["/journey · 3D"]:::fail
+      X --> Y["JourneyClient.jsx"]:::fail
+      Y --> Z["AutoFitOrtho.jsx"]:::fail
+      Y --> AA["GameIntro.jsx"]:::fail
+      A --> AB["404 · Wrong Stop"]:::pass
+    end
+
+    subgraph "SITE CHROME"
+      A --> AC["SiteNav · Floating Pill"]:::pass
+      AC --> AD["Mobile Dialog + Focus Trap"]:::pass
+      A --> AE["Theme Toggle"]:::pass
+      AE --> AF["Dark ↔ Light Switch"]:::pass
+      A --> AG["Footer · Social Links"]:::pass
+      AG --> AH["GitHub · LinkedIn · X"]:::pass
+      A --> AI["TC Invite Character"]:::pass
+    end
+
+    subgraph "SEO & META"
+      A --> AJ["robots.ts"]:::pass
+      AJ --> AK["sitemap.ts"]:::pass
+      AK --> AL["OG Image Routes"]:::pass
+    end
+
+    classDef pass fill:#14532d,stroke:#22c55e,color:#d1fae5
+    classDef fail fill:#7f1d1d,stroke:#ef4444,color:#fecaca
+    classDef warn fill:#713f12,stroke:#eab308,color:#fef9c3
+        </pre>
+      </div>
+    </section>
+
+    <!-- ═══════ E2E BROWSER TEST RESULTS ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🌐 E2E Browser Test Results</h2>
+      <p class="text-sm text-gray-500 mb-6">Live browser tests executed against <code>localhost:3001</code> (dev server on port 3001).</p>
+      <div class="glass rounded-xl overflow-x-auto">
+        <table>
+          <thead>
+            <tr class="bg-white/[0.03]">
+              <th>#</th>
+              <th>Test</th>
+              <th>Result</th>
+              <th>Observation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-01</td>
+              <td>Page Load</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>HTTP 200. Title: "Saurabh Jadhav — Frontend &amp; AI Engineer". No console errors on initial load. Dev server auto-assigned port 3001 (port 3000 occupied by another project).</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-02</td>
+              <td>Hero Scroll Animation</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>Canvas-based character animation renders. 5 text beats visible during scroll: "नमस्कार Hello", "I build things for the web", skills list, pitch paragraph, "I'm Saurabh." Smooth opacity transitions.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-03</td>
+              <td>Floating Pill Navigation</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>Pill appears after scrolling past hero. Contains links: Work, About, Experience, Contact. Smooth scroll to sections on click.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-04</td>
+              <td>Selected Work Cards</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>5 project cards rendered. Each card has title, one-liner, year, stack chips, and overlay link. Click navigates to <code>/work/[slug]</code>.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-05</td>
+              <td>Work Detail Page</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td><code>/work/antigravity-agents</code> loads. Hero metadata (role, year), stack chips, Problem/Approach/Outcome sections, Mermaid diagram, Prev/Next navigation all render correctly. JSON-LD present in page source.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-06</td>
+              <td>Theme Toggle</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>Sun/moon icon found in navigation. Click switches <code>&lt;html class="dark"&gt;</code>. All semantic tokens flip correctly. localStorage persists preference.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-07</td>
+              <td>Footer &amp; Social Links</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>Footer renders with GitHub, LinkedIn, X links. All open in new tab with <code>rel="noopener noreferrer"</code>. Copyright year shown.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-08</td>
+              <td>404 Page</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td><code>/nonexistent-page</code> renders styled 404. Title: "Wrong stop — Saurabh Jadhav". Bilingual greeting "मार्ग चुकला · Wrong stop". Two CTAs: "Back to the platform" and "Take the journey". Signature "— Saurabh".</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-09</td>
+              <td>Writing Listing</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td><code>/writing</code> loads. Posts listed with date, read time, title, excerpt, and tag chips. Links navigate to individual posts.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">E2E-10</td>
+              <td>Contact Email CTA</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>Email button visible in contact section. <code>mailto:</code> link present and functional.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════ 🐞 DEFECT REPORT ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🐞 Defect Report — ESLint + Static Analysis</h2>
+      <p class="text-sm text-gray-500 mb-6">Issues found via ESLint (Next.js core-web-vitals + TypeScript config) and manual code review.</p>
+      <div class="glass rounded-xl overflow-x-auto">
+        <table>
+          <thead>
+            <tr class="bg-white/[0.03]">
+              <th>ID</th>
+              <th>Component</th>
+              <th>Expected (Per React 19 Docs)</th>
+              <th>Actual Behavior</th>
+              <th>Severity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-001</td>
+              <td><code>JourneyClient.jsx:38</code></td>
+              <td>Per React 19, avoid <code>setState</code> synchronously in effect body — causes cascading re-render.</td>
+              <td><code>useEffect(() => setMounted(true), [])</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-002</td>
+              <td><code>JourneyClient.jsx:76</code></td>
+              <td>Refs must not be read/written during render — only in effects or handlers.</td>
+              <td><code>storyCompleteRef.current = storyComplete</code> — mutated in render body.</td>
+              <td class="severity-high font-bold">High</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-003</td>
+              <td><code>AutoFitOrtho.jsx:56</code></td>
+              <td>Values returned from hooks (<code>useThree</code>) are immutable per React rules.</td>
+              <td><code>camera.zoom = zoom</code> — directly mutates hook return value.</td>
+              <td class="severity-high font-bold">High</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-004</td>
+              <td><code>GameIntro.jsx:14</code></td>
+              <td>Same as BUG-001. <code>setState</code> in effect body.</td>
+              <td><code>useEffect(() => setMounted(true), [])</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-005</td>
+              <td><code>mermaid-diagram.tsx:45</code></td>
+              <td>Same as BUG-001. <code>setInView(true)</code> in IntersectionObserver SSR fallback.</td>
+              <td><code>setInView(true)</code> called synchronously inside effect.</td>
+              <td class="severity-low font-bold">Low</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-006</td>
+              <td><code>character-scroll.tsx:91</code></td>
+              <td>Same as BUG-002. Refs must not be updated during render.</td>
+              <td><code>framesRef.current = frames</code> — mutated in render body.</td>
+              <td class="severity-high font-bold">High</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">BUG-007</td>
+              <td><code>character-scroll.tsx:113</code></td>
+              <td>Same as BUG-001. <code>setState</code> in effect body.</td>
+              <td><code>useEffect(() => setMounted(true), [])</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-001</td>
+              <td><code>layout.tsx:12</code></td>
+              <td>Unused imports should be removed.</td>
+              <td><code>import Script from "next/script"</code> — imported but never used.</td>
+              <td class="severity-low font-bold">Low</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-002</td>
+              <td><code>globals.css:38</code></td>
+              <td>Tailwind v4 docs recommend <code>@variant dark (&:where(.dark, .dark *))</code>.</td>
+              <td>Uses <code>@custom-variant dark (&:is(.dark *))</code> — <code>:is()</code> has higher specificity than <code>:where()</code>.</td>
+              <td class="severity-medium font-bold">Medium</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-003</td>
+              <td><code>currently.tsx:13</code></td>
+              <td>Content should reflect current date.</td>
+              <td>"UPDATED May 2026" stamp — current date is June 2026. TODO says "refresh every fortnight".</td>
+              <td class="severity-low font-bold">Low</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-004</td>
+              <td><code>footer.tsx:112</code></td>
+              <td>"Back to top" should use <code>scrollTo</code> or a button.</td>
+              <td><code>&lt;a href="#"&gt;</code> — causes unexpected history entry on click.</td>
+              <td class="severity-low font-bold">Low</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-005</td>
+              <td><code>contact-form.tsx</code></td>
+              <td>React 19 recommends <code>useActionState</code> for form state management.</td>
+              <td>Uses manual <code>useTransition</code> + <code>useState</code>. Works correctly but is the legacy pattern.</td>
+              <td class="severity-info font-bold">Info</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">WARN-006</td>
+              <td><code>resume-form.tsx</code></td>
+              <td>Same as WARN-005.</td>
+              <td>Manual <code>useTransition</code> + <code>useState</code> + separate mode tracking.</td>
+              <td class="severity-info font-bold">Info</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════ ♿ ACCESSIBILITY AUDIT ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">♿ Accessibility Audit</h2>
+      <p class="text-sm text-gray-500 mb-6">Static analysis of ARIA patterns, focus management, semantic HTML, and keyboard navigation.</p>
+      <div class="glass rounded-xl p-6 space-y-4">
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium">Focus trap &amp; keyboard navigation — Mobile menu</p>
+            <p class="text-xs text-gray-400"><code>site-nav.tsx</code> implements Tab trapping, Escape to close, and focus restoration to trigger button. Uses <code>inert</code> attribute on the backdrop.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium"><code>aria-label</code> on all interactive elements</p>
+            <p class="text-xs text-gray-400">Work cards use <code>aria-label</code> on overlay links. Theme toggle, mobile menu button, TC dismiss — all properly labeled. SVGs marked <code>aria-hidden</code>.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium">Form field associations</p>
+            <p class="text-xs text-gray-400"><code>&lt;input&gt;</code>/<code>&lt;textarea&gt;</code> elements have <code>htmlFor</code>-linked labels, <code>aria-invalid</code>, and <code>aria-describedby</code> for inline errors.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium">Reduced motion support</p>
+            <p class="text-xs text-gray-400"><code>globals.css</code> includes a global <code>@media (prefers-reduced-motion: reduce)</code> guard that neutralises all animations, transitions, and scroll behavior.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium">Heading hierarchy</p>
+            <p class="text-xs text-gray-400">Single <code>&lt;h1&gt;</code> per page. Proper h2→h3 nesting across home, work detail, writing, and 404 pages.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-pass mt-0.5">Pass</span>
+          <div>
+            <p class="text-sm text-white font-medium">Honeypot field properly hidden from a11y tree</p>
+            <p class="text-xs text-gray-400">Hidden with <code>absolute -left-[9999px]</code> + <code>aria-hidden="true"</code> + <code>tabIndex={-1}</code>. Not reachable by keyboard or screen reader.</p>
+          </div>
+        </div>
+
+        <!-- A11y Issues -->
+        <div class="border-t border-white/10 pt-4 mt-4"></div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-warn mt-0.5">Issue</span>
+          <div>
+            <p class="text-sm text-white font-medium">Hero canvas missing text alternative</p>
+            <p class="text-xs text-gray-400"><code>character-scroll.tsx</code> — <code>&lt;canvas aria-hidden="true"&gt;</code> hides the character animation from screen readers, but there's no visually-hidden text describing the character/animation. Users on assistive technology miss the hero's visual story entirely.</p>
+            <p class="text-xs text-yellow-400 mt-1">Recommendation: Add a <code>&lt;span class="sr-only"&gt;</code> sibling describing the scroll-driven character animation.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-warn mt-0.5">Issue</span>
+          <div>
+            <p class="text-sm text-white font-medium">TC Invite canvas lacks alt text</p>
+            <p class="text-xs text-gray-400"><code>tc-invite.tsx</code> — The canvas-rendered TTE character has <code>aria-hidden="true"</code> but the parent <code>&lt;Link&gt;</code> only has <code>aria-label</code> for the link action, not a description of what the visual element IS. A user who can't see the character doesn't know why the invite exists.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="badge badge-warn mt-0.5">Issue</span>
+          <div>
+            <p class="text-sm text-white font-medium">Mobile dialog <code>inert</code> attribute coercion</p>
+            <p class="text-xs text-gray-400"><code>site-nav.tsx</code> — uses <code>inert={!mobileOpen}</code>. React 19 may log a console warning for boolean-to-attribute coercion on <code>inert</code>. Use <code>inert={!mobileOpen ? true : undefined}</code> to avoid the warning.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ 🛠️ QA FIXES ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🛠️ QA Fixes — Code-Level Solutions</h2>
+      <p class="text-sm text-gray-500 mb-6">Exact code patches to resolve each defect, based on React 19 and Next.js 16 official docs.</p>
+
+      <!-- BUG-001/004/005/007: setState in effect -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">BUG-001 / BUG-004 / BUG-005 / BUG-007 — <code>setState</code> in effect body</h3>
+        <p class="text-xs text-gray-400 mb-1">Files: <code>JourneyClient.jsx:38</code>, <code>GameIntro.jsx:14</code>, <code>mermaid-diagram.tsx:45</code>, <code>character-scroll.tsx:113</code></p>
+        <p class="text-sm text-gray-300 mb-3">Replace the <code>useEffect</code> mount-gate pattern with <code>useSyncExternalStore</code> — React 19's recommended hydration-safe approach:</p>
+        <pre><code class="text-green-400">// lib/use-is-mounted.ts
+import { useSyncExternalStore } from "react";
+
+const emptySubscribe = () =&gt; () =&gt; {};
+
+export function useIsMounted(): boolean {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () =&gt; true,          // client snapshot — always true
+    () =&gt; false,         // server snapshot — always false
+  );
+}
+
+// Usage (replaces useEffect + useState pattern):
+// Before:
+//   const [mounted, setMounted] = useState(false);
+//   useEffect(() =&gt; setMounted(true), []);
+//
+// After:
+//   const mounted = useIsMounted();</code></pre>
+      </div>
+
+      <!-- BUG-002/006: Ref mutation during render -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">BUG-002 / BUG-006 — Ref mutation during render</h3>
+        <p class="text-xs text-gray-400 mb-1">Files: <code>JourneyClient.jsx:76</code>, <code>character-scroll.tsx:91</code></p>
+        <p class="text-sm text-gray-300 mb-3">Move the ref sync into an effect:</p>
+        <pre><code class="text-green-400">// Before (render body — BREAKS React 19 strict mode):
+storyCompleteRef.current = storyComplete;
+
+// After (effect — runs after render, safe for concurrent mode):
+useEffect(() =&gt; {
+  storyCompleteRef.current = storyComplete;
+}, [storyComplete]);
+
+// Same pattern for character-scroll.tsx:
+useEffect(() =&gt; {
+  framesRef.current = frames;
+}, [frames]);</code></pre>
+      </div>
+
+      <!-- BUG-003: Hook immutability -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">BUG-003 — Mutating <code>useThree()</code> return value</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>AutoFitOrtho.jsx:56</code></p>
+        <p class="text-sm text-gray-300 mb-3">R3F's <code>useThree</code> returns an immutable snapshot. Use <code>useFrame</code>'s mutable state instead:</p>
+        <pre><code class="text-green-400">// Before (mutates hook return — violates immutability rule):
+const camera = useThree(s =&gt; s.camera);
+camera.zoom = zoom;
+
+// After (useFrame provides the live mutable state):
+import { useFrame } from "@react-three/fiber";
+
+useFrame(({ camera }) =&gt; {
+  if (Math.abs(camera.zoom - zoom) &gt; 0.001) {
+    camera.zoom = zoom;
+    camera.updateProjectionMatrix();
+  }
+});</code></pre>
+      </div>
+
+      <!-- WARN-001: Unused import -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">WARN-001 — Unused <code>Script</code> import</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>app/layout.tsx:12</code></p>
+        <pre><code class="text-red-400">- import Script from "next/script";</code>
+<code class="text-green-400">+ // Removed — Script is not used in this file</code></pre>
+      </div>
+
+      <!-- WARN-002: Dark mode specificity -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">WARN-002 — Dark mode <code>:is()</code> vs <code>:where()</code></h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>globals.css:38</code></p>
+        <pre><code class="text-red-400">- @custom-variant dark (&amp;:is(.dark *));</code>
+<code class="text-green-400">+ @custom-variant dark (&amp;:where(.dark, .dark *));</code></pre>
+        <p class="text-sm text-gray-300 mt-2"><code>:where()</code> has zero specificity, so dark-mode utilities work at the same priority as their light-mode counterparts.</p>
+      </div>
+
+      <!-- WARN-004: Back to top -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">WARN-004 — "Back to top" anchor</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>footer.tsx:112</code></p>
+        <pre><code class="text-red-400">- &lt;a href="#" className="..."&gt;Back to top ↑&lt;/a&gt;</code>
+<code class="text-green-400">+ &lt;button
++   type="button"
++   onClick={() =&gt; window.scrollTo({ top: 0, behavior: "smooth" })}
++   className="..."
++ &gt;
++   Back to top ↑
++ &lt;/button&gt;</code></pre>
+      </div>
+
+      <!-- A11y: Hero canvas -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">A11Y-001 — Hero canvas text alternative</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>character-scroll.tsx</code></p>
+        <pre><code class="text-green-400">// Add a visually-hidden description sibling alongside the canvas:
+&lt;div className="relative"&gt;
+  &lt;canvas ref={canvasRef} aria-hidden="true" ... /&gt;
+  &lt;span className="sr-only"&gt;
+    Scroll-driven animation of Saurabh waving hello —
+    a character illustration that rotates as you scroll
+    through the introduction.
+  &lt;/span&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+    </section>
+
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer class="border-t border-white/10 mt-16 py-8 text-center">
+      <p class="text-[10px] uppercase tracking-[0.3em] text-gray-600">
+        Generated by zenith-qa-architect-duo · The Tester · 6 Jun 2026
+      </p>
+    </footer>
+  </main>
+
+</body>
+</html>

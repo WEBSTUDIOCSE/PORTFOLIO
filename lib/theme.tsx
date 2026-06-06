@@ -12,7 +12,7 @@
 // so consumers (theme-toggle.tsx, character-scroll.tsx) need no
 // changes when we swap implementations.
 
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -20,6 +20,29 @@ import {
   useMemo,
   useState,
 } from "react";
+
+const NO_FLASH_THEME_SCRIPT = `
+(function(){
+  try {
+    var t = localStorage.getItem('sj-theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+`;
+
+export const ThemeScript = React.memo(
+  () => (
+    <script
+      id="no-flash-theme"
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }}
+    />
+  ),
+  () => true
+);
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";

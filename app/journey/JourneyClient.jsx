@@ -218,7 +218,7 @@ export default function JourneyClient() {
 
   if (!mounted) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[#bfd8e8] text-[#2a241c] text-xs tracking-[0.2em] uppercase font-mono">
+      <div className="w-screen h-screen flex items-center justify-center bg-background text-foreground text-xs tracking-[0.2em] uppercase font-mono">
         Loading the diorama
       </div>
     );

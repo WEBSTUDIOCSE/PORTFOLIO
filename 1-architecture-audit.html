@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🛡️ Architecture &amp; Security Audit — Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.07); }
+    .glass-glow { box-shadow: 0 0 40px rgba(139,92,246,0.08), inset 0 1px 0 rgba(255,255,255,0.05); }
+    .grade-ring { width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 700; }
+    .grade-b { background: conic-gradient(from 180deg, #22c55e 0deg, #22c55e 252deg, rgba(255,255,255,0.06) 252deg); color: #22c55e; }
+    .severity-critical { color: #ef4444; } .severity-high { color: #f97316; } .severity-medium { color: #eab308; } .severity-low { color: #22c55e; } .severity-info { color: #3b82f6; }
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; }
+    .badge-crit { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
+    .badge-high { background:rgba(249,115,22,0.15); color:#f97316; border:1px solid rgba(249,115,22,0.3); }
+    .badge-med { background:rgba(234,179,8,0.15); color:#eab308; border:1px solid rgba(234,179,8,0.3); }
+    .badge-low { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+    .badge-pass { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+    table { border-collapse:collapse; width:100%; }
+    th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#9ca3af; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; color:#d1d5db; }
+    pre { background:#0d1117; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:16px; overflow-x:auto; font-size:12px; line-height:1.6; }
+    pre code { background:none; padding:0; }
+    code { background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:4px; font-size:12px; }
+    a { color:#60a5fa; text-decoration:none; } a:hover { text-decoration:underline; }
+    .doc-card { transition:transform 0.15s ease, box-shadow 0.15s ease; }
+    .doc-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body class="bg-[#09090b] text-gray-200 min-h-screen">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="border-b border-white/10 px-6 py-10 sm:px-10">
+    <div class="mx-auto max-w-6xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.35em] text-violet-400/70 mb-2">The Architect's Report · Phase 2 SAST</p>
+        <h1 class="text-4xl sm:text-5xl font-light tracking-tight text-white">
+          🛡️ Architecture &amp; Security Audit
+        </h1>
+        <p class="mt-2 text-sm text-gray-400">
+          <span class="text-white font-medium">saurabhjadhav.in</span> · Executed <time datetime="2026-06-06">6 Jun 2026</time> · Cross-referenced against OWASP Top 10:2025
+        </p>
+      </div>
+      <!-- Architecture Health Score -->
+      <div class="flex flex-col items-center gap-2">
+        <div class="grade-ring grade-b relative">
+          <span class="relative z-10 text-5xl">B</span>
+          <div class="absolute inset-[6px] rounded-full bg-[#09090b]"></div>
+          <span class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-green-400 z-20">B</span>
+        </div>
+        <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500">Architecture Health Score</p>
+        <p class="text-xs text-gray-400">Strong foundation · 3 critical gaps</p>
+      </div>
+    </div>
+
+    <!-- Score breakdown -->
+    <div class="mx-auto max-w-6xl mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div class="glass rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-green-400">14</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mt-1">Secure Patterns</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-red-400">3</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mt-1">Critical Risks</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-orange-400">2</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mt-1">High Risks</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-yellow-400">4</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mt-1">Medium Risks</p>
+      </div>
+      <div class="glass rounded-xl p-4 text-center">
+        <p class="text-2xl font-bold text-blue-400">3</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mt-1">Info / Anti-patterns</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-6 sm:px-10 py-12 space-y-16">
+
+    <!-- ═══════ 📚 SOURCED DOCS ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">📚 Sourced Documentation &amp; Standards</h2>
+      <p class="text-sm text-gray-500 mb-6">Official documentation and security standards used to validate the codebase.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="https://owasp.org/Top10/" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-red-400 mb-2">Security Standard</p>
+          <p class="text-lg text-white font-medium">OWASP Top 10:2025</p>
+          <p class="text-xs text-gray-400 mt-2">A01 Broken Access Control · A02 Security Misconfiguration · A03 Supply Chain · A05 Injection</p>
+          <p class="text-[10px] text-gray-600 mt-3">owasp.org/Top10 →</p>
+        </a>
+        <a href="https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-blue-400 mb-2">Framework Security</p>
+          <p class="text-lg text-white font-medium">Next.js 16 Security Headers</p>
+          <p class="text-xs text-gray-400 mt-2">CSP · X-Frame-Options · Referrer-Policy · Permissions-Policy · middleware.ts</p>
+          <p class="text-[10px] text-gray-600 mt-3">nextjs.org/docs →</p>
+        </a>
+        <a href="https://firebase.google.com/docs/rules" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-orange-400 mb-2">Database Security</p>
+          <p class="text-lg text-white font-medium">Firebase Security Rules</p>
+          <p class="text-xs text-gray-400 mt-2">Firestore Rules · Storage Rules · deny-all posture · create-only access</p>
+          <p class="text-[10px] text-gray-600 mt-3">firebase.google.com/docs/rules →</p>
+        </a>
+        <a href="https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-blue-400 mb-2">API Security</p>
+          <p class="text-lg text-white font-medium">Next.js Server Actions</p>
+          <p class="text-xs text-gray-400 mt-2">CSRF protection · <code>"use server"</code> · <code>"server-only"</code> boundary</p>
+          <p class="text-[10px] text-gray-600 mt-3">nextjs.org/docs →</p>
+        </a>
+        <a href="https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-red-400 mb-2">OWASP Cheat Sheet</p>
+          <p class="text-lg text-white font-medium">CSP Cheat Sheet</p>
+          <p class="text-xs text-gray-400 mt-2">script-src · style-src · frame-ancestors · nonce-based policies</p>
+          <p class="text-[10px] text-gray-600 mt-3">cheatsheetseries.owasp.org →</p>
+        </a>
+        <a href="https://react.dev/reference/react/useRef" target="_blank" rel="noopener" class="doc-card glass glass-glow rounded-xl p-5 block">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-blue-400 mb-2">React 19 Docs</p>
+          <p class="text-lg text-white font-medium">Hooks Immutability Rules</p>
+          <p class="text-xs text-gray-400 mt-2">useRef render rules · useEffect setState · useSyncExternalStore</p>
+          <p class="text-[10px] text-gray-600 mt-3">react.dev →</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════ 🗺️ THREAT MAP ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🗺️ Threat Map — Data Flow &amp; Security Bottlenecks</h2>
+      <p class="text-sm text-gray-500 mb-6">Red nodes indicate security risks. Green nodes are secured. Yellow nodes have medium-risk gaps.</p>
+      <div class="glass rounded-xl p-6 overflow-x-auto">
+        <pre class="mermaid">
+graph TD
+    A["👤 Visitor Browser"]:::neutral --> B["Next.js Edge Runtime"]:::fail
+    B -->|"❌ No middleware.ts"| C["App Router"]:::warn
+    C --> D["Server Components"]:::pass
+    C --> E["Server Actions"]:::warn
+
+    E -->|"'use server' + Zod"| F["contact.ts · resume.ts"]:::pass
+    F -->|"❌ No Rate Limiter"| G["Resend API"]:::fail
+    F -->|"Firestore Web SDK"| H["Cloud Firestore"]:::pass
+
+    D --> I["Static Pages"]:::pass
+    D --> J["Dynamic /work/slug"]:::pass
+    D --> K["/journey · R3F"]:::warn
+
+    A -->|"Client JS"| L["Firebase Web SDK"]:::warn
+    L -->|"create-only + validators"| H
+    H -->|"deny-all catch-all"| M["Firestore Rules ✅"]:::pass
+
+    A -->|"❌ No CSP Header"| N["XSS Surface"]:::fail
+    A -->|"❌ No Security Headers"| O["Clickjacking Risk"]:::fail
+
+    B -->|"productionBrowserSourceMaps: true"| P["Source Maps Public"]:::warn
+
+    classDef pass fill:#14532d,stroke:#22c55e,color:#d1fae5
+    classDef fail fill:#7f1d1d,stroke:#ef4444,color:#fecaca
+    classDef warn fill:#713f12,stroke:#eab308,color:#fef9c3
+    classDef neutral fill:#1e293b,stroke:#64748b,color:#e2e8f0
+        </pre>
+      </div>
+    </section>
+
+    <!-- ═══════ 🛡️ SECURITY AUDIT TABLE ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🛡️ Security Audit — Vulnerability Report</h2>
+      <p class="text-sm text-gray-500 mb-6">Each finding includes an exploitation risk narrative explaining how an attacker would abuse it.</p>
+      <div class="glass rounded-xl overflow-x-auto">
+        <table>
+          <thead>
+            <tr class="bg-white/[0.03]">
+              <th>ID</th>
+              <th>OWASP Cat.</th>
+              <th>File / Line</th>
+              <th>Severity</th>
+              <th>Finding</th>
+              <th>Exploitation Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-001</td>
+              <td><span class="badge badge-crit">A02</span></td>
+              <td><code>— (missing file)</code></td>
+              <td class="severity-critical font-bold">Critical</td>
+              <td><strong>No <code>middleware.ts</code></strong> — no security headers, no CSP, no X-Frame-Options, no Referrer-Policy, no Permissions-Policy.</td>
+              <td>An attacker embeds <code>&lt;iframe src="saurabhjadhav.in"&gt;</code> on a malicious page. Without <code>X-Frame-Options: DENY</code>, the portfolio renders inside the attacker's frame, enabling clickjacking — tricking the visitor into clicking the contact form while thinking they're on a different page. Without CSP, any injected script (via a future XSS) runs with full DOM access.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-002</td>
+              <td><span class="badge badge-crit">A02</span></td>
+              <td><code>next.config.ts</code></td>
+              <td class="severity-critical font-bold">Critical</td>
+              <td><strong>No Content-Security-Policy header</strong> defined anywhere — not in <code>next.config.ts headers()</code>, not in a <code>middleware.ts</code>.</td>
+              <td>Without CSP, the browser allows execution of ANY script injected into the page. If an XSS payload is stored in Firestore (a <code>name</code> field containing <code>&lt;script&gt;</code> and the site owner views the data in a custom admin panel), it would execute with full page context. CSP would block this even if the XSS exists.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-003</td>
+              <td><span class="badge badge-crit">A01</span></td>
+              <td><code>actions/contact.ts</code><br/><code>actions/resume.ts</code></td>
+              <td class="severity-critical font-bold">Critical</td>
+              <td><strong>No rate limiting on Server Actions</strong> — both <code>notifyContact</code> and <code>notifyResumeRequest</code> can be called unlimited times.</td>
+              <td>An attacker scripts <code>fetch('/action/notifyContact', {body: formData})</code> in a loop. This floods the Resend API (wasting the paid email quota), fills Firestore with spam docs (storage costs), and potentially gets the Resend domain blacklisted by email providers. A simple Token Bucket in middleware or a per-IP sliding window would block this.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-004</td>
+              <td><span class="badge badge-high">A02</span></td>
+              <td><code>next.config.ts:8</code></td>
+              <td class="severity-high font-bold">High</td>
+              <td><strong><code>productionBrowserSourceMaps: true</code></strong> — full client source maps shipped to production.</td>
+              <td>An attacker opens DevTools on the live site and reads the complete, un-minified source code of every client component. This reveals: variable names that hint at Firebase config structure, Zod schema constraints (allowing bypass crafting), internal routing patterns, and any logic that might be obscured by minification. Not directly exploitable but drastically reduces the attacker's reconnaissance effort.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-005</td>
+              <td><span class="badge badge-high">A02</span></td>
+              <td><code>next.config.ts:37-74</code></td>
+              <td class="severity-high font-bold">High</td>
+              <td><strong>Missing security headers</strong> — <code>headers()</code> only sets <code>Cache-Control</code> for assets. No <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, <code>Strict-Transport-Security</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</td>
+              <td>Without <code>Strict-Transport-Security</code>, the first visit over HTTP is vulnerable to SSL stripping (MITM downgrade). Without <code>X-Content-Type-Options: nosniff</code>, browsers may MIME-sniff uploaded assets as executable. Without <code>Referrer-Policy</code>, full URLs (including query params) leak to third-party origins.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-006</td>
+              <td><span class="badge badge-med">A05</span></td>
+              <td><code>lib/theme.tsx:24-33</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+              <td><strong><code>dangerouslySetInnerHTML</code> with inline script</strong> in ThemeScript component. The content is a hardcoded string constant (not user input), so it's safe today — but the pattern is fragile.</td>
+              <td>Currently safe — the script is a compile-time constant. Risk is future: if anyone interpolates user data (e.g., a theme name from URL params) into <code>NO_FLASH_THEME_SCRIPT</code>, it becomes a stored XSS vector. Adding CSP with a nonce would make this defense-in-depth.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-007</td>
+              <td><span class="badge badge-med">A02</span></td>
+              <td><code>.env.example:9-15</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+              <td><strong>Firebase config uses <code>NEXT_PUBLIC_</code> prefix</strong> — API key, project ID, etc. are client-exposed by design. However, <strong>no App Check</strong> is configured to restrict which origins can call the Firebase API.</td>
+              <td>Anyone can extract the Firebase config from the client bundle and use it from their own scripts/Postman to spam <code>contactSubmissions</code> with valid payloads. Firestore Rules validate shape but cannot verify origin. Firebase App Check would enforce that only requests from the real domain are accepted.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-008</td>
+              <td><span class="badge badge-med">A10</span></td>
+              <td><code>actions/contact.ts:66-70</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+              <td><strong>Swallowed email error</strong> — <code>console.error</code> only. No alerting, no retry, no dead-letter queue.</td>
+              <td>If Resend goes down, the site owner silently stops receiving contact notifications. A recruiter submits the form, sees "success", but no email arrives and the owner never follows up. A structured error reporter (e.g., Sentry) would catch this silently.</td>
+            </tr>
+            <tr>
+              <td class="font-mono text-xs text-gray-500">SEC-009</td>
+              <td><span class="badge badge-med">A06</span></td>
+              <td><code>lib/firebase/app.ts</code></td>
+              <td class="severity-medium font-bold">Medium</td>
+              <td><strong>No Firebase App Check integration</strong>. Firestore is protected by rules, but there is no attestation layer to verify the calling client is the legitimate web app.</td>
+              <td>An attacker extracts the Firebase config from the compiled JS bundle and writes a script that submits thousands of valid (Zod-conforming) contact submissions from a Node.js script. Firestore Rules pass because the shape is valid. Only App Check would block non-browser / non-origin requests.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════ ✅ SECURE PATTERNS ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">✅ Secure Patterns — What's Done Right</h2>
+      <p class="text-sm text-gray-500 mb-6">Patterns that align with OWASP and official framework recommendations.</p>
+      <div class="glass rounded-xl p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Firestore Rules</strong> — deny-all catch-all + create-only with <code>hasOnly()</code> + type/length validators + <code>createdAt == request.time</code> server timestamp enforcement</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Storage Rules</strong> — deny-all. No public read/write. Ready for future gated uploads</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Server Actions</strong> — <code>"use server"</code> + <code>import "server-only"</code> double boundary. CSRF handled by Next.js automatically</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Triple Validation</strong> — Client Zod → Server Zod → Firestore Rules. Defense-in-depth</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>XSS-safe JSON-LD</strong> — <code>jsonLd()</code> replaces <code>&lt;</code> with <code>\\u003c</code> to prevent script breakout</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Honeypot spam defense</strong> — hidden <code>company_url</code> field with <code>z.string().max(0)</code> + silent 200 response</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Firebase Admin isolation</strong> — <code>FIREBASE_SERVICE_ACCOUNT_KEY_B64</code> never prefixed <code>NEXT_PUBLIC_</code>. Base64-decoded at runtime only</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Resend API key server-only</strong> — <code>RESEND_API_KEY</code> never exposed to client bundle</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>No eval()</strong> — zero occurrences across entire codebase</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Firebase singleton</strong> — <code>getApps()</code> guard prevents duplicate initialization on HMR/RSC</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Analytics deferred</strong> — <code>requestIdleCallback</code> + <code>isSupported()</code> + dynamic import. Never blocks first paint</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Bundle isolation</strong> — Firebase Analytics split from Firestore via separate <code>lib/firebase/app.ts</code> boundary</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong>Custom ThemeProvider</strong> — replaces <code>next-themes</code> to avoid React 19 client-script warning</span></div>
+          <div class="flex items-start gap-2"><span class="h-2 w-2 rounded-full bg-green-500 mt-1.5 shrink-0"></span><span class="text-sm"><strong><code>optimizePackageImports</code></strong> — tree-shakes Firebase, drei, Mermaid barrel imports</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ 🛠️ THE ARCHITECT'S SOLUTIONS ═══════ -->
+    <section>
+      <h2 class="text-2xl font-light tracking-tight text-white mb-1">🛠️ The Architect's Solutions</h2>
+      <p class="text-sm text-gray-500 mb-6">Production-ready code fixes for each finding, based on official documentation.</p>
+
+      <!-- SEC-001 + SEC-002 + SEC-005: middleware.ts -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">SEC-001 / SEC-002 / SEC-005 — Add <code>middleware.ts</code> with Security Headers</h3>
+        <p class="text-xs text-gray-400 mb-1">Create: <code>middleware.ts</code> at project root</p>
+        <p class="text-sm text-gray-300 mb-3">Per <a href="https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy" target="_blank">Next.js docs</a>, use middleware to inject CSP + security headers on every response.</p>
+        <pre><code class="text-green-400">// middleware.ts — Security headers for every response
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+
+  // CSP policy — strict nonce-based script-src
+  const csp = [
+    `default-src 'self'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `style-src 'self' 'unsafe-inline'`,  // Tailwind injects styles
+    `img-src 'self' data: blob: https:`,
+    `font-src 'self' https://fonts.gstatic.com`,
+    `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com`,
+    `frame-ancestors 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+  ].join("; ");
+
+  const response = NextResponse.next();
+
+  // OWASP-recommended headers
+  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-DNS-Prefetch-Control", "on");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  response.headers.set("Strict-Transport-Security",
+    "max-age=63072000; includeSubDomains; preload");
+
+  // Pass nonce to Server Components via header
+  response.headers.set("x-nonce", nonce);
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    // Match all paths except static assets and _next internals
+    "/((?!_next/static|_next/image|favicon.ico|assets/).*)",
+  ],
+};</code></pre>
+      </div>
+
+      <!-- SEC-003: Rate limiting -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">SEC-003 — Rate Limit Server Actions</h3>
+        <p class="text-xs text-gray-400 mb-1">Create: <code>lib/rate-limit.ts</code></p>
+        <p class="text-sm text-gray-300 mb-3">Sliding-window IP-based rate limiter. Use in both Server Actions.</p>
+        <pre><code class="text-green-400">// lib/rate-limit.ts — In-memory sliding window rate limiter
+const windowMs = 15 * 60 * 1000; // 15 minutes
+const maxRequests = 5;           // 5 submissions per window
+
+const hits = new Map&lt;string, number[]&gt;();
+
+export function rateLimit(ip: string): { ok: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const timestamps = (hits.get(ip) ?? []).filter(t =&gt; now - t &lt; windowMs);
+
+  if (timestamps.length &gt;= maxRequests) {
+    const oldest = timestamps[0];
+    return { ok: false, retryAfter: Math.ceil((oldest + windowMs - now) / 1000) };
+  }
+
+  timestamps.push(now);
+  hits.set(ip, timestamps);
+  return { ok: true };
+}
+
+// Usage in Server Action:
+// import { headers } from "next/headers";
+// import { rateLimit } from "@/lib/rate-limit";
+//
+// const hdrs = await headers();
+// const ip = hdrs.get("x-forwarded-for") ?? "unknown";
+// const limit = rateLimit(ip);
+// if (!limit.ok) {
+//   return { ok: false, error: `Too many requests. Try again in ${limit.retryAfter}s.` };
+// }</code></pre>
+      </div>
+
+      <!-- SEC-004: Source maps -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">SEC-004 — Disable Production Source Maps</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>next.config.ts:8</code></p>
+        <pre><code class="text-red-400">- productionBrowserSourceMaps: true,</code>
+<code class="text-green-400">+ // productionBrowserSourceMaps: false,  // default — don't ship source maps</code></pre>
+        <p class="text-sm text-gray-300 mt-2">If you need source maps for Sentry/error tracking, use <code>hidden-source-map</code> or upload them to the error service at build time instead of serving them publicly.</p>
+      </div>
+
+      <!-- SEC-007 + SEC-009: App Check -->
+      <div class="mb-10">
+        <h3 class="text-lg text-white font-medium mb-1">SEC-007 / SEC-009 — Enable Firebase App Check</h3>
+        <p class="text-xs text-gray-400 mb-1">File: <code>lib/firebase/app.ts</code></p>
+        <pre><code class="text-green-400">// Add after initializeApp:
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+
+// Only in browser
+if (typeof window !== "undefined") {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(
+      process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
+    ),
+    isTokenAutoRefreshEnabled: true,
+  });
+}</code></pre>
+        <p class="text-sm text-gray-300 mt-2">Then enable App Check enforcement in Firebase Console → App Check → Firestore. This ensures only requests from the real web app (verified by reCAPTCHA v3) can write to Firestore, blocking scripted abuse.</p>
+      </div>
+
+    </section>
+
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer class="border-t border-white/10 mt-16 py-8 text-center">
+      <p class="text-[10px] uppercase tracking-[0.3em] text-gray-600">
+        Generated by zenith-qa-architect-duo · The Architect · 6 Jun 2026
+      </p>
+    </footer>
+  </main>
+
+</body>
+</html>
