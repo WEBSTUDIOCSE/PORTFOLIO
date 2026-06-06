@@ -1,7 +1,7 @@
 'use client';
 
-import { useThree } from '@react-three/fiber';
-import { useLayoutEffect } from 'react';
+import { useThree, useFrame } from '@react-three/fiber';
+import { useEffect, useRef } from 'react';
 
 // Fits the orthographic camera so a `targetWidth` x `targetHeight`
 // rectangle (world units) is visible. Re-runs on every canvas resize
@@ -45,7 +45,14 @@ export default function AutoFitOrtho({
   const sizeW = useThree((s) => s.size.width);
   const sizeH = useThree((s) => s.size.height);
 
-  useLayoutEffect(() => {
+  const needsUpdate = useRef(true);
+
+  useEffect(() => {
+    needsUpdate.current = true;
+  }, [camera, sizeW, sizeH, targetWidth, targetHeight, padding, groundY, bottomMargin]);
+
+  useFrame(() => {
+    if (!needsUpdate.current) return;
     if (!camera.isOrthographicCamera) return;
     if (sizeW < 100 || sizeH < 100) return;
 
@@ -66,7 +73,9 @@ export default function AutoFitOrtho({
     camera.position.set(0, targetY + Y_OFF, Z_OFF);
     camera.lookAt(0, targetY, 0);
     camera.updateProjectionMatrix();
-  }, [camera, sizeW, sizeH, targetWidth, targetHeight, padding, groundY, bottomMargin]);
+
+    needsUpdate.current = false;
+  });
 
   return null;
 }

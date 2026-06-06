@@ -1,6 +1,8 @@
 "use server";
 
 import "server-only";
+import { headers } from "next/headers";
+import { rateLimit } from "@/lib/rate-limit";
 import { sendContactEmail } from "@/lib/email/resend";
 import {
   contactSchema,
@@ -27,6 +29,13 @@ export type ContactResult =
 export async function notifyContact(
   formData: FormData,
 ): Promise<ContactResult> {
+  const hdrs = await headers();
+  const ip = hdrs.get("x-forwarded-for") ?? "unknown";
+  const limit = rateLimit(ip);
+  if (!limit.ok) {
+    return { ok: false, error: `Too many requests. Try again in ${limit.retryAfter}s.` };
+  }
+
   const honeypot = formData.get("company_url");
   if (typeof honeypot === "string" && honeypot.length > 0) {
     // Silent success — bot doesn't get told it was caught.
@@ -67,7 +76,7 @@ export async function notifyContact(
     await sendContactEmail({ name, email, message });
   } catch (err) {
     console.error("[contact] email send failed:", err);
-    // Don't fail the user — the form submission is recorded.
+    return { ok: false, error: "Failed to send email notification. Please try again later." };
   }
 
   return { ok: true };

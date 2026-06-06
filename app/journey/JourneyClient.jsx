@@ -2,6 +2,7 @@
 
 import * as THREE from 'three';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useIsMounted } from '@/lib/use-is-mounted';
 import Image from 'next/image';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF } from '@react-three/drei';
@@ -34,8 +35,7 @@ const AUTOPLAY_PAUSE_MS = 5000;
 
 export default function JourneyClient() {
   // Mount-gate: skip Canvas during SSR/hydration.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsMounted();
 
   // globals.css sets `html { scroll-behavior: smooth }` so anchor
   // links elsewhere on the site feel polished. Here it actively hurts:
@@ -73,7 +73,9 @@ export default function JourneyClient() {
   // the latest value without re-subscribing.
   const [storyComplete, setStoryComplete] = useState(false);
   const storyCompleteRef = useRef(false);
-  storyCompleteRef.current = storyComplete;
+  useEffect(() => {
+    storyCompleteRef.current = storyComplete;
+  }, [storyComplete]);
 
   // Autoplay: train auto-advances through stations with a short halt
   // at each. Any user-initiated scroll cancels playback.
@@ -218,7 +220,7 @@ export default function JourneyClient() {
 
   if (!mounted) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-[#bfd8e8] text-[#2a241c] text-xs tracking-[0.2em] uppercase font-mono">
+      <div className="w-screen h-screen flex items-center justify-center bg-background text-foreground text-xs tracking-[0.2em] uppercase font-mono">
         Loading the diorama
       </div>
     );

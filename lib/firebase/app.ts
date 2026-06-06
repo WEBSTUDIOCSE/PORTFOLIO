@@ -42,6 +42,7 @@ import {
   type FirebaseApp,
   type FirebaseOptions,
 } from "firebase/app";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 function missing(name: string): Error {
   return new Error(
@@ -90,5 +91,15 @@ function buildConfig(): FirebaseOptions {
 export function getFirebaseApp(): FirebaseApp {
   const existing = getApps();
   if (existing.length > 0) return existing[0];
-  return initializeApp(buildConfig());
+  
+  const app = initializeApp(buildConfig());
+  
+  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+      isTokenAutoRefreshEnabled: true,
+    });
+  }
+
+  return app;
 }

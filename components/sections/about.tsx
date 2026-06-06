@@ -27,7 +27,6 @@ export default function About() {
                 // effective render width is ~1.8× the box — declare a larger
                 // `sizes` (+ high quality) or it upscales and looks blurry.
                 sizes="512px"
-                quality={90}
                 className="object-cover"
                 style={{ objectPosition: "center 18%" }}
               />

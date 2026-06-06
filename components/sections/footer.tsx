@@ -9,6 +9,7 @@
 
 import Link from "next/link";
 import { SOCIAL_ICONS, type SocialIconName } from "@/components/social-icons";
+import ScrollToTop from "@/components/scroll-to-top";
 
 const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "/#work" },
@@ -107,12 +108,9 @@ export default function Footer() {
             <p className="text-[10px] leading-relaxed text-muted-foreground">
               All company logos are property of their respective owners.
             </p>
-            <a
-              href="#"
-              className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground transition-colors hover:text-primary"
-            >
+            <ScrollToTop className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground transition-colors hover:text-primary">
               Back to top ↑
-            </a>
+            </ScrollToTop>
           </div>
         </div>
       </div>
