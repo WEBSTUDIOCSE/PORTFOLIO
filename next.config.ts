@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // "valid source maps" best-practice passes and prod stack traces
   // are debuggable. Trade-off: ships .map files (source is visible),
   // which is acceptable for a portfolio.
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
 
   // Image optimization config.
   // - `formats` order = preferred → fallback. AVIF is ~30% smaller

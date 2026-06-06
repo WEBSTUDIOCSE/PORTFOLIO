@@ -9,7 +9,6 @@ import {
   Architects_Daughter,
   Dancing_Script,
 } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider, ThemeScript } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";

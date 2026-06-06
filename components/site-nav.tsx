@@ -207,7 +207,7 @@ export default function SiteNav() {
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        inert={!mobileOpen}
+        inert={!mobileOpen ? true : undefined}
         className={`fixed inset-0 z-40 flex flex-col bg-background/95 backdrop-blur-md transition-opacity duration-300 md:hidden ${
           mobileOpen
             ? "pointer-events-auto opacity-100"

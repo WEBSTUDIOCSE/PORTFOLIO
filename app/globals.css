@@ -35,7 +35,7 @@
 /* shadcn-style class-based dark mode. next-themes (attribute="class")
    adds `class="dark"` to <html>; this @custom-variant makes the
    `dark:` Tailwind utility key off that class. */
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   /* shadcn semantic color tokens — paired background/foreground.

@@ -104,7 +104,7 @@ export default function TCInvite() {
   }, [visible, dismissed]);
 
   useEffect(() => {
-    if (dismissed) return null;
+    if (dismissed) return;
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
@@ -202,6 +202,7 @@ export default function TCInvite() {
               className="hidden"
             />
           )}
+          <span className="sr-only">Animated ticket checker character inviting you to take the journey.</span>
           <canvas
             ref={canvasRef}
             aria-hidden="true"

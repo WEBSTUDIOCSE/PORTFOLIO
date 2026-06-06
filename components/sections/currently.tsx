@@ -10,7 +10,7 @@
 // (and the Now / Listening / Reading lines) whenever you touch them.
 // TODO(saurabh): refresh UPDATED + the lines below every fortnight.
 
-const UPDATED = "May 2026";
+const UPDATED = "June 2026";
 
 const BUILDING_WITH = [
   "Next.js 16",

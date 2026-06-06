@@ -4,14 +4,14 @@
 // Replaces the static platform background with an animated, cinematic
 // "Press Start" / "Scroll to Begin" title screen sequence.
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useIsMounted } from '@/lib/use-is-mounted';
 
 export default function GameIntro({ scrollT, index }) {
   const opacity = Math.max(0, 1 - Math.abs(scrollT - index));
   const active = opacity > 0.5;
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsMounted();
 
   return (
     <section
