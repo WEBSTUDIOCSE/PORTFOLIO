@@ -71,7 +71,7 @@ export default function Contact() {
     >
       <div className="mx-auto max-w-2xl">
         {/* Greeting */}
-        <div className="text-center">
+        <div className="text-center" data-reveal>
           <p className="font-greet text-5xl text-primary sm:text-6xl md:text-7xl">
             Hola.
           </p>
@@ -88,10 +88,10 @@ export default function Contact() {
 
         {/* Primary CTA — surface the real address so the reader
             doesn't have to wonder where the button leads. */}
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex justify-center" data-reveal>
           <a
             href={`mailto:${EMAIL}`}
-            className="group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3.5 text-base font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 sm:px-8 sm:py-4 sm:text-lg"
+            className="group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3.5 text-base font-medium text-primary-foreground shadow-sm transition-[transform,box-shadow,background-color] duration-300 ease-out hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-8 sm:py-4 sm:text-lg"
           >
             <IconMail />
             <span className="font-mono text-sm tracking-tight sm:text-base">
@@ -115,7 +115,10 @@ export default function Contact() {
           </span>
           <span aria-hidden className="h-px w-10 bg-border" />
         </div>
-        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+        <div
+          className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
+          data-reveal-stagger
+        >
           {SECONDARY_CHANNELS.map((c) => (
             <ChannelLink key={c.label} channel={c} />
           ))}

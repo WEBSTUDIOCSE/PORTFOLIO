@@ -6,7 +6,7 @@ import { ImageResponse } from "next/og";
 // CSS — flexbox layout, no grid, no @media queries.
 
 export const alt =
-  "Saurabh Jadhav — Frontend & AI Engineer. I build systems that replace headcount.";
+  "Saurabh Jadhav — Full Stack & AI Engineer. I build systems that replace headcount.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -95,7 +95,7 @@ export default async function Image() {
                 fontFamily: "sans-serif",
               }}
             >
-              Frontend &amp; AI Engineer · Mumbai
+              Full Stack &amp; AI Engineer · Mumbai
             </div>
           </div>
         </div>

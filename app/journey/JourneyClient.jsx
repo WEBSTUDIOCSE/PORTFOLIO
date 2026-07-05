@@ -246,6 +246,11 @@ export default function JourneyClient() {
       {/* Section-A base backdrop — sky-blue. Always rendered. */}
       <div className="journey-platform-bg" aria-hidden="true" />
 
+      {/* Cinematic vignette — darkened corners above the Canvas,
+          below the overlays. Pure CSS; frames the diorama like a
+          lensed miniature. */}
+      <div className="journey-vignette" aria-hidden="true" />
+
       {/* Cinematic Game Intro for Station 0 */}
       <GameIntro scrollT={scrollT} index={0} />
 

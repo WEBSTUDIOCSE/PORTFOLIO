@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { FEATURED_PROJECTS, type Project } from "@/lib/projects";
 
-// Selected Work — the section recruiters spend the most time on.
-// Per research, 4-6 projects in this format gets the highest
-// callback rate. Each card surfaces:
-//   - number (P-001) for scannability
-//   - title in serif display
-//   - one-liner with role + year
-//   - tech stack chips
-//   - METRIC callout (the recruiter-bait)
-//   - optional handwritten annotation
+// Selected Work — editorial project index. Not cards: full-width
+// hairline-ruled rows, the way a printed portfolio lists plates.
+// Each row leads with an oversized Fraunces title (the project's
+// short name), backed by the one-liner, stack chips, and the
+// recruiter-bait metric on the right rail. The whole row is a door
+// (stretched-link pattern) with a "Case study →" cue.
 //
-// First card is featured/large so the layer-cake scan lands there.
+// Motion (via <ScrollFX/>): header fades up, rows stagger in, and
+// on hover the title nudges right while the row picks up a subtle
+// card-tone wash — quiet, editorial, no gimmicks.
+
+// Titles in lib/projects.ts read "Name — descriptor". The index
+// shows the name huge and the descriptor as a serif deck below it.
+function splitTitle(title: string): [string, string | null] {
+  const [name, ...rest] = title.split(" — ");
+  return [name, rest.length > 0 ? rest.join(" — ") : null];
+}
 
 export default function SelectedWork() {
-  const [hero, ...rest] = FEATURED_PROJECTS;
-
   return (
     <section
       id="work"
@@ -23,179 +27,123 @@ export default function SelectedWork() {
     >
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
-        <header className="mb-12 max-w-2xl">
+        <header className="mb-14 max-w-2xl" data-reveal>
           <p className="font-hand text-2xl text-primary">selected work</p>
           <h2 className="mt-1 font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl">
             What I&rsquo;ve built.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Six projects spanning founding-engineer SaaS work, mobile,
-            realtime systems, edge ML, open source, and personal craft.
-            Each links out to a deeper write-up or live demo.
+            Autonomous multi-agent systems, a live AI SaaS, and
+            self-running content platforms — designed, built, and
+            shipped end to end by one engineer.
           </p>
+          <span
+            aria-hidden
+            data-fx-line
+            className="mt-6 block h-px w-24 bg-primary/60"
+          />
         </header>
 
-        {/* Featured project (large) */}
-        {hero && <FeaturedCard project={hero} />}
-
-        {/* Remaining projects (grid) */}
-        {rest.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {rest.map((p) => (
-              <ProjectCard key={p.slug} project={p} />
-            ))}
-          </div>
-        )}
+        {/* Project index */}
+        <div data-reveal-stagger>
+          {FEATURED_PROJECTS.map((p, i) => (
+            <ProjectRow key={p.slug} project={p} index={i} />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function FeaturedCard({ project }: { project: Project }) {
+function ProjectRow({ project, index }: { project: Project; index: number }) {
+  const [name, descriptor] = splitTitle(project.title);
+
   return (
-    <CardShell project={project} variant="featured">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
-        <div className="md:col-span-3">
-          <ProjectNumber project={project} />
-          <h3 className="mt-3 font-display text-3xl font-light leading-tight tracking-tight text-foreground sm:text-4xl">
-            {project.title}
-          </h3>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-foreground">
-            {project.oneLiner}
+    <article className="group relative -mx-4 grid grid-cols-1 gap-x-8 gap-y-6 rounded-lg border-t border-border px-4 py-10 transition-colors duration-300 hover:bg-card/50 sm:-mx-6 sm:px-6 md:grid-cols-12 md:py-14 last:border-b last:border-b-border">
+      {/* Index + meta rail */}
+      <div className="flex items-baseline gap-x-5 md:col-span-2 md:flex-col md:gap-y-3">
+        <p
+          aria-hidden
+          className="font-display text-3xl font-light leading-none text-muted-foreground/50 transition-colors duration-300 group-hover:text-primary md:text-4xl"
+        >
+          {String(index + 1).padStart(2, "0")}
+        </p>
+        <div className="flex flex-wrap items-baseline gap-x-4 md:flex-col md:gap-y-1.5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            {project.number}
           </p>
-          <ProjectMeta project={project} className="mt-4" />
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            {project.year}
+          </p>
         </div>
-        <div className="flex flex-col gap-4 md:col-span-2 md:items-end md:justify-end md:text-right">
-          {project.metric && <Metric value={project.metric} large />}
-          <StackChips stack={project.stack} alignEnd />
-          {project.highlight && (
-            <p className="font-hand-note text-base text-muted-foreground">
-              {project.highlight}
-            </p>
+      </div>
+
+      {/* Title + story */}
+      <div className="md:col-span-7">
+        <h3 className="font-display text-4xl font-light leading-[1.05] tracking-tight text-foreground transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 sm:text-5xl">
+          {name}
+        </h3>
+        {descriptor && (
+          <p className="mt-2 font-display text-lg font-light text-muted-foreground sm:text-xl">
+            {descriptor}
+          </p>
+        )}
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {project.oneLiner}
+        </p>
+        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          {project.role}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {project.stack.slice(0, 6).map((s) => (
+            <span
+              key={s}
+              className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+            >
+              {s}
+            </span>
+          ))}
+          {project.stack.length > 6 && (
+            <span className="rounded-full border border-dashed border-border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+              +{project.stack.length - 6} more
+            </span>
           )}
         </div>
       </div>
-    </CardShell>
-  );
-}
 
-function ProjectCard({ project }: { project: Project }) {
-  return (
-    <CardShell project={project}>
-      <ProjectNumber project={project} />
-      <h3 className="mt-2 font-display text-xl font-light leading-tight tracking-tight text-foreground sm:text-2xl">
-        {project.title}
-      </h3>
-      <p className="mt-2 text-sm leading-relaxed text-foreground">
-        {project.oneLiner}
-      </p>
-      <ProjectMeta project={project} className="mt-3" />
-      {project.metric && (
-        <div className="mt-4">
-          <Metric value={project.metric} />
-        </div>
-      )}
-      <StackChips stack={project.stack} className="mt-4" />
-      {project.highlight && (
-        <p className="font-hand-note mt-3 text-sm text-muted-foreground">
-          {project.highlight}
+      {/* Right rail — metric, annotation, cue */}
+      <div className="flex flex-col gap-3 md:col-span-3 md:items-end md:text-right">
+        {project.metric && (
+          <p className="font-display text-xl font-medium tracking-tight text-primary md:text-2xl">
+            {project.metric}
+          </p>
+        )}
+        {project.highlight && (
+          <p className="font-hand-note text-sm text-muted-foreground">
+            {project.highlight}
+          </p>
+        )}
+        <p className="mt-auto flex items-center gap-1.5 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground transition-colors group-hover:text-primary">
+          Case study
+          <span
+            aria-hidden
+            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none"
+          >
+            →
+          </span>
         </p>
-      )}
-    </CardShell>
-  );
-}
+      </div>
 
-function CardShell({
-  project,
-  children,
-  variant = "default",
-}: {
-  project: Project;
-  children: React.ReactNode;
-  variant?: "default" | "featured";
-}) {
-  const padding =
-    variant === "featured" ? "p-6 sm:p-10" : "p-5 sm:p-6";
-  const cls = `group relative block rounded-lg border border-border bg-card text-card-foreground transition-colors hover:border-primary/40 ${padding}`;
-
-  // Card uses the clickable block pattern: the actual <a> tag is inside 
-  // the title, but a pseudo-element stretches it to cover the entire card.
-  // This prevents screen readers from reading the entire card contents as a single link.
-  return (
-    <div className={cls}>
-      {children}
-      <Link 
-        href={`/work/${project.slug}`} 
+      {/* Stretched link — the whole row is clickable; the sr-only
+          label keeps screen readers from reading the row as one
+          giant link name. */}
+      <Link
+        href={`/work/${project.slug}`}
         className="absolute inset-0 z-10 rounded-lg"
         aria-label={`View project details for ${project.title}`}
       >
         <span className="sr-only">View project</span>
       </Link>
-    </div>
-  );
-}
-
-function ProjectNumber({ project }: { project: Project }) {
-  return (
-    <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-      {project.number}
-    </p>
-  );
-}
-
-function ProjectMeta({
-  project,
-  className = "",
-}: {
-  project: Project;
-  className?: string;
-}) {
-  return (
-    <p
-      className={`font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground ${className}`}
-    >
-      {project.role} · {project.year}
-    </p>
-  );
-}
-
-function Metric({ value, large = false }: { value: string; large?: boolean }) {
-  return (
-    <p
-      className={
-        large
-          ? "font-display text-2xl font-medium tracking-tight text-primary sm:text-3xl"
-          : "font-display text-lg font-medium tracking-tight text-primary"
-      }
-    >
-      {value}
-    </p>
-  );
-}
-
-function StackChips({
-  stack,
-  className = "",
-  alignEnd = false,
-}: {
-  stack: string[];
-  className?: string;
-  alignEnd?: boolean;
-}) {
-  return (
-    <div
-      className={`flex flex-wrap gap-1.5 ${
-        alignEnd ? "md:justify-end" : ""
-      } ${className}`}
-    >
-      {stack.map((s) => (
-        <span
-          key={s}
-          className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
-        >
-          {s}
-        </span>
-      ))}
-    </div>
+    </article>
   );
 }

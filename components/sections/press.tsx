@@ -48,7 +48,7 @@ export default function Press() {
       className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-6xl">
-        <header className="mb-10 max-w-2xl">
+        <header className="mb-10 max-w-2xl" data-reveal>
           <p className="font-hand text-2xl text-primary">on linkedin</p>
           <h2 className="mt-1 font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl">
             Posts that traveled.
@@ -59,14 +59,14 @@ export default function Press() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3" data-reveal-stagger>
           {POSTS.map((post) => (
             <Link
               key={post.key}
               href={linkedinPostUrl(post.urn)}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col rounded-lg border border-border bg-card p-5 text-card-foreground transition-colors hover:border-primary/40"
+              className="group flex flex-col rounded-lg border border-border bg-card p-5 text-card-foreground transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-foreground/[0.06] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             >
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 {post.projectNumber}

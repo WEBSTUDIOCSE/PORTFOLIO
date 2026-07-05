@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import ThemeToggle from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
   title: "Style Guide — Saurabh Jadhav",
@@ -347,12 +346,7 @@ const COMPONENTS_IN_USE = [
   {
     name: "ThemeProvider",
     path: "lib/theme.tsx",
-    note: "Wraps next-themes. attribute='class', defaultTheme='system', disableTransitionOnChange.",
-  },
-  {
-    name: "ThemeToggle",
-    path: "components/theme-toggle.tsx",
-    note: "Pill toggle with Light / Dark segments. Uses resolvedTheme, mounted-state guard.",
+    note: "Dark-only static context. The site ships a permanent dark class on <html>.",
   },
   {
     name: "CharacterScroll",
@@ -387,7 +381,7 @@ const COMPONENTS_IN_USE = [
   {
     name: "SiteNav",
     path: "components/site-nav.tsx",
-    note: "Global sticky nav. Fade-in on scroll on /; always visible elsewhere. Mobile hamburger overlay. Hosts the ThemeToggle.",
+    note: "Global sticky nav. Fade-in on scroll on /; always visible elsewhere. Mobile hamburger overlay. Hosts the brand chip + links.",
   },
   {
     name: "Project detail page",
@@ -490,7 +484,6 @@ export default function StyleGuidePage() {
               Style Guide
             </h1>
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
@@ -500,8 +493,8 @@ export default function StyleGuidePage() {
           <p className="font-hand text-2xl text-primary">A living reference.</p>
           <p className="mt-3 text-base text-muted-foreground leading-relaxed">
             Every colour, font and component used across this site, with the
-            names you can point at when you want something changed. Toggle
-            light / dark above — swatches update live.
+            names you can point at when you want something changed. The
+            site is dark-only; light values below are historical.
           </p>
         </section>
 

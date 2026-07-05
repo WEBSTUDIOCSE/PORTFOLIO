@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/lib/theme";
-import ThemeToggle from "@/components/theme-toggle";
 import { useIsMounted } from "@/lib/use-is-mounted";
 
 // Source frame numbers — frame 60 is missing on disk, so we skip it.
@@ -418,13 +417,10 @@ export default function CharacterScroll() {
             Saurabh Jadhav
           </h1>
           <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px] sm:tracking-[0.2em]">
-            <span className="sm:hidden">FE &amp; AI · Mumbai</span>
-            <span className="hidden sm:inline">Frontend &amp; AI Engineer · Mumbai</span>
+            <span className="sm:hidden">Full Stack &amp; AI · Mumbai</span>
+            <span className="hidden sm:inline">Full Stack &amp; AI Engineer · Mumbai</span>
           </p>
         </header>
-
-        {/* Mode toggle — top-right. */}
-        <ThemeToggle className="absolute right-4 top-5 z-40 sm:right-10 sm:top-8" />
 
         {/* Canvas — replaces <img>. drawImage is atomic with the
             paint, so no blank "in-between" frame during rapid scroll
@@ -457,7 +453,7 @@ export default function CharacterScroll() {
           style={{ opacity: 0 }}
         >
           <h1 className="font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Frontend &amp; AI Engineer
+            Full Stack &amp; AI Engineer
           </h1>
           <p className="text-base text-muted-foreground sm:text-lg">
             3+ years · Mumbai

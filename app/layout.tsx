@@ -10,7 +10,7 @@ import {
   Dancing_Script,
 } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider, ThemeScript } from "@/lib/theme";
+import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
 import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
@@ -76,12 +76,12 @@ const architectsDaughter = Architects_Daughter({
 // previews work everywhere.
 export const metadata: Metadata = {
   metadataBase: new URL("https://saurabhjadhav.in"),
-  title: "Saurabh Jadhav — Frontend & AI Engineer",
+  title: "Saurabh Jadhav — Full Stack & AI Engineer",
   description:
     "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
   keywords: [
     "Saurabh Jadhav",
-    "Frontend Developer",
+    "Full Stack Developer",
     "AI Engineer",
     "Next.js",
     "React",
@@ -98,13 +98,13 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://saurabhjadhav.in",
     siteName: "Saurabh Jadhav",
-    title: "Saurabh Jadhav — Frontend & AI Engineer",
+    title: "Saurabh Jadhav — Full Stack & AI Engineer",
     description:
       "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Saurabh Jadhav — Frontend & AI Engineer",
+    title: "Saurabh Jadhav — Full Stack & AI Engineer",
     description:
       "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
     creator: "@saurabhjadhav",
@@ -150,12 +150,12 @@ const ROOT_JSON_LD = {
       "@id": PERSON_ID,
       name: "Saurabh Jadhav",
       alternateName: "सौरभ जाधव",
-      jobTitle: "Frontend & AI Engineer",
+      jobTitle: "Full Stack & AI Engineer",
       url: SITE_URL,
       image: `${SITE_URL}/opengraph-image`,
       email: "mailto:saurabhjadhav.cse@gmail.com",
       description:
-        "Frontend & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+        "Full Stack & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Mumbai",
@@ -192,7 +192,7 @@ const ROOT_JSON_LD = {
         "shadcn/ui",
         "Multi-agent AI systems",
         "Generative AI",
-        "Frontend Engineering",
+        "Full Stack Development",
         "Web Performance",
       ],
     },
@@ -202,7 +202,7 @@ const ROOT_JSON_LD = {
       url: SITE_URL,
       name: "Saurabh Jadhav",
       description:
-        "Portfolio of Saurabh Jadhav — Frontend & AI Engineer based in Mumbai.",
+        "Portfolio of Saurabh Jadhav — Full Stack & AI Engineer based in Mumbai.",
       publisher: { "@id": PERSON_ID },
       inLanguage: "en-IN",
     },
@@ -220,11 +220,12 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} ${caveat.variable} ${permanentMarker.variable} ${architectsDaughter.variable} ${dancingScript.variable} h-full antialiased`}
+      // Dark-only: the class ships from the server, so there is no
+      // theme flash and no no-flash script. See lib/theme.tsx.
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${tiroDevanagari.variable} ${caveat.variable} ${permanentMarker.variable} ${architectsDaughter.variable} ${dancingScript.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
-        <ThemeScript nonce={nonce} />
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"

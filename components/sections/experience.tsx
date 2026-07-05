@@ -51,22 +51,35 @@ export default function Experience() {
     >
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
-        <header className="mb-12 max-w-2xl">
+        <header className="mb-12 max-w-2xl" data-reveal>
           <p className="font-hand text-2xl text-primary">experience</p>
           <h2 className="mt-1 font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl">
             Where I&rsquo;ve worked.
           </h2>
+          <span aria-hidden data-fx-line className="mt-6 block h-px w-24 bg-primary/60" />
         </header>
 
-        {/* Roles — vertical timeline */}
-        <div className="space-y-10 sm:space-y-12">
-          {ROLES.map((role, i) => (
-            <RoleCard key={`${role.company}-${i}`} role={role} />
-          ))}
+        {/* Roles — vertical timeline. The rail (md+) draws downward in
+            lockstep with scroll (data-fx-rail, scrubbed by ScrollFX);
+            each role carries a station-dot on the rail. */}
+        <div className="relative md:pl-10">
+          <span
+            aria-hidden
+            data-fx-rail
+            className="absolute bottom-2 left-[3.5px] top-2 hidden w-px bg-primary/30 md:block"
+          />
+          <div className="space-y-10 sm:space-y-12">
+            {ROLES.map((role, i) => (
+              <RoleCard key={`${role.company}-${i}`} role={role} />
+            ))}
+          </div>
         </div>
 
         {/* Education + Certifications — sub-section */}
-        <div className="mt-16 grid grid-cols-1 gap-10 border-t border-border pt-12 md:grid-cols-2 md:gap-16">
+        <div
+          className="mt-16 grid grid-cols-1 gap-10 border-t border-border pt-12 md:grid-cols-2 md:gap-16"
+          data-reveal-stagger
+        >
           <div>
             <Subheading>Education</Subheading>
             <div className="mt-6 space-y-5">
@@ -91,7 +104,17 @@ export default function Experience() {
 
 function RoleCard({ role }: { role: Role }) {
   return (
-    <article className="grid grid-cols-1 gap-6 md:grid-cols-12">
+    <article className="relative grid grid-cols-1 gap-6 md:grid-cols-12" data-reveal>
+      {/* Station dot on the timeline rail (md+). Sits over the rail
+          drawn by the parent wrapper; current role gets a soft halo. */}
+      <span
+        aria-hidden
+        className={`absolute -left-10 top-2 hidden h-2 w-2 rounded-full border-2 border-primary md:block ${
+          role.current
+            ? "bg-primary shadow-[0_0_0_4px] shadow-primary/20"
+            : "bg-background"
+        }`}
+      />
       {/* Dates column */}
       <aside className="md:col-span-3">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
