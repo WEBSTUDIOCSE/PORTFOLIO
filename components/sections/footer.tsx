@@ -34,14 +34,17 @@ export default function Footer() {
   return (
     <footer className="border-t border-border bg-background px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-6xl">
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 sm:gap-8">
+        <div
+          className="grid grid-cols-2 gap-10 sm:grid-cols-4 sm:gap-8"
+          data-reveal="fade"
+        >
           {/* Brand + colophon */}
           <div className="col-span-2">
             <p className="font-display text-lg font-medium tracking-tight text-foreground">
               Saurabh Jadhav
             </p>
             <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Frontend &amp; AI Engineer
+              Full Stack &amp; AI Engineer
             </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               I build systems that replace headcount — multi-agent AI

@@ -30,7 +30,7 @@ export const ROLES: Role[] = [
     company: "Livlong 365",
     type: "Full-time",
     role: "Software Developer",
-    subRole: "Frontend Developer",
+    subRole: "Full Stack Developer",
     dates: "Jul 2023 — Present",
     duration: "2 yrs 11 mos",
     location: "Thane, Maharashtra · On-site",

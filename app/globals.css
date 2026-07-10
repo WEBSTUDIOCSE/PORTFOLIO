@@ -112,43 +112,17 @@
   --routemap-h: 96px;
 
   /* ──────────────────────────────────────────────────────────
-     Semantic tokens — LIGHT mode (shadcn convention, OKLCH).
-     Hues approximate the brand palette above:
-       background  ≈ cream
-       foreground  ≈ ink
-       primary     ≈ rail-maroon (the brand identity colour)
-       secondary   ≈ paper (subtle elevated surfaces)
-       muted       ≈ cream-dk (chip / disabled backgrounds)
-       accent      ≈ brass (interactive hover, highlights)
-       destructive ≈ red (error states; one universal red across themes)
+     Semantic tokens — DARK ONLY (shadcn convention, OKLCH).
+     The site committed to a single dark look; the light palette
+     was removed. On near-black, maroon disappears; brass becomes
+     the dominant accent. <html> also carries a permanent `dark`
+     class (app/layout.tsx) so `dark:` utilities keep working.
+       background  ≈ ink-deep
+       foreground  ≈ cream
+       primary     ≈ brass (the accent that reads on near-black)
+       accent      ≈ rail-maroon
+       destructive ≈ red (error states)
      ────────────────────────────────────────────────────────── */
-  --background: oklch(0.929 0.018 80);          /* #efe8d8 cream */
-  --foreground: oklch(0.220 0.025 35);          /* #2a1a14 ink */
-  --card: oklch(0.948 0.022 86);                /* #f7efd9 paper */
-  --card-foreground: oklch(0.220 0.025 35);
-  --popover: oklch(0.948 0.022 86);
-  --popover-foreground: oklch(0.220 0.025 35);
-  --primary: oklch(0.380 0.120 18);             /* #7a1f2b rail-maroon */
-  --primary-foreground: oklch(0.929 0.018 80);  /* cream on maroon */
-  --secondary: oklch(0.860 0.045 88);           /* #e2d4ad cream-dk */
-  --secondary-foreground: oklch(0.220 0.025 35);
-  --muted: oklch(0.890 0.030 84);
-  --muted-foreground: oklch(0.400 0.035 50);    /* #5a4435 ink-soft */
-  --accent: oklch(0.660 0.100 75);              /* #b88c3f brass */
-  --accent-foreground: oklch(0.220 0.025 35);
-  --destructive: oklch(0.550 0.200 27);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.220 0.025 35 / 0.15);
-  --input: oklch(0.220 0.025 35 / 0.15);
-  --ring: oklch(0.380 0.120 18 / 0.5);
-}
-
-/* ──────────────────────────────────────────────────────────
-   Semantic tokens — DARK mode. Triggered by `.dark` on <html>
-   (added by next-themes when attribute="class"). On near-black,
-   maroon disappears; brass becomes the dominant accent.
-   ────────────────────────────────────────────────────────── */
-.dark {
   --background: oklch(0.080 0.008 50);          /* #0d0805 ink-deep */
   --foreground: oklch(0.929 0.018 80);          /* cream */
   --card: oklch(0.220 0.025 35);                /* ink */
@@ -174,6 +148,9 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    /* Dark-only site — native form controls, scrollbars and UA
+       chrome should render dark too. */
+    color-scheme: dark;
   }
   body {
     @apply bg-background text-foreground;
@@ -181,8 +158,44 @@
 }
 
 /* ============================================================
+   ScrollFX ornaments (home page) — see components/scroll-fx.tsx
+   ============================================================ */
+
+/* Portrait orbit ring — About section. A slow 40s spin; the dashes
+   make the rotation legible. Neutralised by the global
+   prefers-reduced-motion guard further down. */
+.fx-portrait-ring {
+  animation: fx-ring-spin 40s linear infinite;
+}
+
+@keyframes fx-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
    Journey page — Saurabh Express design
    ============================================================ */
+
+/* Cinematic vignette — sits above the Canvas (z 1) and below every
+   overlay/panel (z 5+). Darkened corners pull the eye to the train
+   and give the diorama a lensed, filmic frame. Pure CSS, zero JS. */
+.journey-vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--routemap-h, 96px);
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 45%,
+    transparent 58%,
+    rgba(13, 8, 5, 0.14) 88%,
+    rgba(13, 8, 5, 0.26) 100%
+  );
+}
 
 /* ---------- Section-A backdrop (3D platform image) ----------
    Fixed-position image behind the Canvas. Spans from the top of
@@ -924,6 +937,19 @@
   color: var(--rail-maroon-dk);
   border-color: var(--cream);
   box-shadow: 0 0 0 3px rgba(184, 140, 63, 0.3);
+  /* Breathing halo — signals "you are here" on the route map.
+     Neutralised by the global reduced-motion guard. */
+  animation: journey-medallion-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes journey-medallion-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(184, 140, 63, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(184, 140, 63, 0.12);
+  }
 }
 
 .journey-medallion__name {

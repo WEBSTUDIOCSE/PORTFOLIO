@@ -11,6 +11,7 @@ import Currently from "@/components/sections/currently";
 import Contact from "@/components/sections/contact";
 import Footer from "@/components/sections/footer";
 import TCInvite from "@/components/tc-invite";
+import ScrollFX from "@/components/scroll-fx";
 
 // Section order is research-backed (see plan file):
 //   hero → work → about → story → experience → press → testimonials →
@@ -39,6 +40,9 @@ export default function Home() {
       <Contact />
       <Footer />
       <TCInvite />
+      {/* GSAP scroll effects — deferred import, reveals via data-*
+          attributes on the sections above. See components/scroll-fx.tsx. */}
+      <ScrollFX />
     </>
   );
 }

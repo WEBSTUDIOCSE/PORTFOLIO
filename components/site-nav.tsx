@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ThemeToggle from "@/components/theme-toggle";
 
 // Floating-pill nav. Sits with breathing room from the top edge
 // (not pinned), fully rounded, generous interior padding. Pattern
@@ -176,12 +175,6 @@ export default function SiteNav() {
               </li>
             ))}
           </ul>
-
-          {/* Vertical divider — desktop only */}
-          <span aria-hidden className="hidden h-5 w-px bg-border md:block" />
-
-          {/* Theme toggle */}
-          <ThemeToggle />
 
           {/* Mobile hamburger — visible only when desktop links hide */}
           <button

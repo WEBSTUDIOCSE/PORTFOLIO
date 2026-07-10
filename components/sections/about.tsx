@@ -17,39 +17,55 @@ export default function About() {
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-5 md:gap-16">
           {/* Portrait */}
-          <div className="flex flex-col items-center md:col-span-2 md:items-start">
-            <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border bg-muted sm:h-64 sm:w-64">
-              <Image
-                src="/assets/saurabh/ezgif-frame-120.webp"
-                alt="Saurabh Jadhav"
-                fill
-                // `object-cover` crops the 16:9 source into a circle, so the
-                // effective render width is ~1.8× the box — declare a larger
-                // `sizes` (+ high quality) or it upscales and looks blurry.
-                sizes="512px"
-                className="object-cover"
-                style={{ objectPosition: "center 18%" }}
+          <div
+            className="flex flex-col items-center md:col-span-2 md:items-start"
+            data-reveal
+          >
+            <div className="relative">
+              {/* Dashed brass orbit — slow spin, pauses for
+                  reduced-motion via the global guard. */}
+              <span
+                aria-hidden
+                className="fx-portrait-ring absolute -inset-3 rounded-full border border-dashed border-primary/40"
               />
+              <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border bg-muted sm:h-64 sm:w-64">
+                <Image
+                  src="/assets/saurabh/ezgif-frame-120.webp"
+                  alt="Saurabh Jadhav"
+                  fill
+                  // `object-cover` crops the 16:9 source into a circle, so the
+                  // effective render width is ~1.8× the box — declare a larger
+                  // `sizes` (+ high quality) or it upscales and looks blurry.
+                  sizes="512px"
+                  className="object-cover"
+                  style={{ objectPosition: "center 18%" }}
+                />
+              </div>
             </div>
-            <p className="font-hand mt-4 text-3xl text-primary">
+            <p className="font-hand mt-6 text-3xl text-primary">
               — Saurabh
             </p>
           </div>
 
           {/* Bio */}
           <div className="md:col-span-3">
-            <p className="flex items-baseline gap-2 text-primary">
-              <span className="font-deva text-base sm:text-lg">नमस्कार</span>
-              <span className="text-muted-foreground">·</span>
-              <span className="font-greet text-3xl sm:text-4xl">About</span>
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              I&rsquo;m a Frontend &amp; AI Engineer.
-            </h2>
+            <div data-reveal>
+              <p className="flex items-baseline gap-2 text-primary">
+                <span className="font-deva text-base sm:text-lg">नमस्कार</span>
+                <span className="text-muted-foreground">·</span>
+                <span className="font-greet text-3xl sm:text-4xl">About</span>
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                I&rsquo;m a Full Stack &amp; AI Engineer.
+              </h2>
+            </div>
 
-            <div className="mt-6 space-y-4 text-base leading-relaxed text-foreground sm:text-lg">
+            <div
+              className="mt-6 space-y-4 text-base leading-relaxed text-foreground sm:text-lg"
+              data-reveal-stagger
+            >
               <p>
-                Three years deep in production frontend at Livlong 365,
+                Three years shipping production products end to end at Livlong 365,
                 where I led the migration of livlong.com to Next.js 16
                 (~45% LCP improvement) and shipped 60+ reusable components
                 across the insurance and wellness verticals.
@@ -70,10 +86,13 @@ export default function About() {
             </div>
 
             {/* Meta row */}
-            <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-border pt-6 sm:grid-cols-3">
+            <div
+              className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-border pt-6 sm:grid-cols-3"
+              data-reveal-stagger
+            >
               <MetaItem label="Based" value="Mumbai · Thane" />
               <MetaItem label="Timezone" value="GMT +5:30" />
-              <MetaItem label="Open to" value="Senior FE + AI roles" />
+              <MetaItem label="Open to" value="Senior Full Stack + AI roles" />
             </div>
           </div>
         </div>

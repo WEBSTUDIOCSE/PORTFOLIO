@@ -32,7 +32,10 @@ export default function Currently() {
       className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-6xl">
-        <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
+        <header
+          className="mb-10 flex flex-wrap items-end justify-between gap-4"
+          data-reveal
+        >
           <div className="max-w-2xl">
             <p className="font-hand text-2xl text-primary">currently</p>
             <h2 className="mt-1 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl">
@@ -46,7 +49,10 @@ export default function Currently() {
 
         {/* Open to — the highest-signal line for recruiters. Pulled
             out as a banner above the soft-signal grid. */}
-        <div className="mb-10 rounded-xl border border-primary/30 bg-primary/[0.06] px-5 py-5 sm:px-6">
+        <div
+          className="mb-10 rounded-xl border border-primary/30 bg-primary/[0.06] px-5 py-5 sm:px-6"
+          data-reveal
+        >
           <div className="flex items-center gap-2">
             <span aria-hidden className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -57,7 +63,7 @@ export default function Currently() {
             </p>
           </div>
           <p className="mt-3 text-base leading-relaxed text-foreground sm:text-lg">
-            Senior Frontend / AI Engineer roles · technical co-founding ·
+            Senior Full Stack / AI Engineer roles · technical co-founding ·
             freelance AI builds.{" "}
             <span className="text-muted-foreground">
               Available anywhere — remote, hybrid, or on-site. Usually
@@ -66,7 +72,10 @@ export default function Currently() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
+        <div
+          className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12"
+          data-reveal-stagger
+        >
           {/* Now, building */}
           <div>
             <Label>Now, building</Label>

@@ -1,159 +1,41 @@
 "use client";
 
-// Custom ThemeProvider — replaces `next-themes` to avoid the
-// React 19 "script inside Client Component" warning that next-themes
-// triggers (its no-flash script is rendered inside its own client
-// ThemeProvider). The no-flash script for us lives in
-// app/layout.tsx <head> instead — a Server Component context where
-// React 19 does not warn.
-//
-// API surface kept identical to the previous next-themes wrapper:
-//   { theme, resolvedTheme, setTheme }
-// so consumers (theme-toggle.tsx, character-scroll.tsx) need no
-// changes when we swap implementations.
+// Dark-only theme. The site committed to a single dark look — the
+// light palette and the toggle were removed. This file keeps the old
+// { theme, resolvedTheme, setTheme } API so consumers
+// (mermaid-diagram.tsx, character-scroll.tsx) need no changes, but
+// everything resolves to "dark" permanently:
+//   - <html> ships with class="dark" from the server (app/layout.tsx),
+//     so there is no flash and no no-flash script.
+//   - globals.css defines the dark tokens on :root directly.
+//   - setTheme is a no-op.
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-
-const NO_FLASH_THEME_SCRIPT = `
-(function(){
-  try {
-    var t = localStorage.getItem('sj-theme');
-    if (!t) {
-      t = 'dark';
-      localStorage.setItem('sj-theme', 'dark');
-    }
-    if (t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  } catch (e) {}
-})();
-`;
-
-export const ThemeScript = React.memo(
-  ({ nonce }: { nonce?: string }) => (
-    <script
-      id="no-flash-theme"
-      nonce={nonce}
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }}
-    />
-  ),
-  () => true
-);
+import React, { createContext, useContext } from "react";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
 
 type ThemeContextValue = {
-  /** Current theme preference — "system", "light", or "dark". */
+  /** Always "dark" — kept for API compatibility. */
   theme: Theme;
-  /** Effective theme after resolving "system" — only "light" or "dark". */
+  /** Always "dark" — kept for API compatibility. */
   resolvedTheme: ResolvedTheme;
+  /** No-op — the site is dark-only. */
   setTheme: (t: Theme) => void;
 };
 
-const ThemeCtx = createContext<ThemeContextValue | null>(null);
+const DARK_ONLY: ThemeContextValue = {
+  theme: "dark",
+  resolvedTheme: "dark",
+  setTheme: () => {},
+};
 
-const STORAGE_KEY = "sj-theme";
-const DARK_CLASS = "dark";
-
-function readSystem(): ResolvedTheme {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-function readStored(): Theme {
-  if (typeof window === "undefined") return "dark";
-  try {
-    const v = window.localStorage.getItem(STORAGE_KEY);
-    if (v === "light" || v === "dark" || v === "system") return v;
-  } catch {
-    // localStorage can throw in strict privacy modes.
-  }
-  return "dark";
-}
+const ThemeCtx = createContext<ThemeContextValue>(DARK_ONLY);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Server renders with "system" placeholder — the actual theme is
-  // already on <html> from the no-flash script, so the user never
-  // sees a flash. The first effect syncs React state with reality.
-  const [theme, setThemeState] = useState<Theme>("dark");
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>("dark");
-
-  // One-time bootstrap on mount.
-  useEffect(() => {
-    setThemeState(readStored());
-    setSystemTheme(readSystem());
-
-    // System preference can change while the page is open.
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const onSystemChange = (e: MediaQueryListEvent) => {
-      setSystemTheme(e.matches ? "dark" : "light");
-    };
-    mql.addEventListener("change", onSystemChange);
-
-    // Cross-tab sync — toggling in tab A reflects in tab B.
-    const onStorage = (e: StorageEvent) => {
-      if (e.key !== STORAGE_KEY) return;
-      const v = e.newValue;
-      if (v === "light" || v === "dark" || v === "system") {
-        setThemeState(v);
-      }
-    };
-    window.addEventListener("storage", onStorage);
-
-    return () => {
-      mql.removeEventListener("change", onSystemChange);
-      window.removeEventListener("storage", onStorage);
-    };
-  }, []);
-
-  const resolvedTheme: ResolvedTheme =
-    theme === "system" ? systemTheme : theme;
-
-  // Apply / strip the .dark class on <html>. This is what flips the
-  // CSS tokens defined under `.dark { ... }` in globals.css.
-  useEffect(() => {
-    const root = document.documentElement;
-    if (resolvedTheme === "dark") {
-      root.classList.add(DARK_CLASS);
-    } else {
-      root.classList.remove(DARK_CLASS);
-    }
-  }, [resolvedTheme]);
-
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, t);
-    } catch {
-      // Persistence is best-effort.
-    }
-  }, []);
-
-  const value = useMemo<ThemeContextValue>(
-    () => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme],
-  );
-
-  return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
+  return <ThemeCtx.Provider value={DARK_ONLY}>{children}</ThemeCtx.Provider>;
 }
 
 export function useTheme(): ThemeContextValue {
-  const ctx = useContext(ThemeCtx);
-  if (!ctx) {
-    throw new Error("useTheme must be used within <ThemeProvider>");
-  }
-  return ctx;
+  return useContext(ThemeCtx);
 }
