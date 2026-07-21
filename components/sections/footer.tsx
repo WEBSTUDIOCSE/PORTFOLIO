@@ -43,7 +43,7 @@ export default function Footer() {
   const [isEmailHovered, setIsEmailHovered] = useState(false);
 
   return (
-    <footer className="dotted-grid relative flex h-screen w-full flex-col justify-end overflow-hidden bg-[#fde047] px-4 pb-6 text-[#1a1a1a] md:px-10 md:pb-8">
+    <footer className="dotted-grid relative flex h-screen w-full flex-col justify-end overflow-hidden bg-[#fde047] px-6 pb-6 text-[#1a1a1a] sm:px-10 md:pb-8">
       {/* Huge faint wordmark — decorative, so plain <p>s (not headings)
           even though the reference used <h1>. */}
       <div

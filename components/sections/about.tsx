@@ -1,14 +1,91 @@
-// About — short bio with the "why". Comes AFTER Selected Work
-// because the research-backed psychology is "show the work first,
-// then the person" — recruiters who reached this point already
-// like what they saw and now want context.
+"use client";
+
+// About — short bio with the "why". Moved to AFTER Experience — "show
+// the work and the history first, then the person" — recruiters who
+// reached this point already like what they saw and now want context.
 //
 // Uses an existing hero WebP frame as a placeholder portrait. Swap
 // to a proper headshot later by replacing the src path.
+//
+// Bio paragraphs get a scroll-scrubbed "reading" reveal: each word
+// starts dim and brightens to full opacity as the section scrolls
+// through view, staggered so it reads like a wave following the
+// reader down the page rather than a single fade-in. This is on top
+// of (not instead of) the one-shot data-reveal-stagger entrance below
+// — the paragraphs fade+slide up once as they enter view, then
+// continue illuminating word-by-word as the user keeps scrolling.
+//
+// GSAP is dynamic-imported inside useEffect, mirroring the safety
+// discipline in components/scroll-fx.tsx (never in the critical
+// bundle; bails before importing anything for prefers-reduced-motion)
+// rather than going through that shared component — splitting text
+// into per-word spans and scrubbing their opacity is bespoke enough
+// that it doesn't fit the shared data-attribute vocabulary there.
 
 import Image from "next/image";
+import { useEffect, useRef } from "react";
+
+const BIO_PARAGRAPHS = [
+  "Three years shipping production products end to end at Livlong 365, where I led the migration of livlong.com to Next.js 16 (~45% LCP improvement) and shipped 60+ reusable components across the insurance and wellness verticals.",
+  "Outside work, the systems I build go further. OpenClaw is a 15-agent autonomous operations pipeline running on my VPS — zero human intervention after task input. CinematicTale is a live AI storytelling SaaS with face-swap and Razorpay subscriptions. Elite Mindset Forge writes, illustrates, and auto-publishes multilingual content across Instagram and Facebook, all of it AI-driven.",
+  "I build systems that replace headcount. One developer. Infinite leverage.",
+];
+
+// Splits a sentence into word spans (for the reveal) interleaved with
+// plain whitespace text nodes (so word-spacing stays exactly as
+// written, no extra gaps introduced).
+function splitWords(text: string) {
+  return text.split(/(\s+)/).map((chunk, i) =>
+    chunk.trim() === "" ? (
+      chunk
+    ) : (
+      <span key={i} className="reveal-word">
+        {chunk}
+      </span>
+    ),
+  );
+}
 
 export default function About() {
+  const bioRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cancelled = false;
+    let ctx: { revert: () => void } | undefined;
+
+    (async () => {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled || !bioRef.current) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        const words = gsap.utils.toArray<HTMLElement>(".reveal-word", bioRef.current);
+        gsap.set(words, { opacity: 0.28 });
+        gsap.to(words, {
+          opacity: 1,
+          stagger: 0.02,
+          ease: "none",
+          scrollTrigger: {
+            trigger: bioRef.current,
+            start: "top 75%",
+            end: "bottom 45%",
+            scrub: 0.5,
+          },
+        });
+      }, bioRef);
+    })();
+
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
+  }, []);
+
   return (
     <section
       id="about"
@@ -61,27 +138,14 @@ export default function About() {
             </div>
 
             <div
+              ref={bioRef}
               className="mt-6 space-y-4 text-base leading-relaxed text-foreground sm:text-lg"
               data-reveal-stagger
             >
-              <p>
-                Three years shipping production products end to end at Livlong 365,
-                where I led the migration of livlong.com to Next.js 16
-                (~45% LCP improvement) and shipped 60+ reusable components
-                across the insurance and wellness verticals.
-              </p>
-              <p>
-                Outside work, the systems I build go further. OpenClaw is
-                a 15-agent autonomous operations pipeline running on my
-                VPS &mdash; zero human intervention after task input.
-                CinematicTale is a live AI storytelling SaaS with face-swap
-                and Razorpay subscriptions. Elite Mindset Forge writes,
-                illustrates, and auto-publishes multilingual content
-                across Instagram and Facebook, all of it AI-driven.
-              </p>
+              <p>{splitWords(BIO_PARAGRAPHS[0])}</p>
+              <p>{splitWords(BIO_PARAGRAPHS[1])}</p>
               <p className="font-display text-lg text-primary sm:text-xl md:text-2xl">
-                I build systems that replace headcount. One developer.
-                Infinite leverage.
+                {splitWords(BIO_PARAGRAPHS[2])}
               </p>
             </div>
 

@@ -134,7 +134,7 @@ export default function WhatWeBuild() {
       ref={sectionRef}
       id="build"
       aria-labelledby="build-heading"
-      className="dotted-grid relative w-full bg-[#fde047] px-4 py-24 text-[#1a1a1a] md:px-10 md:py-32"
+      className="dotted-grid relative w-full bg-[#fde047] px-6 py-24 text-[#1a1a1a] sm:px-10 md:py-32"
     >
       {/* Header */}
       <div className="mx-auto mb-16 w-full max-w-6xl md:mb-24">

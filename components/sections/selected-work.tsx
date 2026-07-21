@@ -17,6 +17,16 @@ import { FEATURED_PROJECTS, type Project } from "@/lib/projects";
 // column is a plain title index; hovering/focusing a title swaps the
 // right column's plate — a single live preview instead of ten static
 // cards, so the reel reads as one considered specimen at a time.
+//
+// Section backdrop: the same black (#151515) + dotted-grid treatment
+// as the reference site's dark sections (see `.dotted-grid-inverse`
+// in app/globals.css, added for the since-removed Studio section and
+// reused here), full-bleed and min-h-screen like the other
+// DEVSTUDIOLABS-pattern sections on this page. Only the section's own
+// background changed — the index/plate/rows inside still use the
+// theme's semantic tokens (bg-card, border-border, text-foreground),
+// which already read as near-black-on-near-black elevation, so they
+// don't need re-deriving for this specific shade.
 
 // Titles in lib/projects.ts read "Name — descriptor". The index
 // shows the name huge and the descriptor as a serif deck below it.
@@ -30,7 +40,7 @@ export default function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
+      className="dotted-grid-inverse relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-[#151515] px-6 py-24 sm:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
@@ -92,7 +102,7 @@ function InteractiveIndex({ projects }: { projects: Project[] }) {
       </nav>
 
       <div className="sticky top-28 col-span-7">
-        <ProjectPlate key={active.slug} project={active} index={activeIdx} />
+        <ProjectPlate project={active} index={activeIdx} />
       </div>
     </div>
   );
@@ -162,7 +172,7 @@ function ProjectPlate({
     <Link
       href={`/work/${project.slug}`}
       aria-label={`View project details for ${project.title}`}
-      className="project-plate-enter group relative block overflow-hidden rounded-2xl border border-border bg-card p-8 transition-colors duration-300 hover:border-primary/40 focus-visible:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:p-10"
+      className="project-plate-enter group relative block h-[36rem] max-h-[80vh] overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-300 hover:border-primary/40 focus-visible:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       {/* Ghost index number — specimen-plate motif, echoes the
           numbered rows without repeating them literally. */}
@@ -173,7 +183,25 @@ function ProjectPlate({
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <div className="relative flex items-start justify-between gap-4">
+      {/* Sketchbook annotation — absolutely positioned so its
+          presence/absence never changes anything else (only OpenClaw
+          has one right now). */}
+      {project.highlight && (
+        <p className="pointer-events-none absolute right-10 top-10 max-w-[9rem] rotate-2 text-right font-hand-note text-sm text-muted-foreground">
+          {project.highlight}
+        </p>
+      )}
+
+      {/* Every block below is pinned to a fixed offset from the top
+          or bottom edge of the h-[36rem] box — nothing is sized by
+          its neighbours' content, so switching between projects with
+          very different amounts of text (a 5-item stack vs. a
+          9-item stack, a one-line vs. a four-line pitch) can never
+          change any element's position. line-clamp caps each text
+          block so it can't grow past the room reserved for it. */}
+
+      {/* Header — number/year + metric */}
+      <div className="absolute inset-x-10 top-10 flex items-start justify-between gap-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
           {project.number} · {project.year}
         </p>
@@ -184,26 +212,25 @@ function ProjectPlate({
         )}
       </div>
 
-      <h3 className="relative mt-6 font-display text-4xl font-light leading-[1.05] tracking-tight text-foreground sm:text-5xl">
-        {name}
-      </h3>
-      {descriptor && (
-        <p className="relative mt-2 font-display text-lg font-light text-muted-foreground sm:text-xl">
-          {descriptor}
+      {/* Title block — starts a fixed distance below the header */}
+      <div className="absolute inset-x-10 top-24">
+        <h3 className="line-clamp-2 font-display text-4xl font-light leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+          {name}
+        </h3>
+        {descriptor && (
+          <p className="mt-2 line-clamp-1 font-display text-lg font-light text-muted-foreground sm:text-xl">
+            {descriptor}
+          </p>
+        )}
+        <p className="mt-5 line-clamp-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {project.oneLiner}
         </p>
-      )}
+      </div>
 
-      <p className="relative mt-5 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-        {project.oneLiner}
-      </p>
-
-      {project.highlight && (
-        <p className="relative mt-4 font-hand-note text-sm text-muted-foreground">
-          {project.highlight}
-        </p>
-      )}
-
-      <div className="relative mt-6 flex flex-wrap gap-1.5">
+      {/* Stack chips — anchored a fixed distance above the footer,
+          bounded to 2 rows regardless of how many technologies a
+          project lists. */}
+      <div className="absolute inset-x-10 bottom-28 flex max-h-[4.5rem] flex-wrap gap-1.5 overflow-hidden">
         {project.stack.slice(0, 6).map((s) => (
           <span
             key={s}
@@ -219,7 +246,8 @@ function ProjectPlate({
         )}
       </div>
 
-      <div className="relative mt-8 flex items-center justify-between border-t border-border pt-5">
+      {/* Footer — always glued to the bottom edge */}
+      <div className="absolute inset-x-10 bottom-10 flex items-center justify-between border-t border-border pt-5">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
           {project.role}
         </p>
