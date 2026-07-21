@@ -166,14 +166,28 @@
 }
 
 /* ============================================================
-   Footer — DEVSTUDIOLABS-pattern closing panel. A deliberate,
-   full-bleed color-block break from the site's dark theme (the
-   same trick the reference plays against its own light theme).
-   Exact values lifted from its globals.css: brand-yellow #fde047,
-   brand-text #1a1a1a, 20px dotted grid at 10% black.
+   DEVSTUDIOLABS-pattern sections — Footer, "What I Build", and
+   "Studio" all deliberately break from the site's dark theme with
+   full-bleed color blocks (the same trick the reference plays
+   against its own light theme). Exact values lifted from its
+   globals.css: brand-yellow #fde047, brand-text #1a1a1a, 20px
+   dotted grid at 10% opacity.
+
+   The reference swaps dot color via a `.dark` ancestor selector
+   that never actually applies on its own (light-only) site — so on
+   its black Studio section the dots are effectively invisible
+   black-on-black. This site is dark-only and needs the dots to
+   actually show against a near-black background, so `-inverse` is
+   a real second variant (white dots), not a copy of the unused
+   conditional.
    ============================================================ */
-.footer-dotted-grid {
+.dotted-grid {
   background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dotted-grid-inverse {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
