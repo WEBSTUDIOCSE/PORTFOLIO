@@ -47,7 +47,7 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
+      className="theme-light-white border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-6xl">
         {/* Heading */}

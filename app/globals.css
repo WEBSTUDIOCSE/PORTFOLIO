@@ -114,34 +114,42 @@
   /* ──────────────────────────────────────────────────────────
      Semantic tokens — DARK ONLY (shadcn convention, OKLCH).
      The site committed to a single dark look; the light palette
-     was removed. On near-black, maroon disappears; brass becomes
-     the dominant accent. <html> also carries a permanent `dark`
-     class (app/layout.tsx) so `dark:` utilities keep working.
+     was removed. <html> also carries a permanent `dark` class
+     (app/layout.tsx) so `dark:` utilities keep working.
+
+     Surface ladder (each step a deliberate lightness jump, not a
+     rounding error, so elevation actually reads):
+       background 0.070 → card 0.155 → popover 0.175 → muted 0.205
+     Brass (primary) is pushed brighter + more saturated than the
+     old 0.66/0.100 pairing so CTAs and links read as a real accent
+     instead of a flat dull gold. Maroon (accent) stays a true deep
+     red rather than a desaturated brown — it's used sparingly, so
+     it can afford to be vivid where it appears.
        background  ≈ ink-deep
        foreground  ≈ cream
        primary     ≈ brass (the accent that reads on near-black)
        accent      ≈ rail-maroon
        destructive ≈ red (error states)
      ────────────────────────────────────────────────────────── */
-  --background: oklch(0.080 0.008 50);          /* #0d0805 ink-deep */
-  --foreground: oklch(0.929 0.018 80);          /* cream */
-  --card: oklch(0.220 0.025 35);                /* ink */
-  --card-foreground: oklch(0.929 0.018 80);
-  --popover: oklch(0.220 0.025 35);
-  --popover-foreground: oklch(0.929 0.018 80);
-  --primary: oklch(0.660 0.100 75);             /* brass */
-  --primary-foreground: oklch(0.080 0.008 50);
-  --secondary: oklch(0.300 0.025 40);
-  --secondary-foreground: oklch(0.929 0.018 80);
-  --muted: oklch(0.260 0.020 40);
-  --muted-foreground: oklch(0.929 0.018 80 / 0.6);
-  --accent: oklch(0.380 0.120 18);              /* maroon as accent on dark */
-  --accent-foreground: oklch(0.929 0.018 80);
+  --background: oklch(0.070 0.010 48);          /* near-black, warm */
+  --foreground: oklch(0.940 0.020 80);          /* cream */
+  --card: oklch(0.155 0.022 40);                /* surface 1 — clearly lifted off bg */
+  --card-foreground: oklch(0.940 0.020 80);
+  --popover: oklch(0.175 0.024 40);             /* surface 2 — floats above card */
+  --popover-foreground: oklch(0.940 0.020 80);
+  --primary: oklch(0.740 0.150 78);             /* brighter, richer brass */
+  --primary-foreground: oklch(0.090 0.012 50);
+  --secondary: oklch(0.220 0.024 40);
+  --secondary-foreground: oklch(0.940 0.020 80);
+  --muted: oklch(0.205 0.020 42);               /* surface 3 — subtle fills */
+  --muted-foreground: oklch(0.940 0.020 80 / 0.7);
+  --accent: oklch(0.340 0.150 20);              /* true maroon, not muddy brown */
+  --accent-foreground: oklch(0.965 0.015 80);
   --destructive: oklch(0.620 0.220 27);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.929 0.018 80 / 0.12);
-  --input: oklch(0.929 0.018 80 / 0.12);
-  --ring: oklch(0.660 0.100 75 / 0.5);
+  --border: oklch(0.940 0.020 80 / 0.16);
+  --input: oklch(0.940 0.020 80 / 0.16);
+  --ring: oklch(0.740 0.150 78 / 0.5);
 }
 
 @layer base {
@@ -158,8 +166,136 @@
 }
 
 /* ============================================================
+   Light-surface section overrides — "except the hero, nowhere else
+   should be black" (2026-07-21). Every section already addresses
+   color purely through the semantic tokens above (bg-background,
+   text-foreground, text-muted-foreground, border-border, bg-card,
+   bg-muted, text-card-foreground, ...) — that's the whole point of
+   using semantic tokens instead of literal colors. So re-theming a
+   section to read as light needs ZERO changes to its component's own
+   classNames: just override the underlying custom properties on the
+   section's wrapping element and every descendant (including nested
+   client components like ResumeForm) picks up the new values via
+   normal CSS cascade.
+
+   --destructive/--destructive-foreground are left alone (error red
+   reads fine on light regardless). --primary DOES need overriding,
+   though: the dark theme's brass (oklch 0.740 0.150 78, ≈ #de9d16) is
+   tuned for contrast against near-black and reads as washed-out,
+   low-contrast gold on white/sand (measured ~2.2:1 — fails WCAG even
+   for large text). Swapped to the brand palette's existing
+   `--brass-dk` (already defined above, used by /journey) for a
+   text-safe darker amber, with `--cream` as its foreground so buttons
+   filled with it still have a light, legible label.
+   ============================================================ */
+.theme-light-sand {
+  --background: #f4ece2;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: var(--brass-dk);
+  --primary-foreground: var(--cream);
+  --secondary: #ffffff;
+  --secondary-foreground: #1a1a1a;
+  --muted: #ece0cd;
+  --muted-foreground: rgba(26, 26, 26, 0.62);
+  --accent: #ffffff;
+  --accent-foreground: #1a1a1a;
+  --border: rgba(26, 26, 26, 0.15);
+  --input: rgba(26, 26, 26, 0.15);
+  --ring: rgba(138, 101, 38, 0.45);
+  color-scheme: light;
+}
+
+.theme-light-white {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f7f3ec;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: var(--brass-dk);
+  --primary-foreground: var(--cream);
+  --secondary: #f4ece2;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f2ede4;
+  --muted-foreground: rgba(26, 26, 26, 0.62);
+  --accent: #f4ece2;
+  --accent-foreground: #1a1a1a;
+  --border: rgba(26, 26, 26, 0.15);
+  --input: rgba(26, 26, 26, 0.15);
+  --ring: rgba(138, 101, 38, 0.45);
+  color-scheme: light;
+}
+
+/* ResumeForm now lives in the yellow Footer (Contact section was
+   removed) but still addresses color purely through semantic tokens
+   — same override technique as the light sections above, tuned so
+   its card reads as a black panel on yellow (matching the footer's
+   existing black tooltip/nav-pill language) instead of the dark
+   theme's near-black-on-near-black pairing. */
+.theme-footer-form {
+  --background: #2a2a2a;
+  --foreground: #f4f1ea;
+  --card: #1a1a1a;
+  --card-foreground: #f4f1ea;
+  --muted-foreground: rgba(244, 241, 234, 0.62);
+  --border: rgba(244, 241, 234, 0.18);
+  --input: rgba(244, 241, 234, 0.18);
+  --primary: #fde047;
+  --primary-foreground: #1a1a1a;
+  --ring: rgba(253, 224, 71, 0.5);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   DEVSTUDIOLABS-pattern sections — Footer and "What I Build" break
+   from the site's dark theme with full-bleed light color blocks (the
+   same trick the reference plays against its own light theme). Exact
+   values lifted from its globals.css: brand-yellow #fde047,
+   brand-text #1a1a1a, 20px dotted grid at 10% opacity.
+
+   Full-section black/near-black backgrounds are reserved for the
+   hero (which already carries the site's own dark theme) — every
+   other section uses this light dotted grid or a plain light color
+   instead, so there's variety rather than everything reading as
+   black or yellow. `-inverse` (white dots) is for that one remaining
+   dark surface, the hero.
+   ============================================================ */
+.dotted-grid {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dotted-grid-inverse {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ============================================================
    ScrollFX ornaments (home page) — see components/scroll-fx.tsx
    ============================================================ */
+
+/* Selected Work — specimen plate crossfade. Re-keyed on every active
+   project change (see selected-work.tsx), so the mount animation
+   replays each time the preview swaps. Covered by the global
+   reduced-motion guard further down. */
+@keyframes project-plate-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.project-plate-enter {
+  animation: project-plate-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
 /* Portrait orbit ring — About section. A slow 40s spin; the dashes
    make the rotation legible. Neutralised by the global

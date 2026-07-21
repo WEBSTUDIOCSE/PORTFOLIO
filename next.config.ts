@@ -46,6 +46,18 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Looping 3D clips behind the "What I Build" cards — same
+      // rationale as /models/*: not content-hashed, so a bounded
+      // max-age with must-revalidate is the safe long-cache option.
+      {
+        source: "/3d/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, must-revalidate",
+          },
+        ],
+      },
       // Long-cache the hero canvas frame sequences. There are two
       // folders — saurabh/ (1920×1080 originals) and saurabh-lite/
       // (960×540 compressed) — served adaptively based on the

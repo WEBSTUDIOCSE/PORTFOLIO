@@ -374,11 +374,6 @@ const COMPONENTS_IN_USE = [
     note: "Work history (Livlong, Hapinee) + Education + Certifications. Vertical timeline, most recent first. Logo cell with monogram fallback.",
   },
   {
-    name: "Press",
-    path: "components/sections/press.tsx",
-    note: "On LinkedIn — text-only links to launch posts with impression metrics. No iframes (perf).",
-  },
-  {
     name: "SiteNav",
     path: "components/site-nav.tsx",
     note: "Global sticky nav. Fade-in on scroll on /; always visible elsewhere. Mobile hamburger overlay. Hosts the brand chip + links.",
@@ -406,7 +401,7 @@ const COMPONENTS_IN_USE = [
   {
     name: "ResumeForm",
     path: "components/forms/resume-form.tsx",
-    note: "Inline-expanding gated form. Soft-gates /resume.pdf — captures name/email/role/company, then auto-triggers download.",
+    note: "Inline-expanding gated form, now hosted in the Footer (scoped via .theme-footer-form). Soft-gates /resume.pdf — captures name/email/role/company, then auto-triggers download.",
   },
   {
     name: "Firebase Admin SDK",
@@ -429,16 +424,6 @@ const COMPONENTS_IN_USE = [
     note: "Server Action: same pipeline as contact, returns the download URL on success.",
   },
   {
-    name: "Currently",
-    path: "components/sections/currently.tsx",
-    note: "Soft signals — building / listening / reading. Manual fortnightly refresh.",
-  },
-  {
-    name: "Contact",
-    path: "components/sections/contact.tsx",
-    note: "Final beat. Hola greeting + four channels (Email primary, GitHub/LinkedIn/Resume secondary).",
-  },
-  {
     name: "PROJECTS data",
     path: "lib/projects.ts",
     note: "Single source of truth for project metadata. Used by SelectedWork now; future /work/[slug].",
@@ -457,12 +442,11 @@ const TECH_STACK = [
 ];
 
 const ROUTES = [
-  { path: "/", role: "Landing — hero → work → about → experience → press → currently → contact" },
+  { path: "/", role: "Landing — hero → build → work → experience → about" },
+  { path: "/#build", role: "What I Build anchor (within /)" },
   { path: "/#work", role: "Selected work anchor (within /)" },
-  { path: "/#about", role: "About anchor (within /)" },
   { path: "/#experience", role: "Experience anchor (within /)" },
-  { path: "/#press", role: "Press / LinkedIn posts anchor (within /)" },
-  { path: "/#contact", role: "Contact anchor (within /)" },
+  { path: "/#about", role: "About anchor (within /)" },
   { path: "/work/[slug]", role: "Project detail — Problem · Approach · Outcome · Lessons" },
   { path: "/writing", role: "Index of long-form posts" },
   { path: "/writing/[slug]", role: "Individual post" },
