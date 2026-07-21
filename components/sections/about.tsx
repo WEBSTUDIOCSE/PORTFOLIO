@@ -89,7 +89,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
+      className="theme-light-sand border-t border-border bg-background px-6 py-24 sm:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-5 md:gap-16">

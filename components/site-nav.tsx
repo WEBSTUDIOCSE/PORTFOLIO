@@ -20,7 +20,7 @@ const LINKS: NavLink[] = [
   { label: "Work", href: "/#work" },
   { label: "About", href: "/#about" },
   { label: "Writing", href: "/writing" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Journey", href: "/journey" },
 ];
 
 export default function SiteNav() {

@@ -403,7 +403,7 @@ export default function CharacterScroll() {
       style={{ height: "400vh" }}
       className="relative bg-background"
     >
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-background">
+      <div className="dotted-grid-inverse sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden bg-background">
         {/* TL;DR overlay — name + role + location. Visible at hero
             start; fades out near the end of the scroll so the
             SiteNav (which fades IN at the same point) doesn't

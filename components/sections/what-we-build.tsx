@@ -1,10 +1,12 @@
 "use client";
 
 // "What I Build" — sticky-stacking layer cards, ported 1:1 (layout,
-// type scale, color blocks, sticky + scroll-scrubbed depth/veil
-// effect) from a reference agency site's updated AvatarSection.tsx
-// ("WHAT WE BUILD", D:\DEVSTUDIO\WEBSTUDIO\DEVELOPMENT\DEVSTUDIOLABS).
-// "WE" → "I" since this is a solo portfolio, not a studio.
+// type scale, sticky + scroll-scrubbed depth/veil effect) from a
+// reference agency site's updated AvatarSection.tsx ("WHAT WE BUILD",
+// D:\DEVSTUDIO\WEBSTUDIO\DEVELOPMENT\DEVSTUDIOLABS). "WE" → "I" since
+// this is a solo portfolio, not a studio. The reference alternates
+// black/sand cards; this site keeps full-black backgrounds to the
+// hero only, so `layer.dark` now alternates white/sand instead.
 //
 // Content is Saurabh's own — four things his real project history
 // (lib/projects.ts, lib/experience.ts) backs up, not a generic
@@ -171,7 +173,7 @@ export default function WhatWeBuild() {
             style={{ top: `calc(4.5rem + ${idx * 1.5}rem)` }}
             className={`sticky mb-8 overflow-hidden rounded-[1.75rem] shadow-2xl will-change-transform md:mb-12 md:rounded-[2.5rem] ${
               layer.dark
-                ? "bg-[#151515] text-[#f4f1ea]"
+                ? "bg-white text-[#1a1a1a]"
                 : "bg-[#f4ece2] text-[#1a1a1a]"
             }`}
           >
@@ -194,11 +196,7 @@ export default function WhatWeBuild() {
                   {layer.stack.map((tech) => (
                     <span
                       key={tech}
-                      className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${
-                        layer.dark
-                          ? "border-[#f4f1ea]/25 text-[#f4f1ea]/90"
-                          : "border-[#1a1a1a]/25 text-[#1a1a1a]/80"
-                      }`}
+                      className="rounded-full border border-[#1a1a1a]/25 px-4 py-1.5 text-sm font-semibold text-[#1a1a1a]/80"
                     >
                       {tech}
                     </span>

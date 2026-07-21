@@ -18,6 +18,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { SOCIAL_ICONS, type SocialIconName } from "@/components/social-icons";
 import ScrollToTop from "@/components/scroll-to-top";
+import ResumeForm from "@/components/forms/resume-form";
 
 const EMAIL = "saurabhjadhav.cse@gmail.com";
 const [EMAIL_USER, EMAIL_DOMAIN] = EMAIL.split("@");
@@ -27,7 +28,6 @@ const NAV: { label: string; href: string }[] = [
   { label: "About", href: "/#about" },
   { label: "Writing", href: "/writing" },
   { label: "Journey", href: "/journey" },
-  { label: "Contact", href: "/#contact" },
 ];
 
 const SOCIALS: { label: string; href: string; icon: SocialIconName }[] = [
@@ -126,6 +126,15 @@ export default function Footer() {
 
               {/* Expandable email button */}
               <EmailButton onHoverChange={setIsEmailHovered} />
+            </div>
+
+            {/* Resume gate — the one piece of Contact's job (besides
+                socials/email, already covered above) that didn't
+                already live here. Scoped theme override so the form's
+                own semantic-token styling reads as a black panel on
+                yellow instead of the dark theme's default pairing. */}
+            <div className="theme-footer-form mb-6">
+              <ResumeForm />
             </div>
 
             {/* Colophon / legal / back-to-top — folded into the slot

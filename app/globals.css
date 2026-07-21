@@ -166,20 +166,103 @@
 }
 
 /* ============================================================
-   DEVSTUDIOLABS-pattern sections — Footer, "What I Build", and
-   "Studio" all deliberately break from the site's dark theme with
-   full-bleed color blocks (the same trick the reference plays
-   against its own light theme). Exact values lifted from its
-   globals.css: brand-yellow #fde047, brand-text #1a1a1a, 20px
-   dotted grid at 10% opacity.
+   Light-surface section overrides — "except the hero, nowhere else
+   should be black" (2026-07-21). Every section already addresses
+   color purely through the semantic tokens above (bg-background,
+   text-foreground, text-muted-foreground, border-border, bg-card,
+   bg-muted, text-card-foreground, ...) — that's the whole point of
+   using semantic tokens instead of literal colors. So re-theming a
+   section to read as light needs ZERO changes to its component's own
+   classNames: just override the underlying custom properties on the
+   section's wrapping element and every descendant (including nested
+   client components like ResumeForm) picks up the new values via
+   normal CSS cascade.
 
-   The reference swaps dot color via a `.dark` ancestor selector
-   that never actually applies on its own (light-only) site — so on
-   its black Studio section the dots are effectively invisible
-   black-on-black. This site is dark-only and needs the dots to
-   actually show against a near-black background, so `-inverse` is
-   a real second variant (white dots), not a copy of the unused
-   conditional.
+   --destructive/--destructive-foreground are left alone (error red
+   reads fine on light regardless). --primary DOES need overriding,
+   though: the dark theme's brass (oklch 0.740 0.150 78, ≈ #de9d16) is
+   tuned for contrast against near-black and reads as washed-out,
+   low-contrast gold on white/sand (measured ~2.2:1 — fails WCAG even
+   for large text). Swapped to the brand palette's existing
+   `--brass-dk` (already defined above, used by /journey) for a
+   text-safe darker amber, with `--cream` as its foreground so buttons
+   filled with it still have a light, legible label.
+   ============================================================ */
+.theme-light-sand {
+  --background: #f4ece2;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: var(--brass-dk);
+  --primary-foreground: var(--cream);
+  --secondary: #ffffff;
+  --secondary-foreground: #1a1a1a;
+  --muted: #ece0cd;
+  --muted-foreground: rgba(26, 26, 26, 0.62);
+  --accent: #ffffff;
+  --accent-foreground: #1a1a1a;
+  --border: rgba(26, 26, 26, 0.15);
+  --input: rgba(26, 26, 26, 0.15);
+  --ring: rgba(138, 101, 38, 0.45);
+  color-scheme: light;
+}
+
+.theme-light-white {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f7f3ec;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: var(--brass-dk);
+  --primary-foreground: var(--cream);
+  --secondary: #f4ece2;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f2ede4;
+  --muted-foreground: rgba(26, 26, 26, 0.62);
+  --accent: #f4ece2;
+  --accent-foreground: #1a1a1a;
+  --border: rgba(26, 26, 26, 0.15);
+  --input: rgba(26, 26, 26, 0.15);
+  --ring: rgba(138, 101, 38, 0.45);
+  color-scheme: light;
+}
+
+/* ResumeForm now lives in the yellow Footer (Contact section was
+   removed) but still addresses color purely through semantic tokens
+   — same override technique as the light sections above, tuned so
+   its card reads as a black panel on yellow (matching the footer's
+   existing black tooltip/nav-pill language) instead of the dark
+   theme's near-black-on-near-black pairing. */
+.theme-footer-form {
+  --background: #2a2a2a;
+  --foreground: #f4f1ea;
+  --card: #1a1a1a;
+  --card-foreground: #f4f1ea;
+  --muted-foreground: rgba(244, 241, 234, 0.62);
+  --border: rgba(244, 241, 234, 0.18);
+  --input: rgba(244, 241, 234, 0.18);
+  --primary: #fde047;
+  --primary-foreground: #1a1a1a;
+  --ring: rgba(253, 224, 71, 0.5);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   DEVSTUDIOLABS-pattern sections — Footer and "What I Build" break
+   from the site's dark theme with full-bleed light color blocks (the
+   same trick the reference plays against its own light theme). Exact
+   values lifted from its globals.css: brand-yellow #fde047,
+   brand-text #1a1a1a, 20px dotted grid at 10% opacity.
+
+   Full-section black/near-black backgrounds are reserved for the
+   hero (which already carries the site's own dark theme) — every
+   other section uses this light dotted grid or a plain light color
+   instead, so there's variety rather than everything reading as
+   black or yellow. `-inverse` (white dots) is for that one remaining
+   dark surface, the hero.
    ============================================================ */
 .dotted-grid {
   background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px);

@@ -7,13 +7,12 @@ import About from "@/components/sections/about";
 import Experience from "@/components/sections/experience";
 // Testimonials hidden for now — re-enable once real quotes are collected.
 // import Testimonials from "@/components/sections/testimonials";
-import Contact from "@/components/sections/contact";
 import Footer from "@/components/sections/footer";
 import TCInvite from "@/components/tc-invite";
 import ScrollFX from "@/components/scroll-fx";
 
 // Section order is research-backed (see plan file):
-//   hero → build → work → story → experience → about → contact → footer
+//   hero → build → work → story → experience → about → footer
 // WhatWeBuild is the DEVSTUDIOLABS-pattern color-block section (see its
 // own file comments) inserted right after the hero. About moved to
 // after Experience — "show the work and the history first, then the
@@ -22,8 +21,13 @@ import ScrollFX from "@/components/scroll-fx";
 // for.") were removed — components/sections/press.tsx and
 // currently.tsx no longer exist; see lib/projects.ts's linkedinPosts
 // field if Press-equivalent content is ever wanted again elsewhere.
+// Contact ("Hola.") was also removed — the Footer already covers
+// socials + email (EmailButton) and now also hosts ResumeForm (the
+// one thing Contact had that Footer didn't), so a dedicated Contact
+// section was pure duplication. components/sections/contact.tsx no
+// longer exists.
 // Reads chronologically: who I am → what I build → what I've shipped →
-// where I've worked → who I am → how to reach me → housekeeping.
+// where I've worked → who I am → housekeeping + how to reach me.
 //
 // TCInvite is a fixed floating widget — the Indian Railways Ticket
 // Checker character who slides in after the hero and routes to
@@ -38,7 +42,6 @@ export default function Home() {
       <Experience />
       <About />
       {/* <Testimonials /> hidden for now — enable later with real quotes */}
-      <Contact />
       <Footer />
       <TCInvite />
       {/* GSAP scroll effects — deferred import, reveals via data-*
