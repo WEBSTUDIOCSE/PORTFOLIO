@@ -52,7 +52,7 @@ Scripts: `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
 ```
 app/            Routes — landing (page.tsx), /journey, /work/[slug], /writing, plus
                 sitemap / robots / OG-image routes and Server Actions (app/actions/)
-components/     site-nav, theme-toggle, tc-invite, sections/ (home), forms/
+components/     site-nav, chat-widget, sections/ (home), forms/
 lib/            projects.ts, writing.ts (content), seo.ts, theme.tsx,
                 validation/, email/, firebase/
 public/assets/  saurabh/ + saurabh-lite/ (hero frames), station backgrounds

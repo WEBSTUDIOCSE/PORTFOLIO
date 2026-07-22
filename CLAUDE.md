@@ -52,8 +52,9 @@ hour.
 | `/style-guide` | `app/style-guide/page.tsx` | Design-token / component reference |
 | — | `app/opengraph-image.tsx`, `app/work|writing/[slug]/opengraph-image.tsx` | Dynamic OG images per route |
 | — | `app/sitemap.ts`, `app/robots.ts`, `app/not-found.tsx` | SEO + 404 |
+| `POST /api/chat` | `app/api/chat/route.ts` | Chat widget's streamed GLM endpoint (Route Handler, not a Server Action — see subsystem #7) |
 
-Server Actions live in `app/actions/` (`contact.ts`, `resume.ts`).
+Server Actions live in `app/actions/` (`contact.ts`).
 
 ---
 
@@ -72,7 +73,7 @@ app/
 components/
 ├── site-nav.tsx          Floating pill nav. Hidden on /journey; on / it fades in mid hero-morph (~285vh)
 ├── theme-toggle.tsx      Light/dark toggle (state in lib/theme.tsx)
-├── tc-invite.tsx         Floating Ticket-Checker widget → routes to /journey (home only)
+├── chat-widget.tsx       Floating chat widget → GLM-backed Q&A about Saurabh (home only)
 ├── mermaid-diagram.tsx   Client wrapper, dynamic-imports mermaid
 ├── sections/             Home page sections: character-scroll, selected-work, about,
 │                         experience, press, currently, contact, footer
@@ -132,6 +133,20 @@ write to Firestore, and send notification email via Resend. Firebase admin SDK i
 ### 6. Performance — `next.config.ts`
 AVIF-first image formats; `optimizePackageImports` for `firebase`, `@react-three/drei`,
 `mermaid` (fat barrels); long-cache headers for `/models/*` and the two hero frame folders.
+
+### 7. Chat widget — `components/chat-widget.tsx` + `app/api/chat/*` + `lib/chat/*`
+Floating widget (replaced the old TC mascot, same bottom-right slot) answering questions
+about Saurabh — GLM (Zhipu AI free tier) streamed via a Route Handler, not a Server Action
+(Server Actions don't stream cleanly to a `fetch`-based client). Knowledge base = `lib/projects.ts`
++ `lib/experience.ts` + `lib/writing.ts` compiled once at module load (`lib/chat/knowledge-base.ts`),
+plus the live resume PDF fetched from `NEXT_PUBLIC_RESUME_URL` and parsed via `unpdf`, cached
+server-side with a 1-hour TTL (`lib/chat/resume-cache.ts`) — this is the only thing that
+refreshes without a redeploy. Conversations are **ephemeral**: nothing about message
+content is stored anywhere server-side. Rate-limited two ways: per-IP in-memory
+(`lib/rate-limit.ts`'s `chatRateLimit`) and a durable cross-instance global daily cap
+(`lib/chat/daily-cap.ts`, Firestore `chatUsage/{date}` doc via the Admin SDK) — the per-IP
+limiter alone can't protect the shared free-tier quota from aggregate traffic across
+Vercel's multiple serverless instances.
 
 ---
 
@@ -243,7 +258,8 @@ restore the local author.
 Copy `.env.example` → `.env.local` (gitignored). Keys: Firebase client config
 (`NEXT_PUBLIC_FIREBASE_*` — public by design), `FIREBASE_SERVICE_ACCOUNT_KEY_B64`
 (server-only), `RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `NEXT_PUBLIC_RESUME_URL`,
-`NEXT_PUBLIC_GOOGLE_VERIFICATION`.
+`NEXT_PUBLIC_GOOGLE_VERIFICATION`, `ZHIPU_API_KEY` (server-only, chat widget),
+optionally `ZHIPU_MODEL` / `ZHIPU_API_BASE_URL` / `CHAT_DAILY_BUDGET`.
 
 ---
 

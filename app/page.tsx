@@ -8,7 +8,7 @@ import Experience from "@/components/sections/experience";
 // Testimonials hidden for now — re-enable once real quotes are collected.
 // import Testimonials from "@/components/sections/testimonials";
 import Footer from "@/components/sections/footer";
-import TCInvite from "@/components/tc-invite";
+import ChatWidget from "@/components/chat-widget";
 import ScrollFX from "@/components/scroll-fx";
 
 // Section order is research-backed (see plan file):
@@ -29,9 +29,11 @@ import ScrollFX from "@/components/scroll-fx";
 // Reads chronologically: who I am → what I build → what I've shipped →
 // where I've worked → who I am → housekeeping + how to reach me.
 //
-// TCInvite is a fixed floating widget — the Indian Railways Ticket
-// Checker character who slides in after the hero and routes to
-// /journey on click. Lives at root of home only.
+// ChatWidget is a fixed floating widget in the same slot the TC
+// (Ticket Checker) mascot used to occupy — replaced entirely, see
+// components/chat-widget.tsx. Answers questions about Saurabh using
+// projects/experience/writing + his resume as a knowledge base
+// (GLM-backed, see app/api/chat/route.ts). Lives at root of home only.
 export default function Home() {
   return (
     <>
@@ -43,7 +45,7 @@ export default function Home() {
       <About />
       {/* <Testimonials /> hidden for now — enable later with real quotes */}
       <Footer />
-      <TCInvite />
+      <ChatWidget />
       {/* GSAP scroll effects — deferred import, reveals via data-*
           attributes on the sections above. See components/scroll-fx.tsx. */}
       <ScrollFX />
