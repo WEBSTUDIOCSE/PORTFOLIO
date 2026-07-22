@@ -22,10 +22,10 @@ import ScrollFX from "@/components/scroll-fx";
 // currently.tsx no longer exist; see lib/projects.ts's linkedinPosts
 // field if Press-equivalent content is ever wanted again elsewhere.
 // Contact ("Hola.") was also removed — the Footer already covers
-// socials + email (EmailButton) and now also hosts ResumeForm (the
-// one thing Contact had that Footer didn't), so a dedicated Contact
-// section was pure duplication. components/sections/contact.tsx no
-// longer exists.
+// socials + email (EmailButton), so a dedicated Contact section was
+// pure duplication. components/sections/contact.tsx no longer exists.
+// Resume is a direct-download icon in the Footer's icon row now, not
+// a gated form — components/forms/resume-form.tsx was removed too.
 // Reads chronologically: who I am → what I build → what I've shipped →
 // where I've worked → who I am → housekeeping + how to reach me.
 //

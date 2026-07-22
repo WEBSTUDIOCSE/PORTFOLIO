@@ -172,8 +172,88 @@ export const PROJECTS: Project[] = [
       "Three-layer agency hierarchy on a $10/month Hostinger VPS. A single Telegram message reaches Jarvis (Layer 1 COO running a ReAct loop with persistent context in SOUL.md / USER.md / MEMORY.md). Jarvis routes through Groq's free tier to one of three agency CEOs — Shuri (Dev), Maya (Creative), Natasha (LinkedIn) — each owning a narrow pipeline of specialists. Heavy models (GLM-5, Gemini 2.5 Flash) are invoked only when needed; image and video agents always confirm with the user before firing. Shared Firebase state, not prompt-passing, is what keeps the whole agency coherent — and what makes a $10/month VPS replace a 5–7 person team.",
   },
   {
-    slug: "cinematictale",
+    slug: "claratto",
     number: "P-002",
+    title: "claratto — AI tutoring platform",
+    oneLiner:
+      "Users learn any topic through a multi-turn Socratic AI tutor, get tested, and watch a persistent 3D brain visualization grow as topics are proven — not just marked complete. Live and monetised — Razorpay subscriptions, credit-based usage tiers, Firebase auth, syllabus-to-curriculum AI generation, voice-based mock interviews.",
+    role: "Founder · solo engineer",
+    year: "2025",
+    stack: ["Next.js 16", "Firebase", "Gemini", "Three.js", "Razorpay"],
+    metric: "Live · claratto.com",
+    href: "https://claratto.com",
+    featured: true,
+    problem:
+      "Most AI tutors just answer questions or dump information — they don't verify you actually learned anything, and there's no persistent sense of progress beyond a checklist. I wanted a tutor that teaches in a genuinely Socratic, multi-turn way, tests comprehension before marking anything \"done,\" and gives the learner something tangible to watch grow as proof of mastery — not just another progress bar.",
+    approach: [
+      "Multi-turn Socratic AI tutor built on a TEACHING_STYLE protocol: real depth delivered in chunks, with a genuine comprehension check between each chunk before the tutor moves on.",
+      "A cognitive-science reinforcement loop layered on top of that — recall checkpoints, spaced repetition, and teach-back — so understanding is revisited, not just delivered once.",
+      "Syllabus-to-curriculum generation: users upload a syllabus (PDF/DOCX/TXT), Gemini parses it into subjects → topics → difficulty → prerequisites, each with its own AI-generated teacher persona.",
+      "Persistent 3D brain visualization in Three.js: proven topics render as glowing nodes, positioned by an AI-classified domain taxonomy (mechanism / conceptual / factual / skill / emotional) — a node only lights up after passing a test, never just from reading.",
+      "Voice-based mock interviews via Sarvam's voice models as a separate assessment surface, deliberately not wired into the core brain/learning loop.",
+      "Razorpay subscriptions with credit-based usage tiers (lib/plans.ts, lib/credits.ts) gate usage throughout, on top of Firebase auth.",
+    ],
+    outcome: [
+      "Live and monetised at claratto.com.",
+      "Real users proving topics through multi-turn Socratic sessions, not just marking lessons complete.",
+      "Working credit-based subscription billing via Razorpay, with Firebase auth end to end.",
+    ],
+    lessons: [
+      "Comprehension checks between chunks — not just at the end — is what makes a tutor feel Socratic instead of a lecture with a pop quiz bolted on.",
+      "Growth has to be provable, not just visual. Gating the brain's growth on passing a test (never on reading) is what keeps the visualization honest as a signal of mastery instead of decoration.",
+      "Splitting assessment (voice mock interviews) from the core learning loop kept both systems simpler than trying to unify them into one flow.",
+    ],
+    diagram: `flowchart TD
+  User[User]
+  Auth[[Firebase Auth]]
+
+  subgraph Onboard[Syllabus to curriculum]
+    Upload[Upload syllabus · PDF/DOCX/TXT]
+    Parse[[Gemini · parse]]
+    Curriculum[(Subjects to Topics · difficulty · prerequisites)]
+    Persona[AI teacher persona per topic]
+  end
+
+  subgraph Learn[Socratic learning loop]
+    Tutor[Multi-turn tutor · TEACHING_STYLE protocol]
+    Chunk[Depth delivered in chunks]
+    Check[Comprehension check]
+    Reinforce[Recall checkpoints · spaced repetition · teach-back]
+  end
+
+  subgraph Proof[Proof of mastery]
+    Test[Test]
+    Classify[[AI domain classifier]]
+    Brain[(3D Brain · Three.js)]
+  end
+
+  subgraph Assess[Separate assessment]
+    Voice[[Sarvam voice models]]
+    Interview[Voice-based mock interview]
+  end
+
+  subgraph Billing[Billing]
+    Razorpay[[Razorpay]]
+    Credits[(Credit-based usage tiers)]
+  end
+
+  User --auth--> Auth
+  User --upload--> Upload
+  Upload --> Parse --> Curriculum --> Persona --> Tutor
+  Tutor --> Chunk --> Check
+  Check -->|pass| Reinforce
+  Check -->|retry| Chunk
+  Reinforce --> Test
+  Test -->|pass| Classify --> Brain
+  User --> Interview --> Voice
+  User --subscribe--> Razorpay --> Credits
+  Credits --gate usage--> Tutor`,
+    diagramCaption:
+      "The keystone is that growth is earned, not given — the 3D brain only lights up a node after a topic passes its test, never just from being read or chunked through. Gemini turns an uploaded syllabus into a full curriculum tree with per-topic teacher personas; the Socratic tutor then delivers each topic in comprehension-gated chunks (the TEACHING_STYLE protocol) before a topic is even eligible for testing. A pass routes through an AI domain classifier that positions the new node in the brain by cognitive type — mechanism, conceptual, factual, skill, or emotional — so the visualization reads as an actual map of what's been mastered, not a progress bar. Voice-based mock interviews (Sarvam) sit alongside as a separate assessment surface, and Razorpay-backed credit tiers gate usage throughout.",
+  },
+  {
+    slug: "cinematictale",
+    number: "P-003",
     title: "CinematicTale — AI storytelling SaaS",
     oneLiner:
       "Users create characters, generate narratives, produce AI images via PuLID face-swap. Live and monetised — Razorpay subscriptions, Firebase auth, 7-phase launch playbook.",
@@ -249,7 +329,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "elite-mindset-forge",
-    number: "P-003",
+    number: "P-004",
     title: "Elite Mindset Forge — autonomous content platform",
     oneLiner:
       "A read-only website fed by a separate Agent Portal: scheduled triggers spin up AI agents that generate every quote, image, and video; Firestore fans them out to Instagram, Facebook, push subscribers, and the site. Multilingual (English / Hindi / Marathi). Zero human in the loop.",

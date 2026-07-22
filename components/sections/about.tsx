@@ -119,7 +119,7 @@ export default function About() {
                 />
               </div>
             </div>
-            <p className="font-hand mt-6 text-3xl text-primary">
+            <p className="font-sans italic mt-6 text-3xl text-primary">
               — Saurabh
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function About() {
               <p className="flex items-baseline gap-2 text-primary">
                 <span className="font-deva text-base sm:text-lg">नमस्कार</span>
                 <span className="text-muted-foreground">·</span>
-                <span className="font-greet text-3xl sm:text-4xl">About</span>
+                <span className="font-display text-3xl sm:text-4xl">About</span>
               </p>
               <h2 className="mt-2 font-display text-3xl font-light tracking-tight text-foreground sm:text-4xl md:text-5xl">
                 I&rsquo;m a Full Stack &amp; AI Engineer.
@@ -168,7 +168,7 @@ export default function About() {
 function MetaItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+      <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
         {label}
       </p>
       <p className="mt-1 text-sm text-foreground">{value}</p>

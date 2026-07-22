@@ -416,7 +416,7 @@ export default function CharacterScroll() {
           <h1 className="font-display text-base font-medium leading-tight tracking-tight text-foreground sm:text-xl">
             Saurabh Jadhav
           </h1>
-          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px] sm:tracking-[0.2em]">
+          <p className="mt-0.5 font-sans text-[9px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px] sm:tracking-[0.2em]">
             <span className="sm:hidden">Full Stack &amp; AI · Mumbai</span>
             <span className="hidden sm:inline">Full Stack &amp; AI Engineer · Mumbai</span>
           </p>
@@ -442,7 +442,7 @@ export default function CharacterScroll() {
           <p className="flex items-baseline gap-2 text-primary sm:gap-3">
             <span className="font-deva text-base sm:text-lg">नमस्कार</span>
             <span className="text-muted-foreground">·</span>
-            <span className="font-greet text-3xl sm:text-4xl">Hello</span>
+            <span className="font-display text-3xl sm:text-4xl">Hello</span>
           </p>
         </div>
 
@@ -488,13 +488,13 @@ export default function CharacterScroll() {
           className="absolute inset-x-0 top-[24%] z-10 flex flex-col items-center gap-3 px-6 text-center"
           style={{ opacity: 0 }}
         >
-          <p className="font-hand text-xl text-primary sm:text-2xl">
+          <p className="font-sans text-xl text-primary sm:text-2xl">
             the pitch
           </p>
           <h2 className="font-display text-2xl font-light tracking-tight text-foreground sm:text-3xl md:text-4xl">
             I build systems that replace headcount.
           </h2>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
+          <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
             One developer. Infinite leverage.
           </p>
         </div>

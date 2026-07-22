@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden bg-background px-6 text-foreground sm:px-10">
+    <main className="theme-light-sand relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden bg-background px-6 text-foreground sm:px-10">
       <div className="relative z-10 mx-auto max-w-2xl text-center">
         {/* Eyebrow */}
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
           404 · route not found
         </p>
 
@@ -29,7 +29,7 @@ export default function NotFound() {
         <p className="mt-8 flex items-baseline justify-center gap-2 text-primary sm:gap-3">
           <span className="font-deva text-xl sm:text-2xl">मार्ग चुकला</span>
           <span className="text-muted-foreground">·</span>
-          <span className="font-greet text-4xl sm:text-5xl">Wrong stop</span>
+          <span className="font-display text-4xl sm:text-5xl">Wrong stop</span>
         </p>
 
         {/* Headline */}
@@ -71,7 +71,7 @@ export default function NotFound() {
         </div>
 
         {/* Signature */}
-        <p className="mt-12 font-hand text-2xl text-primary">
+        <p className="mt-12 font-sans italic text-2xl text-primary">
           — Saurabh
         </p>
       </div>

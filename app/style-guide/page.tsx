@@ -399,9 +399,9 @@ const COMPONENTS_IN_USE = [
     note: "Native form + Server Action. useTransition for pending state, Zod errors inline, honeypot anti-spam.",
   },
   {
-    name: "ResumeForm",
-    path: "components/forms/resume-form.tsx",
-    note: "Inline-expanding gated form, now hosted in the Footer (scoped via .theme-footer-form). Soft-gates /resume.pdf — captures name/email/role/company, then auto-triggers download.",
+    name: "ResumeIcon + direct download",
+    path: "components/social-icons.tsx, components/sections/footer.tsx",
+    note: "Resume is a direct download link in the Footer's icon row (NEXT_PUBLIC_RESUME_URL, falls back to /resume.pdf) — no gated form. The old ResumeForm (name/email/company capture) was removed.",
   },
   {
     name: "Firebase Admin SDK",
@@ -417,11 +417,6 @@ const COMPONENTS_IN_USE = [
     name: "submitContact action",
     path: "app/actions/contact.ts",
     note: "Server Action: Zod validate → 60s rate-limit check → Firestore write → Resend email. Email failure doesn't fail submission.",
-  },
-  {
-    name: "requestResume action",
-    path: "app/actions/resume.ts",
-    note: "Server Action: same pipeline as contact, returns the download URL on success.",
   },
   {
     name: "PROJECTS data",

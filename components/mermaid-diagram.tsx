@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { useTheme } from "@/lib/theme";
 
 // Renders a Mermaid diagram from a text string. The mermaid library
 // (~700KB) is dynamic-imported on mount so it never lands in the
 // initial JS bundle — only project detail pages that actually have
 // a diagram pay the cost, and only after the page is interactive.
 //
-// Re-renders on theme change so the diagram tracks light/dark. Per
-// mermaid docs, the way to swap themes is `mermaid.initialize({ theme })`
-// followed by re-running `.render()` on the source — the rendered
-// SVG has baked-in colors and isn't theme-reactive on its own.
+// Every page that renders a diagram (/work/[slug]) is a light
+// section now (.theme-light-sand — see app/globals.css), so this
+// always initializes Mermaid's "default" (light) theme rather than
+// reading site theme state: lib/theme.tsx's `resolvedTheme` is
+// permanently "dark" (a holdover from the site's old dark-only
+// commitment) and would otherwise render a dark diagram box on a
+// light page.
 //
 // `useId` namespaces every diagram instance so multiple diagrams on
 // the same page don't collide on Mermaid's internal SVG element IDs.
@@ -26,7 +28,6 @@ export default function MermaidDiagram({
   const id = useId().replace(/:/g, "_");
   const figureRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { resolvedTheme } = useTheme();
   const [error, setError] = useState<string | null>(null);
   // `inView` gates the dynamic import. Mermaid is ~700 KB even
   // tree-shaken, and blocks the main thread ~600 ms while rendering
@@ -66,7 +67,7 @@ export default function MermaidDiagram({
         const mermaid = (await import("mermaid")).default;
         mermaid.initialize({
           startOnLoad: false,
-          theme: resolvedTheme === "dark" ? "dark" : "default",
+          theme: "default",
           flowchart: {
             curve: "basis",
             useMaxWidth: true,
@@ -88,7 +89,7 @@ export default function MermaidDiagram({
     return () => {
       cancelled = true;
     };
-  }, [chart, id, resolvedTheme, inView]);
+  }, [chart, id, inView]);
 
   return (
     <figure
@@ -102,13 +103,13 @@ export default function MermaidDiagram({
         className="mermaid-container flex min-h-[200px] items-center justify-center [&_svg]:max-w-full [&_svg]:!h-auto"
       >
         {!inView && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             Diagram · loads on scroll
           </span>
         )}
       </div>
       {error && (
-        <p className="mt-3 font-mono text-xs text-destructive">
+        <p className="mt-3 font-sans text-xs text-destructive">
           Diagram render failed: {error}
         </p>
       )}

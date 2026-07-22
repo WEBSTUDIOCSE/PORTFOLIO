@@ -115,7 +115,7 @@ export default async function WritingDetailPage({
   };
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="theme-light-sand bg-background text-foreground">
       {/* Page-scoped JSON-LD — BlogPosting + BreadcrumbList. Both
           reference the root Person node via @id rather than
           duplicating identity fields. */}
@@ -132,7 +132,7 @@ export default async function WritingDetailPage({
       <div className="mx-auto max-w-2xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link
           href="/writing"
-          className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary"
+          className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary"
         >
           ← All writing
         </Link>
@@ -143,11 +143,11 @@ export default async function WritingDetailPage({
         <div className="flex flex-wrap items-baseline gap-3">
           <time
             dateTime={post.date}
-            className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground"
+            className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground"
           >
             {formatDate(post.date)}
           </time>
-          <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+          <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             · {post.readTime}
           </span>
         </div>
@@ -161,7 +161,7 @@ export default async function WritingDetailPage({
           {post.tags.map((t) => (
             <span
               key={t}
-              className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+              className="rounded-full border border-border bg-muted px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
             >
               {t}
             </span>
@@ -187,7 +187,7 @@ export default async function WritingDetailPage({
         </div>
 
         {/* Sign-off */}
-        <p className="mt-12 font-hand text-2xl text-primary">— Saurabh</p>
+        <p className="mt-12 font-sans italic text-2xl text-primary">— Saurabh</p>
       </article>
 
       {/* Prev / Next */}
@@ -198,7 +198,7 @@ export default async function WritingDetailPage({
               href={`/writing/${prev.slug}`}
               className="group flex flex-col gap-1 text-left"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 ← Newer
               </span>
               <span className="font-display text-lg text-foreground group-hover:text-primary">
@@ -213,7 +213,7 @@ export default async function WritingDetailPage({
               href={`/writing/${next.slug}`}
               className="group flex flex-col gap-1 text-right"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 Older →
               </span>
               <span className="font-display text-lg text-foreground group-hover:text-primary">

@@ -32,35 +32,3 @@ export const contactSchema = z.object({
 
 export type ContactInput = z.infer<typeof contactSchema>;
 export type ContactField = "name" | "email" | "message";
-
-// ─── Resume request ───────────────────────────────────────────
-
-// Only `name` and `email` are required. `role` and `company` are
-// optional — recruiters in a hurry can grab the resume with minimal
-// friction. Empty strings are coerced for missing optional fields so
-// the Firestore shape stays consistent (rules expect all 5 keys).
-export const resumeRequestSchema = z.object({
-  name: z.string().trim().min(1, "Required").max(100),
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email("That doesn't look like an email")
-    .max(200),
-  role: z
-    .string()
-    .trim()
-    .max(200, "Keep it under 200 characters")
-    .optional()
-    .default(""),
-  company: z
-    .string()
-    .trim()
-    .max(200, "Keep it under 200 characters")
-    .optional()
-    .default(""),
-  company_url: z.string().max(0).optional(), // honeypot
-});
-
-export type ResumeRequestInput = z.infer<typeof resumeRequestSchema>;
-export type ResumeField = "name" | "email" | "role" | "company";

@@ -115,7 +115,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
   };
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="theme-light-sand bg-background text-foreground">
       {/* Page-scoped JSON-LD. Two graphs: the project itself
           (SoftwareApplication) and the breadcrumb trail. Both link
           back to the Person node declared in app/layout.tsx via @id. */}
@@ -132,7 +132,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
       <div className="mx-auto max-w-3xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link
           href="/#work"
-          className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary"
+          className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary"
         >
           ← All work
         </Link>
@@ -140,7 +140,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
 
       {/* Hero */}
       <header className="mx-auto max-w-3xl px-6 pb-16 sm:px-10">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary">
           {project.number} · {project.year}
         </p>
         <h1 className="mt-2 font-display text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl">
@@ -183,7 +183,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           {project.stack.map((s) => (
             <span
               key={s}
-              className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+              className="rounded-full border border-border bg-muted px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
             >
               {s}
             </span>
@@ -248,7 +248,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
                     {post.label ?? "Read the launch post"}
                   </span>
                   {post.impressions && (
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                       · {post.impressions}
                     </span>
                   )}
@@ -270,7 +270,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
               href={`/work/${prev.slug}`}
               className="group flex flex-col gap-1 text-left"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 ← Previous
               </span>
               <span className="font-display text-lg text-foreground group-hover:text-primary">
@@ -285,7 +285,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
               href={`/work/${next.slug}`}
               className="group flex flex-col gap-1 text-right"
             >
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 Next →
               </span>
               <span className="font-display text-lg text-foreground group-hover:text-primary">
@@ -310,7 +310,7 @@ function Fact({
 }) {
   return (
     <div>
-      <dt className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+      <dt className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
         {label}
       </dt>
       <dd className="mt-1 text-sm text-foreground">{value}</dd>
@@ -327,7 +327,7 @@ function Block({
 }) {
   return (
     <section>
-      <p className="font-hand text-2xl text-primary">{kicker}</p>
+      <p className="font-sans italic text-2xl text-primary">{kicker}</p>
       <div className="mt-4">{children}</div>
     </section>
   );
