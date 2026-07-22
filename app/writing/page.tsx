@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function WritingIndexPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="theme-light-sand min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-6 pb-24 pt-28 sm:px-10 sm:pt-32">
         {/* Header */}
         <header className="mb-16">
-          <p className="font-hand text-2xl text-primary">writing</p>
+          <p className="font-sans italic text-2xl text-primary">writing</p>
           <h1 className="mt-1 font-display text-5xl font-light tracking-tight sm:text-6xl">
             Things I&rsquo;ve written.
           </h1>
@@ -35,11 +35,11 @@ export default function WritingIndexPage() {
                 <div className="flex flex-wrap items-baseline gap-3">
                   <time
                     dateTime={post.date}
-                    className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground"
+                    className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground"
                   >
                     {formatDate(post.date)}
                   </time>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                     · {post.readTime}
                   </span>
                 </div>
@@ -53,7 +53,7 @@ export default function WritingIndexPage() {
                   {post.tags.map((t) => (
                     <span
                       key={t}
-                      className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+                      className="rounded-full border border-border bg-muted px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
                     >
                       {t}
                     </span>
