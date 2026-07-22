@@ -11,15 +11,14 @@
 // Content is Saurabh's own — four things his real project history
 // (lib/projects.ts, lib/experience.ts) backs up, not a generic
 // service menu. The four looping 3D clips are copied from the
-// reference's public/3d/ as-is. Two are genuine 1:1 fits (Firebase —
-// his actual backend; an abstract character standing in for "agents").
-// The other two (a Svelte logo, an Android robot) are decorative
-// stock-style motion clips from the reference, not literal claims —
-// Saurabh doesn't build Svelte or Android apps. They're kept for now
-// for visual parity; swap them for bespoke text-to-3D props (Tripo/
-// Meshy — see the /journey scenery workflow in CLAUDE.md) whenever
-// there's time, rather than leaving a technically-literate visitor to
-// wonder why a Svelte logo is spinning under a card about AI media.
+// reference's public/3d/ as-is: Firebase (his actual backend) sits on
+// Cloud & Automation, an abstract character stands in for "agents" on
+// Multi-Agent AI Systems. The Svelte logo and Android robot are
+// decorative stock-style motion clips from the reference, not literal
+// claims — Saurabh doesn't build Svelte or Android apps — placed per
+// explicit direction rather than by tech-match. Swap them for bespoke
+// text-to-3D props (Tripo/Meshy — see the /journey scenery workflow in
+// CLAUDE.md) whenever there's time.
 //
 // GSAP is dynamic-imported inside useEffect, mirroring the safety
 // discipline in components/scroll-fx.tsx (never in the critical
@@ -35,7 +34,7 @@ const LAYERS = [
     title: "Full-Stack Web Apps",
     desc: "Production Next.js & React apps, Firebase-backed and deployed on Vercel — built and shipped solo to real users.",
     stack: ["Next.js", "React", "Firebase"],
-    videoBase: "/3d/Firebase_flame_logo_rotating_202607031937",
+    videoBase: "/3d/3D_Svelte_logo_rotating_202607031937",
     dark: true,
   },
   {
@@ -49,14 +48,14 @@ const LAYERS = [
     title: "AI-Generated Media",
     desc: "Image, video, and voice generation pipelines — Gemini, fal.ai, and Veo wired into consistent, production-grade creative workflows.",
     stack: ["Gemini", "fal.ai", "Veo"],
-    videoBase: "/3d/3D_Svelte_logo_rotating_202607031937",
+    videoBase: "/3d/3D_Android_robot_rotating_202607031937",
     dark: true,
   },
   {
     title: "Cloud & Automation",
     desc: "Self-hosted infrastructure on lean VPS budgets, GitHub Actions → Vercel CI/CD, and scheduled automation that runs with zero human in the loop.",
     stack: ["Docker", "GitHub Actions", "Vercel"],
-    videoBase: "/3d/3D_Android_robot_rotating_202607031937",
+    videoBase: "/3d/Firebase_flame_logo_rotating_202607031937",
     dark: false,
   },
 ] as const;
