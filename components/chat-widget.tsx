@@ -160,33 +160,25 @@ export default function ChatWidget() {
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
           }`}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-[#1a1a1a]/10 bg-[#1a1a1a] px-4 py-3 text-[#f4f1ea]">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8a6526]">
-                <BotIcon className="h-4 w-4 text-[#f4f1ea]" />
-              </span>
-              <div>
-                <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
-                  Saurabh&apos;s Assistant
-                  <span
-                    aria-hidden
-                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"
-                  />
-                </p>
-                <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
-                  Projects · experience · contact
-                </p>
-              </div>
+          {/* Header — no close button here; the floating bubble
+              itself toggles open/closed (plus Escape), so a second
+              close affordance would just be redundant. */}
+          <div className="flex items-center gap-2.5 border-b border-[#1a1a1a]/10 bg-[#1a1a1a] px-4 py-3 text-[#f4f1ea]">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8a6526]">
+              <BotIcon className="h-4 w-4 text-[#f4f1ea]" />
+            </span>
+            <div>
+              <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
+                Saurabh&apos;s Assistant
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"
+                />
+              </p>
+              <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
+                Projects · experience · contact
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close chat"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[#f4f1ea]/70 transition-colors hover:bg-[#f4f1ea]/10 hover:text-[#f4f1ea]"
-            >
-              <CloseIcon className="h-4 w-4" />
-            </button>
           </div>
 
           {/* Messages */}
@@ -194,7 +186,7 @@ export default function ChatWidget() {
             ref={listRef}
             role="log"
             aria-live="polite"
-            className="flex-1 space-y-3 overflow-y-auto px-4 py-4 font-sans text-sm leading-relaxed"
+            className="no-scrollbar flex-1 space-y-3 overflow-y-auto px-4 py-4 font-sans text-sm leading-relaxed"
           >
             {messages.length === 0 && (
               <div className="chat-message-enter flex flex-col gap-4">
@@ -335,7 +327,7 @@ export default function ChatWidget() {
           <span
             className={`absolute transition-all duration-200 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
           >
-            <CloseIcon className="h-5 w-5" />
+            <CloseIcon className="h-4 w-4" />
           </span>
         </button>
       </div>

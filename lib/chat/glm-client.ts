@@ -68,14 +68,24 @@ export async function streamGLMChatCompletion(opts: {
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
   let buffer = "";
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
 
   return new ReadableStream<Uint8Array>({
     async start(controller) {
-      const reader = upstream.body!.getReader();
+      reader = upstream.body!.getReader();
+      // Once the consumer disconnects mid-stream (tab/panel closed
+      // while a reply is streaming), `cancel()` below stops the read
+      // loop by rejecting the in-flight `reader.read()` — but a chunk
+      // already in flight can still land after that. `closed` guards
+      // every controller call so we never enqueue/close/error on an
+      // already-closed controller (which throws "Controller is
+      // already closed" and, left unguarded, spams that error for
+      // every remaining line in the buffer).
+      let closed = false;
       try {
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done || closed) break;
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
@@ -85,6 +95,7 @@ export async function streamGLMChatCompletion(opts: {
             if (!trimmed.startsWith("data:")) continue;
             const data = trimmed.slice(5).trim();
             if (data === "[DONE]") {
+              closed = true;
               controller.close();
               return;
             }
@@ -92,16 +103,24 @@ export async function streamGLMChatCompletion(opts: {
               const json = JSON.parse(data);
               const delta: string | undefined =
                 json.choices?.[0]?.delta?.content;
-              if (delta) controller.enqueue(encoder.encode(delta));
+              if (delta && !closed) controller.enqueue(encoder.encode(delta));
             } catch (e) {
               console.error("[chat] failed to parse GLM SSE chunk:", e);
             }
           }
         }
-        controller.close();
+        if (!closed) {
+          closed = true;
+          controller.close();
+        }
       } catch (err) {
-        controller.error(err);
+        if (!closed) controller.error(err);
       }
+    },
+    cancel() {
+      // Consumer disconnected — stop pulling from GLM instead of
+      // reading a response nobody will receive.
+      reader?.cancel().catch(() => {});
     },
   });
 }
