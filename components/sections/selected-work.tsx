@@ -141,7 +141,6 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
                   ? "noopener noreferrer"
                   : undefined
               }
-              onClick={(e) => e.stopPropagation()}
               className="relative z-20 font-display text-xl font-medium tracking-tight text-[#1a1a1a] underline decoration-[#1a1a1a]/30 underline-offset-4 transition-colors hover:text-[#1a1a1a]/70 md:text-2xl"
             >
               {project.metric}
