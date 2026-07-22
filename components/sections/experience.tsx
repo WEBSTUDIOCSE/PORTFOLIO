@@ -52,7 +52,7 @@ export default function Experience() {
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
         <header className="mb-12 max-w-2xl" data-reveal>
-          <p className="font-hand text-2xl text-primary">experience</p>
+          <p className="font-sans italic text-2xl text-primary">experience</p>
           <h2 className="mt-1 font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl">
             Where I&rsquo;ve worked.
           </h2>
@@ -117,14 +117,14 @@ function RoleCard({ role }: { role: Role }) {
       />
       {/* Dates column */}
       <aside className="md:col-span-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
           {role.dates}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
           {role.duration}
         </p>
         {role.current && (
-          <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+          <span className="mt-3 inline-flex items-center gap-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-primary">
             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
             Current
           </span>
@@ -140,7 +140,7 @@ function RoleCard({ role }: { role: Role }) {
               <h3 className="font-display text-2xl font-light tracking-tight text-foreground sm:text-3xl">
                 {role.company}
               </h3>
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                 · {role.type}
               </span>
             </div>
@@ -155,7 +155,7 @@ function RoleCard({ role }: { role: Role }) {
                 <span className="text-muted-foreground"> · {role.subRole}</span>
               )}
             </p>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+            <p className="mt-1 font-sans text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
               {role.location}
             </p>
           </div>
@@ -179,7 +179,7 @@ function RoleCard({ role }: { role: Role }) {
           {role.stack.map((s) => (
             <span
               key={s}
-              className="rounded-full border border-border bg-muted px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
+              className="rounded-full border border-border bg-muted px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-muted-foreground"
             >
               {s}
             </span>
@@ -230,7 +230,7 @@ function Logo({
 
 function Subheading({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+    <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
       {children}
     </p>
   );
@@ -243,7 +243,7 @@ function EducationRow({ education }: { education: Education }) {
         {education.institution}
       </p>
       <p className="mt-0.5 text-sm text-foreground">{education.degree}</p>
-      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+      <p className="mt-1 font-sans text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
         {education.dates} · {education.grade}
       </p>
     </div>
@@ -255,7 +255,7 @@ function CertificationRow({ cert }: { cert: Certification }) {
     <div>
       <p className="font-display text-lg text-foreground">{cert.name}</p>
       <p className="mt-0.5 text-sm text-muted-foreground">{cert.issuer}</p>
-      <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+      <p className="mt-1 font-sans text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
         Issued {cert.issued}
       </p>
     </div>

@@ -168,7 +168,7 @@ export default function SiteNav() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="block rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="block rounded-full px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 >
                   {l.label}
                 </Link>
@@ -223,7 +223,7 @@ export default function SiteNav() {
             </Link>
           ))}
           <span aria-hidden className="mt-4 h-px w-12 bg-border" />
-          <p className="font-hand text-2xl text-primary">— Saurabh</p>
+          <p className="font-sans italic text-2xl text-primary">— Saurabh</p>
         </nav>
       </div>
     </>

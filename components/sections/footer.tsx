@@ -18,10 +18,14 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { SOCIAL_ICONS, type SocialIconName } from "@/components/social-icons";
 import ScrollToTop from "@/components/scroll-to-top";
-import ResumeForm from "@/components/forms/resume-form";
+import { downloadFile } from "@/lib/download-file";
 
 const EMAIL = "saurabhjadhav.cse@gmail.com";
 const [EMAIL_USER, EMAIL_DOMAIN] = EMAIL.split("@");
+
+// Direct download — no gated lead-capture form anymore. Same fallback
+// path the old ResumeForm used.
+const RESUME_URL = process.env.NEXT_PUBLIC_RESUME_URL ?? "/resume.pdf";
 
 const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "/#work" },
@@ -122,19 +126,34 @@ export default function Footer() {
                     </li>
                   );
                 })}
+                {/* Resume — same icon-row treatment as the socials,
+                    direct download instead of the old gated form.
+                    RESUME_URL is cross-origin (Firebase Storage), so
+                    the plain `download` attribute is silently ignored
+                    by the browser and just navigates instead of
+                    downloading — fetch-and-blob forces a real
+                    download; target="_blank" + the href stay as a
+                    graceful no-JS fallback (opens in a new tab rather
+                    than leaving the page). */}
+                <li className="ml-3">
+                  <a
+                    href={RESUME_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Download resume PDF"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      downloadFile(RESUME_URL, "saurabh-jadhav-resume.pdf");
+                    }}
+                    className="flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none"
+                  >
+                    <SOCIAL_ICONS.resume className="h-6 w-6" />
+                  </a>
+                </li>
               </ul>
 
               {/* Expandable email button */}
               <EmailButton onHoverChange={setIsEmailHovered} />
-            </div>
-
-            {/* Resume gate — the one piece of Contact's job (besides
-                socials/email, already covered above) that didn't
-                already live here. Scoped theme override so the form's
-                own semantic-token styling reads as a black panel on
-                yellow instead of the dark theme's default pairing. */}
-            <div className="theme-footer-form mb-6">
-              <ResumeForm />
             </div>
 
             {/* Colophon / legal / back-to-top — folded into the slot

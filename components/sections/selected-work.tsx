@@ -135,7 +135,7 @@ function ProjectListRow({
           isActive ? "scale-y-100" : "scale-y-0"
         }`}
       />
-      <span className="font-mono text-xs text-[#1a1a1a]/50">
+      <span className="font-sans text-xs text-[#1a1a1a]/50">
         {String(index + 1).padStart(2, "0")}
       </span>
       <span
@@ -149,7 +149,7 @@ function ProjectListRow({
       </span>
       <span
         aria-hidden
-        className={`ml-auto shrink-0 font-mono text-xs uppercase tracking-[0.18em] text-[#1a1a1a] transition-opacity duration-300 ${
+        className={`ml-auto shrink-0 font-sans text-xs uppercase tracking-[0.18em] text-[#1a1a1a] transition-opacity duration-300 ${
           isActive ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -187,7 +187,7 @@ function ProjectPlate({
           presence/absence never changes anything else (only OpenClaw
           has one right now). */}
       {project.highlight && (
-        <p className="pointer-events-none absolute right-10 top-10 max-w-[9rem] rotate-2 text-right font-hand-note text-sm text-[#1a1a1a]/60">
+        <p className="pointer-events-none absolute right-10 top-10 max-w-[9rem] rotate-2 text-right font-sans italic text-sm text-[#1a1a1a]/60">
           {project.highlight}
         </p>
       )}
@@ -202,7 +202,7 @@ function ProjectPlate({
 
       {/* Header — number/year + metric */}
       <div className="absolute inset-x-10 top-10 flex items-start justify-between gap-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/60">
+        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/60">
           {project.number} · {project.year}
         </p>
         {project.metric && (
@@ -234,13 +234,13 @@ function ProjectPlate({
         {project.stack.slice(0, 6).map((s) => (
           <span
             key={s}
-            className="rounded-full border border-[#1a1a1a]/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70"
+            className="rounded-full border border-[#1a1a1a]/20 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70"
           >
             {s}
           </span>
         ))}
         {project.stack.length > 6 && (
-          <span className="rounded-full border border-dashed border-[#1a1a1a]/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70">
+          <span className="rounded-full border border-dashed border-[#1a1a1a]/20 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70">
             +{project.stack.length - 6} more
           </span>
         )}
@@ -248,10 +248,10 @@ function ProjectPlate({
 
       {/* Footer — always glued to the bottom edge */}
       <div className="absolute inset-x-10 bottom-10 flex items-center justify-between border-t border-[#1a1a1a]/15 pt-5">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
+        <p className="font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
           {project.role}
         </p>
-        <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60 transition-colors group-hover:text-[#1a1a1a]">
+        <p className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60 transition-colors group-hover:text-[#1a1a1a]">
           Case study
           <span
             aria-hidden
@@ -279,10 +279,10 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
           {String(index + 1).padStart(2, "0")}
         </p>
         <div className="flex flex-wrap items-baseline gap-x-4 md:flex-col md:gap-y-1.5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/60">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/60">
             {project.number}
           </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
+          <p className="font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
             {project.year}
           </p>
         </div>
@@ -301,20 +301,20 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#1a1a1a]/70 sm:text-base">
           {project.oneLiner}
         </p>
-        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
+        <p className="mt-4 font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
           {project.role}
         </p>
         <div className="mt-4 flex flex-wrap gap-1.5">
           {project.stack.slice(0, 6).map((s) => (
             <span
               key={s}
-              className="rounded-full border border-[#1a1a1a]/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70"
+              className="rounded-full border border-[#1a1a1a]/20 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70"
             >
               {s}
             </span>
           ))}
           {project.stack.length > 6 && (
-            <span className="rounded-full border border-dashed border-[#1a1a1a]/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70">
+            <span className="rounded-full border border-dashed border-[#1a1a1a]/20 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70">
               +{project.stack.length - 6} more
             </span>
           )}
@@ -329,11 +329,11 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
           </p>
         )}
         {project.highlight && (
-          <p className="font-hand-note text-sm text-[#1a1a1a]/60">
+          <p className="font-sans italic text-sm text-[#1a1a1a]/60">
             {project.highlight}
           </p>
         )}
-        <p className="mt-auto flex items-center gap-1.5 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60 transition-colors group-hover:text-[#1a1a1a]">
+        <p className="mt-auto flex items-center gap-1.5 pt-4 font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60 transition-colors group-hover:text-[#1a1a1a]">
           Case study
           <span
             aria-hidden

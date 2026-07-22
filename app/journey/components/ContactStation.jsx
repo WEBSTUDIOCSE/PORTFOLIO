@@ -1,6 +1,13 @@
 'use client';
 
-import ResumeForm from '@/components/forms/resume-form';
+import { downloadFile } from '@/lib/download-file';
+
+// Direct download — no gated lead-capture form. Same fallback path
+// the old ResumeForm used. RESUME_URL is cross-origin (Firebase
+// Storage), so the plain `download` attribute is silently ignored by
+// the browser and just navigates instead of downloading — see
+// lib/download-file.ts.
+const RESUME_URL = process.env.NEXT_PUBLIC_RESUME_URL ?? '/resume.pdf';
 
 // Final-stop overlay for the Contact station. Fixed-position card
 // above the Canvas (z=10) so the train + route-map stay obscured
@@ -54,8 +61,8 @@ export default function ContactStation({ scrollT, index }) {
             </div>
           </div>
 
-          {/* Primary contact methods — Email + Phone */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Primary contact methods — Email + Phone + Resume */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
             {/* Email */}
             <a
@@ -96,6 +103,34 @@ export default function ContactStation({ scrollT, index }) {
               </div>
               <svg className="flex-shrink-0 w-4 h-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+
+            {/* Resume — direct download, same card treatment as Email/Phone */}
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Download resume PDF"
+              onClick={(e) => {
+                e.preventDefault();
+                downloadFile(RESUME_URL, 'saurabh-jadhav-resume.pdf');
+              }}
+              className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-white/10 bg-black/40 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-black/60 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            >
+              <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                <svg className="w-5 h-5 text-white/80 group-hover:text-white" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-white/50 font-mono text-[10px] uppercase tracking-wider mb-1">Data Package</p>
+                <p className="text-white/90 text-sm font-mono truncate">
+                  Resume · PDF
+                </p>
+              </div>
+              <svg className="flex-shrink-0 w-4 h-4 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
             </a>
 
@@ -169,12 +204,6 @@ export default function ContactStation({ scrollT, index }) {
               <span className="hidden sm:block text-white/60 font-mono text-[10px] uppercase group-hover:text-white transition-colors">Instagram</span>
             </a>
 
-          </div>
-
-          {/* Resume — same gated intro form as the landing page
-              (captures name/email/role/company, then serves the PDF). */}
-          <div className="flex justify-center mt-6 p-6 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md">
-            <ResumeForm />
           </div>
 
           {/* Footer */}

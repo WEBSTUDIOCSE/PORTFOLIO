@@ -160,7 +160,7 @@ export default function TCInvite() {
         aria-hidden
         className="relative mb-6 hidden rounded-2xl border border-border bg-card px-4 py-2.5 opacity-0 shadow-lg shadow-foreground/[0.06] transition-opacity duration-300 md:block md:group-hover:opacity-100"
       >
-        <span className="font-hand text-lg leading-tight text-foreground">
+        <span className="font-sans italic text-lg leading-tight text-foreground">
           चला! Come, come →
         </span>
         <span
