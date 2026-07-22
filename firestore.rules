@@ -52,6 +52,19 @@ service cloud.firestore {
     // already published to the Firebase Console, remove it there too
     // (this file is only a reference; publishing is manual).
 
+    // ── Chat widget global daily usage counter ───────────────────
+    // Written exclusively by the Admin SDK (Route Handler at
+    // /api/chat) via a server-side transaction — the Admin SDK
+    // bypasses these rules entirely. This block exists only to keep
+    // the deny-all posture for this collection explicit, matching
+    // every other collection here. No client ever reads/writes
+    // chatUsage, and no chat message content is ever stored here or
+    // anywhere else server-side (conversations are ephemeral,
+    // browser-only).
+    match /chatUsage/{date} {
+      allow read, write: if false;
+    }
+
     // ── Catch-all: deny everything else ──────────────────────────
     // This MUST stay at the bottom. New collections need explicit
     // rules above this line.

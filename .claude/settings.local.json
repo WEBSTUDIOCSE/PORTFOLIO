@@ -22,7 +22,14 @@
       "Bash(grep -rn \"tc-wave.webm\" --include=*.tsx --include=*.jsx --include=*.ts components app)",
       "Bash(rm -f public/assets/tc-wave.webm)",
       "Bash(rm -rf .tmpframes)",
-      "Bash(ls -la public/assets/*.web*)"
+      "Bash(ls -la public/assets/*.web*)",
+      "Bash(node -e \"const fs=require\\('firebase-admin/firestore'\\); console.log\\(typeof fs.FieldValue, typeof fs.getFirestore\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(curl -s \"http://localhost:3000/?t=$\\(date +%s\\)\" -o /tmp/home_chat.html)",
+      "Bash(curl -s -X POST http://localhost:3000/api/chat -H \"Content-Type: application/json\" -d '{\"message\":\"hi\",\"history\":[]}' -o /tmp/chat_probe.json -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(netstat -ano)",
+      "Bash(curl -s -o /tmp/chat_get.html -w \"GET /api/chat -> %{http_code}\\\\n\" http://localhost:3000/api/chat)",
+      "Bash(curl -s -v -X POST http://localhost:3000/api/chat -H \"Content-Type: application/json\" -d '{\"message\":\"hi\",\"history\":[]}')"
     ]
   }
 }
