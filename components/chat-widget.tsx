@@ -46,10 +46,28 @@ export default function ChatWidget() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nearFooter, setNearFooter] = useState(false);
 
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  // The footer has its own "Reach out" row (email/socials/resume) in
+  // the same bottom-right corner this widget occupies — without this,
+  // the fixed bubble sits on top of those icons and blocks clicks on
+  // them. Fade the closed bubble out while the footer is in view; if
+  // the panel is already open, leave it alone rather than yanking it
+  // away mid-conversation.
+  useEffect(() => {
+    const footer = document.getElementById("site-footer");
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setNearFooter(entry.isIntersecting),
+      { rootMargin: "0px 0px -15% 0px" },
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   // Auto-scroll the message list to the newest content.
   useEffect(() => {
@@ -144,7 +162,11 @@ export default function ChatWidget() {
     messages[messages.length - 1].content === "";
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div
+      className={`fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
+        nearFooter && !open ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+    >
       {/* Panel — stays mounted after first open, animates via
           scale/opacity + inert rather than mount/unmount. */}
       {hasOpenedOnce && (
