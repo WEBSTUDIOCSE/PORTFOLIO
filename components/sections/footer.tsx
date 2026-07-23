@@ -230,7 +230,7 @@ function EmailButton({
         className="flex max-w-0 items-center justify-start overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[220px] group-focus-visible:max-w-[220px]"
       >
         <span className="pl-1.5 text-base font-normal tracking-tight sm:text-lg">
-          @{EMAIL_DOMAIN}
+          {EMAIL_DOMAIN}
         </span>
       </span>
 
