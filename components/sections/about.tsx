@@ -107,15 +107,11 @@ export default function About() {
               />
               <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border bg-muted sm:h-64 sm:w-64">
                 <Image
-                  src="/assets/saurabh/ezgif-frame-120.webp"
+                  src="/assets/saurabh-about.jpg"
                   alt="Saurabh Jadhav"
                   fill
-                  // `object-cover` crops the 16:9 source into a circle, so the
-                  // effective render width is ~1.8× the box — declare a larger
-                  // `sizes` (+ high quality) or it upscales and looks blurry.
                   sizes="512px"
                   className="object-cover"
-                  style={{ objectPosition: "center 18%" }}
                 />
               </div>
             </div>
