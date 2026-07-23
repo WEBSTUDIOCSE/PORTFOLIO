@@ -203,8 +203,10 @@ export default function WhatWeBuild() {
                 </div>
               </div>
 
-              {/* 3D clip — WebM/VP9 first (smaller, same quality), MP4/H.264
-                  fallback for Safari. Decorative only, aria-hidden. */}
+              {/* 3D clip — MP4/H.264 only; the source set is just .mp4
+                  now (no .webm re-export exists for the current
+                  clips), so a single <source> avoids a guaranteed
+                  404 fetch attempt per card. Decorative only, aria-hidden. */}
               <div className="relative min-h-[240px] bg-black md:min-h-0">
                 <video
                   loop
@@ -214,7 +216,6 @@ export default function WhatWeBuild() {
                   aria-hidden="true"
                   className="absolute inset-0 h-full w-full object-cover"
                 >
-                  <source src={`${layer.videoBase}.webm`} type="video/webm" />
                   <source src={`${layer.videoBase}.mp4`} type="video/mp4" />
                 </video>
               </div>

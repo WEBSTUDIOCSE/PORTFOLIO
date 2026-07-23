@@ -203,14 +203,16 @@ export default function CharacterScroll() {
     };
 
     // Fit math:
-    // - Desktop (≥640px): object-contain — character sits as a
-    //   "tabletop" portrait with breathing room around it. Matches
-    //   the considered/editorial feel of the rest of the page.
-    // - Mobile (<640px): contain × 1.5 — a moderate zoom over the
-    //   plain contain fit. Plain contain leaves the figure stranded
-    //   in a black void on tall phones; full cover crops the head
-    //   too aggressively. 1.5× is the middle that lets the figure
-    //   feel present without losing the silhouette edges.
+    // - Desktop (≥640px): object-contain, vertically centered — the
+    //   character sits as a "tabletop" portrait with breathing room
+    //   around it. Matches the considered/editorial feel of the rest
+    //   of the page.
+    // - Mobile (<640px): contain × 1.5, bottom-anchored. Tall narrow
+    //   viewports are width-constrained by `baseScale`, which leaves a
+    //   large empty vertical band above AND below the figure if
+    //   centered — the figure reads as floating in a black void.
+    //   Anchoring to the bottom (with a small margin so it isn't
+    //   flush against the edge) grounds the portrait instead.
     const draw = (targetIdx: number) => {
       // Clamp down to nearest loaded — never call drawImage with null.
       let idx = targetIdx;
@@ -229,7 +231,7 @@ export default function CharacterScroll() {
       const dw = iw * scale;
       const dh = ih * scale;
       const dx = (cssW - dw) / 2;
-      const dy = (cssH - dh) / 2;
+      const dy = isMobile ? cssH - dh - cssH * 0.06 : (cssH - dh) / 2;
 
       ctx.clearRect(0, 0, cssW, cssH);
       ctx.drawImage(img, dx, dy, dw, dh);
@@ -460,24 +462,28 @@ export default function CharacterScroll() {
           </p>
         </div>
 
-        {/* Beat 3 — orbital skill tags */}
+        {/* Beat 3 — orbital skill tags. Mobile values (unprefixed)
+            cluster around the bottom-anchored portrait's actual
+            silhouette (~59%–94% of viewport height, see the draw()
+            fit math above); sm: restores the original wide desktop
+            orbit tuned for the vertically-centered portrait there. */}
         <div ref={beat3Ref} className="absolute inset-0 z-10" style={{ opacity: 0 }}>
-          <SkillTag className="absolute left-[8%] top-[18%] sm:left-[12%]">
+          <SkillTag className="absolute left-[4%] top-[50%] sm:left-[12%] sm:top-[18%]">
             Next.js 16
           </SkillTag>
-          <SkillTag className="absolute right-[8%] top-[26%] sm:right-[12%]">
+          <SkillTag className="absolute right-[4%] top-[56%] sm:right-[12%] sm:top-[26%]">
             React 19
           </SkillTag>
-          <SkillTag className="absolute left-[6%] top-[58%] sm:left-[10%]">
+          <SkillTag className="absolute left-[2%] top-[70%] sm:left-[10%] sm:top-[58%]">
             TypeScript
           </SkillTag>
-          <SkillTag className="absolute right-[6%] top-[64%] sm:right-[10%]">
+          <SkillTag className="absolute right-[2%] top-[76%] sm:right-[10%] sm:top-[64%]">
             Firebase
           </SkillTag>
-          <SkillTag className="absolute bottom-[18%] left-[15%] sm:left-[20%]">
+          <SkillTag className="absolute bottom-[10%] left-[8%] sm:bottom-[18%] sm:left-[20%]">
             Tailwind v4
           </SkillTag>
-          <SkillTag className="absolute bottom-[14%] right-[15%] sm:right-[20%]">
+          <SkillTag className="absolute bottom-[18%] right-[8%] sm:bottom-[14%] sm:right-[20%]">
             Multi-agent AI
           </SkillTag>
         </div>
