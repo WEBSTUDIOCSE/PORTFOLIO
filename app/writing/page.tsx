@@ -1,11 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PUBLISHED_POSTS } from "@/lib/writing";
+import { SITE_URL } from "@/lib/seo";
+
+const TITLE = "Writing — Saurabh Jadhav";
+const DESCRIPTION =
+  "Technical posts on multi-agent AI systems, production engineering lessons, and building AI-native products end to end.";
 
 export const metadata: Metadata = {
-  title: "Writing — Saurabh Jadhav",
-  description:
-    "Short technical posts on multi-agent AI systems, web performance, and the Next.js 16 migration.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${SITE_URL}/writing` },
+  openGraph: {
+    type: "website",
+    url: `${SITE_URL}/writing`,
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: "Saurabh Jadhav",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function WritingIndexPage() {

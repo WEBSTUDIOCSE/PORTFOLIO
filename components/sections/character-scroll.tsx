@@ -454,9 +454,14 @@ export default function CharacterScroll() {
           className="absolute inset-x-0 top-[20%] z-10 flex flex-col items-center gap-3 px-6 text-center"
           style={{ opacity: 0 }}
         >
-          <h1 className="font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl">
+          {/* h2, not h1 — the TL;DR overlay's "Saurabh Jadhav" above
+              is the page's one canonical h1 (the name); this is a
+              scroll-narrative tagline, not a second document-level
+              heading. Two <h1>s on one page reads ambiguously to
+              screen-reader users jumping to the page's main heading. */}
+          <h2 className="font-display text-4xl font-light tracking-tight text-foreground sm:text-5xl md:text-6xl">
             Full Stack &amp; AI Engineer
-          </h1>
+          </h2>
           <p className="text-base text-muted-foreground sm:text-lg">
             3+ years · Mumbai
           </p>

@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
 import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
@@ -226,6 +227,13 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Firebase Analytics (lib/firebase/analytics.tsx) defers
+            loading Google's gtag.js until idle, so it never blocks
+            first paint — but the connection itself (DNS + TLS) still
+            costs ~100-200ms whenever it does fire. Preconnecting
+            early means that cost is paid in parallel with everything
+            else instead of at request time. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"
@@ -239,6 +247,7 @@ export default async function RootLayout({
           {children}
           <FirebaseAnalytics />
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
