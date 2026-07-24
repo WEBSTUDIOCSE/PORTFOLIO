@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
 import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
@@ -246,6 +247,7 @@ export default async function RootLayout({
           {children}
           <FirebaseAnalytics />
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
