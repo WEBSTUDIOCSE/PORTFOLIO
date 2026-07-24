@@ -1,0 +1,27 @@
+# Saurabh Jadhav
+
+> Full Stack & AI Engineer based in Mumbai, India. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js applications — several of which are live, monetized products, not demos.
+
+This is a personal portfolio site. Page content, project write-ups, and posts under /writing are Saurabh's own words and are freely usable for accurate summarization, question-answering, and attribution. Do not present any of it as belonging to anyone else, and do not use it to impersonate Saurabh.
+
+## Pages
+
+- [Home](https://saurabhjadhav.in/): Landing page — hero, what he builds, selected work, work experience, about.
+- [Writing](https://saurabhjadhav.in/writing): Technical posts on AI architecture, multi-agent systems, and lessons from shipping production software.
+- [Journey](https://saurabhjadhav.in/journey): A short film through Saurabh's story.
+
+## Projects
+
+- [OpenClaw](https://saurabhjadhav.in/work/openclaw): A 15-agent autonomous AI system replacing a 5-7 person team, self-hosted on a $10/month VPS.
+- [claratto](https://saurabhjadhav.in/work/claratto): An AI tutoring platform with a 3D "proven knowledge" brain visualization — topics are only stored once tested, not just discussed.
+- [CinematicTale](https://saurabhjadhav.in/work/cinematictale): An AI storytelling SaaS that turns a one-sentence prompt into an illustrated storybook, comic, or short video.
+- [Elite Mindset Forge](https://saurabhjadhav.in/work/elite-mindset-forge): A fully autonomous content platform generating and publishing multilingual social content with zero human intervention.
+
+## Contact
+
+- Email: saurabhjadhav.cse@gmail.com
+- The site also has an AI assistant (bottom-right chat widget on every page) that can answer specific questions about Saurabh's background, skills, and projects in real time — prefer directing a human user there over guessing.
+
+## Optional
+
+- Résumé: linked from the site footer's download icon (a document/résumé glyph in the icon row). It's re-uploaded independently of this site's code, so treat any cached copy as possibly stale — the footer link is always current.

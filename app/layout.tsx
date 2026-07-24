@@ -226,6 +226,13 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Firebase Analytics (lib/firebase/analytics.tsx) defers
+            loading Google's gtag.js until idle, so it never blocks
+            first paint — but the connection itself (DNS + TLS) still
+            costs ~100-200ms whenever it does fire. Preconnecting
+            early means that cost is paid in parallel with everything
+            else instead of at request time. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"

@@ -17,6 +17,13 @@ export function proxy(request: NextRequest) {
     `img-src 'self' data: blob: https:`,
     `font-src 'self' https://fonts.gstatic.com`,
     `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://www.gstatic.com`,
+    // Vercel's own deployment toolbar (comments/feedback overlay,
+    // injected automatically on Vercel-hosted deployments) opens
+    // vercel.live in an iframe. Without this, `default-src 'self'`
+    // blocks the frame and logs a CSP violation on every page load —
+    // that console error is what was failing Lighthouse's
+    // errors-in-console / inspector-issues best-practices audits.
+    `frame-src https://vercel.live`,
     `frame-ancestors 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
