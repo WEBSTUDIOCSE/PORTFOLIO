@@ -99,15 +99,23 @@ export default function Footer() {
           <div className="flex flex-col items-start md:items-end">
             <p className="mb-4 text-xl font-normal md:text-2xl">Reach out</p>
 
-            <div className="mb-6 flex h-11 items-center justify-end sm:h-[52px]">
-              {/* Social icons — collapse away while the email button
-                  is hovered/focused, exactly like the reference. */}
+            <div className="mb-6 flex min-h-11 flex-wrap items-center justify-end gap-y-3 sm:min-h-[52px] sm:flex-nowrap">
+              {/* Social icons — collapse away while the email button is
+                  hovered/focused, but only from sm: up. Touch devices
+                  don't have a real ":hover" — mobile Safari fires the
+                  mouseenter/focus handlers below on tap (which drove
+                  this collapse) without reliably also matching the
+                  button's own `group-hover:` text-reveal, so the icons
+                  would vanish while the email text never appeared —
+                  and re-tapping toggled it back and forth, reading as
+                  the row jittering left/right. Below sm:, this always
+                  stays fully expanded — no hover-dependent motion at all. */}
               <ul
                 aria-label="Social links"
-                className={`flex list-none items-center overflow-hidden py-0 pl-0 pr-5 transition-all duration-500 ease-out ${
+                className={`flex max-w-[240px] list-none items-center overflow-hidden py-0 pl-0 pr-5 opacity-100 transition-all duration-500 ease-out ${
                   isEmailHovered
-                    ? "max-w-0 opacity-0"
-                    : "max-w-[240px] opacity-100"
+                    ? "sm:max-w-0 sm:opacity-0"
+                    : "sm:max-w-[240px] sm:opacity-100"
                 }`}
               >
                 {SOCIALS.map((s, i) => {
@@ -209,10 +217,12 @@ function EmailButton({
       aria-label={copied ? "Email copied" : `Copy email address ${EMAIL}`}
       className="group relative flex shrink-0 cursor-pointer items-center focus-visible:outline-none"
     >
-      {/* Left text — user part of the address */}
+      {/* Left text — user part of the address. Always expanded below
+          sm: (no reliable touch ":hover" to reveal it otherwise);
+          collapses-then-hover-reveals only at sm: and up. */}
       <span
         aria-hidden
-        className="flex max-w-0 items-center justify-end overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[200px] group-focus-visible:max-w-[200px]"
+        className="flex max-w-[200px] items-center justify-end overflow-hidden whitespace-nowrap transition-all duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[200px] sm:group-focus-visible:max-w-[200px]"
       >
         <span className="pr-1.5 text-base font-normal tracking-tight sm:text-lg">
           {EMAIL_USER}
@@ -224,10 +234,11 @@ function EmailButton({
         @
       </span>
 
-      {/* Right text — domain part of the address */}
+      {/* Right text — domain part of the address. Same mobile-always-
+          expanded treatment as the left span above. */}
       <span
         aria-hidden
-        className="flex max-w-0 items-center justify-start overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-[220px] group-focus-visible:max-w-[220px]"
+        className="flex max-w-[220px] items-center justify-start overflow-hidden whitespace-nowrap transition-all duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[220px] sm:group-focus-visible:max-w-[220px]"
       >
         <span className="pl-1.5 text-base font-normal tracking-tight sm:text-lg">
           {EMAIL_DOMAIN}
