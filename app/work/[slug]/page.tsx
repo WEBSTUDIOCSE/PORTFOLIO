@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PROJECTS, type Project } from "@/lib/projects";
+import { getProjectLinks, PROJECTS, type Project } from "@/lib/projects";
 import MermaidDiagram from "@/components/mermaid-diagram";
 import { PERSON_ID, SITE_URL, jsonLd } from "@/lib/seo";
 
@@ -57,6 +57,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
   const next = idx < PROJECTS.length - 1 ? PROJECTS[idx + 1] : null;
 
   const linkedinPosts = project.linkedinPosts ?? [];
+  const projectLinks = getProjectLinks(project);
 
   const url = `${SITE_URL}/work/${project.slug}`;
   const image = `${url}/opengraph-image`;
@@ -80,7 +81,9 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
     author: { "@id": PERSON_ID },
     dateCreated: project.year,
     keywords: project.stack.join(", "),
-    ...(project.href ? { sameAs: project.href } : {}),
+    ...(projectLinks.length > 0
+      ? { sameAs: projectLinks.map((link) => link.href) }
+      : {}),
     // Required by Google for richer SoftwareApplication results.
     // Free portfolio projects → offer with price 0.
     offers: {
@@ -154,29 +157,26 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
         <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border py-6 sm:grid-cols-4">
           <Fact label="Role" value={project.role} />
           <Fact label="Year" value={project.year} />
+          {project.status && <Fact label="Status" value={project.status} />}
           {project.metric && <Fact label="Outcome" value={project.metric} />}
-          {project.href && (
-            <Fact
-              label="Live"
-              value={
-                <Link
-                  href={project.href}
-                  target={
-                    project.href.startsWith("http") ? "_blank" : undefined
-                  }
-                  rel={
-                    project.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  className="text-primary hover:underline"
-                >
-                  Visit →
-                </Link>
-              }
-            />
-          )}
         </dl>
+
+        {projectLinks.length > 0 && (
+          <div className="mt-6 flex flex-wrap gap-2">
+            {projectLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-sans text-[10px] uppercase tracking-[0.18em] text-card-foreground transition-colors hover:border-primary/50 hover:text-primary"
+              >
+                {link.label}
+                <span aria-hidden>↗</span>
+              </a>
+            ))}
+          </div>
+        )}
 
         {/* Stack chips */}
         <div className="mt-6 flex flex-wrap gap-1.5">

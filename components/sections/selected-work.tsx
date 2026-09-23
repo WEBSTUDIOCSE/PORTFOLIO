@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { FEATURED_PROJECTS, type Project } from "@/lib/projects";
+import {
+  FEATURED_PROJECTS,
+  getProjectLinks,
+  type Project,
+} from "@/lib/projects";
 
 // Selected Work — simple static project stack.
 //
@@ -46,9 +50,9 @@ export default function SelectedWork() {
             What I&rsquo;ve built.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-[#1a1a1a]/70 sm:text-base">
-            Autonomous multi-agent systems, a live AI SaaS, and
-            self-running content platforms — designed, built, and
-            shipped end to end by one engineer.
+            Identity infrastructure, self-hosted agent systems, and AI
+            products — designed, built, and shipped end to end by one
+            engineer.
           </p>
           <span
             aria-hidden
@@ -71,6 +75,7 @@ export default function SelectedWork() {
 
 function ProjectRow({ project, index }: { project: Project; index: number }) {
   const [name, descriptor] = splitTitle(project.title);
+  const projectLinks = getProjectLinks(project);
 
   return (
     <article className="group relative -mx-4 grid grid-cols-1 gap-x-8 gap-y-6 rounded-lg border-t border-[#1a1a1a]/15 px-4 py-10 transition-colors duration-300 hover:bg-white/50 sm:-mx-6 sm:px-6 md:grid-cols-12 md:py-14 last:border-b last:border-b-[#1a1a1a]/15">
@@ -86,9 +91,16 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
           <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/60">
             {project.number}
           </p>
-          <p className="font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
-            {project.year}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-sans text-[11px] uppercase tracking-[0.18em] text-[#1a1a1a]/60">
+              {project.year}
+            </p>
+            {project.status && (
+              <span className="rounded-full border border-[#1a1a1a]/20 px-2 py-0.5 font-sans text-[9px] uppercase tracking-[0.16em] text-[#1a1a1a]/60">
+                {project.status}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -127,6 +139,21 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
 
       {/* Right rail — metric, annotation, cue */}
       <div className="flex flex-col gap-3 md:col-span-3 md:items-end md:text-right">
+        {projectLinks.length > 0 && (
+          <div className="relative z-20 flex flex-wrap gap-1.5 md:justify-end">
+            {projectLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-[#1a1a1a]/20 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] text-[#1a1a1a]/70 transition-colors hover:border-[#1a1a1a]/50 hover:text-[#1a1a1a]"
+              >
+                {link.label} <span aria-hidden>↗</span>
+              </a>
+            ))}
+          </div>
+        )}
         {project.metric && (
           project.href ? (
             // Real external link, above the stretched case-study

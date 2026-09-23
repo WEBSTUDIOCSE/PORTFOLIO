@@ -22,6 +22,15 @@ export type Project = {
   metric?: string;
   /** External link — live demo or repo. */
   href?: string;
+  /** Optional status label shown beside the project metadata. */
+  status?: string;
+  /** Additional external links, such as a live product and its repository. */
+  links?: Array<{
+    label: string;
+    href: string;
+  }>;
+  /** Public source repository, when one exists. */
+  github?: string;
   /** Optional sketchbook annotation (Architects Daughter font). */
   highlight?: string;
   /** Surface on the homepage SelectedWork reel. */
@@ -62,8 +71,227 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    slug: "openclaw",
+    slug: "knownin",
     number: "P-001",
+    title: "KnownIn — professional identity workspace",
+    oneLiner:
+      "A living professional identity workspace that keeps profile truth, resumes, applications, and public presence in sync through chat or 38 authenticated MCP tools.",
+    role: "Founder · solo engineer",
+    year: "2026",
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "Firebase",
+      "Gemini",
+      "MCP",
+      "Razorpay",
+      "React PDF",
+    ],
+    metric: "38 MCP tools · live at knownin.com",
+    href: "https://www.knownin.com",
+    status: "Live product",
+    links: [{ label: "Live product", href: "https://www.knownin.com" }],
+    highlight: "↗ the source of truth for a working life",
+    featured: true,
+    problem:
+      "A professional identity usually lives in disconnected resumes, job portals, chat threads, and stale profile links. Every application asks for the same facts again, while tailored resumes risk drifting away from what is actually true. KnownIn makes one structured profile the source of truth and turns every downstream surface into a controlled projection of it.",
+    approach: [
+      "Profile Truth is stored as structured, tenant-scoped data: profile fields, verified skills, experience, projects, education, certifications, and AI-named custom sections. Firestore is accessed through server-only data modules, with audit events recording every chat-driven change.",
+      "Natural-language updates flow through a Gemini parser into schema-validated deltas. The same profile can be maintained conversationally instead of through a maze of CRUD forms, while custom sections preserve useful facts that do not fit a fixed resume schema.",
+      "A bearer-authenticated remote MCP server exposes 38 read/write tools across the profile, resume, project, application, and public-card surfaces. The contract is designed for Claude, ChatGPT, Cursor, and other MCP clients, with scoped API keys hashed at rest.",
+      "Resume generation is deliberately separated from profile truth. The live Main Resume follows the profile, while tailored versions select only verified skills, real experience, and real projects for a job description, then produce a fit score and learning-gap report before rendering one of three PDF templates.",
+      "Applications and private answers stay outside the public profile and resume layers. Submission stages require explicit confirmation, while the public card sanitizes stored URLs and generates its own Open Graph preview.",
+      "Razorpay subscriptions are finalized only by verified webhooks; plan limits are checked before an AI tailoring call so billing and provider usage stay aligned.",
+    ],
+    outcome: [
+      "38 MCP tools give connected AI clients a complete, auditable interface to the professional identity.",
+      "Live at knownin.com with public cards, chat-driven profile updates, application tracking, and resume exports.",
+      "Three ATS-focused PDF templates plus job-specific tailoring, fit analysis, and learning-gap reporting.",
+      "Profile, resume, application, and billing boundaries are enforced in server-side code rather than left to prompts or UI conventions.",
+    ],
+    lessons: [
+      "The profile should be the database of record; resumes, public cards, and applications should be derived views with stricter boundaries.",
+      "An MCP integration is a product surface, not a thin adapter. Authentication, scopes, CORS, tool documentation, and safe failure modes all matter.",
+      "Truthful automation needs explicit verification states. A skill that is merely mentioned cannot silently become resume evidence.",
+      "Private job-search context must be modeled separately from shareable identity data, even when both are useful to an AI assistant.",
+    ],
+    diagram: `flowchart TD
+  User[User]
+
+  subgraph Surfaces[Product surfaces]
+    Dashboard[Next.js dashboard]
+    Chat[Chat-driven updates]
+    MCP[MCP clients]
+    Card[Public professional card]
+  end
+
+  subgraph Gateway[Authenticated server boundary]
+    Routes[Route handlers]
+    MCPGateway[MCP endpoint · bearer keys]
+    Delta[Gemini · schema-validated delta]
+  end
+
+  subgraph Truth[Profile Truth]
+    Profile[(Profile + verified skills)]
+    History[(Knowledge event audit log)]
+    Private[(Private application answers)]
+  end
+
+  subgraph Outputs[Controlled projections]
+    MainResume[Live Main Resume]
+    Tailor[Tailored resume + fit report]
+    PDF[@react-pdf/renderer]
+    Applications[Application tracker]
+  end
+
+  subgraph Infra[External services]
+    Firestore[(Firebase Firestore)]
+    Storage[(Firebase Storage)]
+    Gemini[[Google Gemini]]
+    Razorpay[[Razorpay + verified webhooks]]
+  end
+
+  User --> Dashboard
+  User --> Chat
+  Dashboard --> Routes
+  Chat --> Routes --> Delta --> Profile
+  MCP --> MCPGateway --> Profile
+  Profile --> Firestore
+  Profile --> History
+  Dashboard --> MainResume
+  Dashboard --> Tailor
+  MCPGateway --> Tailor
+  Tailor -->|verified profile evidence| PDF
+  MainResume --> PDF
+  PDF --> Storage
+  Dashboard --> Applications --> Private
+  Dashboard --> Razorpay
+  Razorpay --> Firestore
+  Card --> Profile
+  Delta --> Gemini`,
+    diagramCaption:
+      "KnownIn is organized around one rule: Profile Truth is the source, everything else is a controlled projection. Chat and MCP clients can update the structured profile through authenticated server boundaries; the resume builder selects only verified evidence; applications keep private answers separate; and the public card exposes a sanitized view. Firestore holds the tenant data and audit trail, Storage holds rendered PDFs, Gemini parses updates and performs fit analysis, and Razorpay webhooks—not the browser—decide subscription state.",
+  },
+  {
+    slug: "cubicle",
+    number: "P-002",
+    title: "Cubicle — self-hosted multi-agent AI office",
+    oneLiner:
+      "An open-source AI office where agents live in a 3D React Three Fiber workspace, accept delegated tasks, stream live status, search the web, generate media, remember context, and take voice calls on infrastructure you own.",
+    role: "Founder · solo engineer",
+    year: "2026",
+    stack: [
+      "Next.js 16",
+      "React Three Fiber",
+      "FastAPI",
+      "Celery",
+      "Redis",
+      "PostgreSQL",
+      "pgvector",
+      "LiteLLM",
+      "WebRTC",
+      "Docker",
+    ],
+    metric: "10+ engines · 3D office · self-hosted",
+    href: "https://github.com/SAURABHRJADHAVCSE/cubicle",
+    github: "https://github.com/SAURABHRJADHAVCSE/cubicle",
+    status: "Open source",
+    links: [
+      {
+        label: "GitHub repository",
+        href: "https://github.com/SAURABHRJADHAVCSE/cubicle",
+      },
+    ],
+    highlight: "↗ an office where the agents actually work",
+    featured: true,
+    problem:
+      "Most multi-agent tools leave the operator staring at terminal logs or a chat transcript. That makes it hard to understand who is working, what is blocked, where files landed, or whether the system is making progress. Cubicle turns the harness into a place: agents have desks, live status, task context, memory, files, and a direct line back to the person running the office.",
+    approach: [
+      "A Next.js 16 frontend renders the office with React Three Fiber while ordinary panels handle onboarding, agents, tasks, chat, settings, files, and mobile/PWA access. Zustand holds scene/UI state; TanStack Query handles server state; Socket.io keeps agent activity live without polling.",
+      "A FastAPI backend is the protected control plane. Device bearer tokens gate the REST and Socket.io surfaces, while Caddy routes the web app, API, and real-time transport through one self-hosted address.",
+      "Task execution is asynchronous by design: Celery workers consume Redis-backed jobs, persist task results in PostgreSQL, and can route a boss task into dependent subtasks or let an agent call an explicitly configured teammate as a tool.",
+      "The engine registry separates CLI subprocesses such as Claude Code, Codex, and Gemini CLI from API engines routed through LiteLLM, including Ollama, Anthropic, Groq, OpenRouter, GLM, and custom OpenAI-compatible providers.",
+      "PostgreSQL stores agents, tasks, conversations, settings, and social events; pgvector stores semantic agent memory. Workspaces are bind-mounted to the host so files created by agents are real files the operator can open in VS Code.",
+      "The system also includes capability-gated Tavily search/crawl, Gemini image/video generation, Web Push, a Celery Beat social scheduler, and a WebRTC/aiortc voice path with coturn and a Sarvam provider boundary.",
+    ],
+    outcome: [
+      "Open-source and self-hosted through Docker Compose, with a 3D office that makes multi-agent state visible.",
+      "10+ CLI and API engine paths behind one registry instead of one hard-coded model provider.",
+      "Live task, agent, chat, and social events over Socket.io, backed by Celery workers and Redis.",
+      "Persistent semantic memory, host-visible workspaces, web search, media tools, PWA access, and voice-call scaffolding in one system.",
+    ],
+    lessons: [
+      "A visual workspace is observability: the office makes queue state, agent presence, and progress legible at a glance.",
+      "The engine boundary is the product's long-term leverage. New providers should implement one interface rather than leak provider logic across tasks and UI.",
+      "Real-time state needs a durable source of truth underneath it. Socket events make the interface feel alive, but PostgreSQL remains the record of what happened.",
+      "Self-hosting makes file paths, secrets, reverse proxies, device pairing, and TURN networking product concerns—not deployment afterthoughts.",
+    ],
+    diagram: `flowchart LR
+  User[Browser or phone]
+
+  subgraph Edge[Self-hosted edge]
+    Caddy[Caddy reverse proxy]
+    Web[Next.js 16 + React Three Fiber]
+    Auth[Device bearer auth]
+  end
+
+  subgraph Control[FastAPI control plane]
+    API[REST API]
+    Socket[Socket.io events]
+    Router[Task router + delegation]
+    Voice[WebRTC + aiortc]
+  end
+
+  subgraph Queue[Async execution]
+    Redis[(Redis broker + pub/sub)]
+    Workers[Celery workers]
+    Beat[Celery Beat scheduler]
+  end
+
+  subgraph Engines[Engine registry]
+    CLI[CLI subprocess engines · Claude Code · Codex · Gemini CLI]
+    LLM[LiteLLM API engines · Ollama · Anthropic · Groq · OpenRouter · GLM]
+    Search[Tavily search + crawl]
+    Media[Gemini image + video]
+  end
+
+  subgraph Data[Durable state]
+    Postgres[(PostgreSQL 16)]
+    Memory[(pgvector agent memory)]
+    Files[(Host bind-mounted workspaces)]
+  end
+
+  TURN[coturn TURN relay]
+  Sarvam[Sarvam STT / TTS boundary]
+
+  User --> Caddy
+  Caddy --> Web
+  Caddy --> API
+  Caddy --> Socket
+  Web --> Auth --> API
+  Web --> Socket
+  API --> Router
+  API --> Postgres
+  Router --> Redis
+  Redis --> Workers
+  Beat --> Redis
+  Workers --> CLI
+  Workers --> LLM
+  Workers --> Search
+  Workers --> Media
+  Workers --> Postgres
+  Workers --> Memory
+  Workers --> Files
+  API --> Voice
+  Voice --> TURN
+  Voice --> Sarvam
+  Router -->|dependent subtasks| Router`,
+    diagramCaption:
+      "Cubicle separates the experience layer from the execution layer. The Next.js/React Three Fiber office and Socket.io events make state visible; FastAPI owns the authenticated control plane; Redis and Celery absorb long-running work; PostgreSQL is the durable record; pgvector gives each agent searchable memory; and the engine registry routes tasks to CLI or LiteLLM-backed providers. Docker Compose, Caddy, coturn, and a host-mounted workspace complete the self-hosted boundary.",
+  },
+  {
+    slug: "openclaw",
+    number: "P-003",
     title: "OpenClaw — 15-agent autonomous system",
     oneLiner:
       "A self-hosted AI agency on a $10/month VPS — 15 sub-agents across three agencies (Dev/Shuri, Creative/Maya, LinkedIn/Natasha) reporting to Jarvis the COO. One Telegram message kicks off a full product cycle: build → QA → deploy → post.",
@@ -173,7 +401,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "claratto",
-    number: "P-002",
+    number: "P-004",
     title: "claratto — AI tutoring platform",
     oneLiner:
       "Users learn any topic through a multi-turn Socratic AI tutor, get tested, and watch a persistent 3D brain visualization grow as topics are proven — not just marked complete. Live and monetised — Razorpay subscriptions, credit-based usage tiers, Firebase auth, syllabus-to-curriculum AI generation, voice-based mock interviews.",
@@ -253,7 +481,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "cinematictale",
-    number: "P-003",
+    number: "P-005",
     title: "CinematicTale — AI storytelling SaaS",
     oneLiner:
       "Users create characters, generate narratives, produce AI images via PuLID face-swap. Live and monetised — Razorpay subscriptions, Firebase auth, 7-phase launch playbook.",
@@ -329,7 +557,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "elite-mindset-forge",
-    number: "P-004",
+    number: "P-006",
     title: "Elite Mindset Forge — autonomous content platform",
     oneLiner:
       "A read-only website fed by a separate Agent Portal: scheduled triggers spin up AI agents that generate every quote, image, and video; Firestore fans them out to Instagram, Facebook, push subscribers, and the site. Multilingual (English / Hindi / Marathi). Zero human in the loop.",
@@ -424,5 +652,22 @@ export const PROJECTS: Project[] = [
       "The website is a pure read-only consumer — content originates in a separate Agent Portal backend, kicked off by scheduled Firebase triggers at specific times of day. The Engine calls the AI models (Gemini Pro + RAG for trilingual text; Imagen / Veo / Kling for visuals) and writes the result to a shared Firestore. From there it fans out in parallel: Autogram Poster auto-posts to Instagram + Facebook, a Firestore trigger multicasts FCM push notifications to subscribers, and elitemindsetforge.com just renders whatever's already in the database. Nothing is generated on the website itself.",
   },
 ];
+
+export function getProjectLinks(project: Project) {
+  const links = [...(project.links ?? [])];
+
+  if (project.href && !links.some((link) => link.href === project.href)) {
+    links.unshift({ label: "Open project", href: project.href });
+  }
+
+  if (
+    project.github &&
+    !links.some((link) => link.href === project.github)
+  ) {
+    links.push({ label: "GitHub", href: project.github });
+  }
+
+  return links;
+}
 
 export const FEATURED_PROJECTS = PROJECTS.filter((p) => p.featured);
