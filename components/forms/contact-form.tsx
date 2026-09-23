@@ -70,6 +70,14 @@ export default function ContactForm() {
           error: "Please fix the highlighted fields.",
           fields,
         });
+        const firstInvalid = ["name", "email", "message"].find(
+          (field) => fields[field as ContactField],
+        );
+        if (firstInvalid) {
+          window.requestAnimationFrame(() =>
+            document.getElementById(`field-${firstInvalid}`)?.focus(),
+          );
+        }
         isSubmittingRef.current = false;
         return;
       }
@@ -165,7 +173,7 @@ export default function ContactForm() {
           required
           multiline
           rows={5}
-          placeholder="What are you building? What role? Anything you'd want me to know."
+          placeholder="What are you building? What role? Anything you’d want me to know…"
           error={fieldErrors?.message}
         />
 
@@ -241,7 +249,7 @@ function Field({
   const id = `field-${name}`;
   const errorId = `${id}-error`;
   const baseInput =
-    "w-full rounded-md border bg-card px-3 py-2.5 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40";
+    "w-full rounded-md border bg-card px-3 py-2.5 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus-visible:ring-2 focus-visible:ring-primary/60";
   const inputClass = `${baseInput} ${
     error ? "border-destructive" : "border-border focus:border-primary/40"
   }`;
@@ -271,6 +279,7 @@ function Field({
           name={name}
           type={type}
           autoComplete={autoComplete}
+          spellCheck={type !== "email"}
           required={required}
           placeholder={placeholder}
           aria-invalid={Boolean(error)}

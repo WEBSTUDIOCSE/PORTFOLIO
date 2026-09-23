@@ -58,6 +58,25 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
 
   const linkedinPosts = project.linkedinPosts ?? [];
   const projectLinks = getProjectLinks(project);
+  const contentSections = [
+    { id: "problem", label: "Problem", visible: Boolean(project.problem) },
+    {
+      id: "approach",
+      label: "Approach",
+      visible: Boolean(project.approach?.length),
+    },
+    {
+      id: "architecture",
+      label: "Architecture",
+      visible: Boolean(project.diagram),
+    },
+    { id: "outcome", label: "Outcome", visible: Boolean(project.outcome?.length) },
+    {
+      id: "lessons",
+      label: "Lessons",
+      visible: Boolean(project.lessons?.length),
+    },
+  ].filter((section) => section.visible);
 
   const url = `${SITE_URL}/work/${project.slug}`;
   const image = `${url}/opengraph-image`;
@@ -135,7 +154,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
       <div className="mx-auto max-w-3xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link
           href="/#work"
-          className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-primary"
+          className="rounded-full font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
         >
           ← All work
         </Link>
@@ -146,7 +165,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary">
           {project.number} · {project.year}
         </p>
-        <h1 className="mt-2 font-display text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="mt-2 font-display text-balance text-4xl font-light leading-tight tracking-tight sm:text-5xl md:text-6xl">
           {project.title}
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-foreground sm:text-xl">
@@ -169,7 +188,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-sans text-[10px] uppercase tracking-[0.18em] text-card-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-sans text-[10px] uppercase tracking-[0.18em] text-card-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {link.label}
                 <span aria-hidden>↗</span>
@@ -189,12 +208,38 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
             </span>
           ))}
         </div>
+
+        {contentSections.length > 0 && (
+          <nav
+            aria-label="Project sections"
+            className="mt-8 border-t border-border pt-5"
+          >
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+              On this page
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+              {contentSections.map((section) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="font-sans text-xs text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    {section.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </header>
 
       {/* Problem · Approach · Outcome · Lessons */}
-      <article className="mx-auto max-w-3xl space-y-16 px-6 pb-24 sm:px-10">
+      <article
+        id="project-content"
+        className="mx-auto max-w-3xl space-y-16 px-6 pb-24 sm:px-10"
+      >
         {project.problem && (
-          <Block kicker="The problem">
+          <Block id="problem" kicker="The problem">
             <p className="text-lg leading-relaxed text-foreground sm:text-xl">
               {project.problem}
             </p>
@@ -202,13 +247,13 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
         )}
 
         {project.approach && project.approach.length > 0 && (
-          <Block kicker="Approach">
+          <Block id="approach" kicker="Approach">
             <Bullets items={project.approach} />
           </Block>
         )}
 
         {project.diagram && (
-          <Block kicker="Architecture">
+          <Block id="architecture" kicker="Architecture">
             <MermaidDiagram
               chart={project.diagram}
               caption={project.diagramCaption}
@@ -217,13 +262,13 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
         )}
 
         {project.outcome && project.outcome.length > 0 && (
-          <Block kicker="Outcome">
+          <Block id="outcome" kicker="Outcome">
             <Bullets items={project.outcome} />
           </Block>
         )}
 
         {project.lessons && project.lessons.length > 0 && (
-          <Block kicker="Lessons learned">
+          <Block id="lessons" kicker="Lessons learned">
             <Bullets items={project.lessons} />
           </Block>
         )}
@@ -242,7 +287,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
                   href={`https://www.linkedin.com/feed/update/${post.urn}/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-baseline gap-2 rounded-lg border border-border bg-card px-5 py-4 text-card-foreground transition-colors hover:border-primary/40"
+                  className="inline-flex items-baseline gap-2 rounded-lg border border-border bg-card px-5 py-4 text-card-foreground transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   <span className="font-display text-lg">
                     {post.label ?? "Read the launch post"}
@@ -268,7 +313,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           {prev ? (
             <Link
               href={`/work/${prev.slug}`}
-              className="group flex flex-col gap-1 text-left"
+              className="group flex flex-col gap-1 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
             >
               <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 ← Previous
@@ -283,7 +328,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           {next ? (
             <Link
               href={`/work/${next.slug}`}
-              className="group flex flex-col gap-1 text-right"
+              className="group flex flex-col gap-1 rounded-lg text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
             >
               <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                 Next →
@@ -319,14 +364,16 @@ function Fact({
 }
 
 function Block({
+  id,
   kicker,
   children,
 }: {
+  id?: string;
   kicker: string;
   children: React.ReactNode;
 }) {
   return (
-    <section>
+    <section id={id}>
       <p className="font-sans italic text-2xl text-primary">{kicker}</p>
       <div className="mt-4">{children}</div>
     </section>

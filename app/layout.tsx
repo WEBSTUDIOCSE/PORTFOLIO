@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Geist,
   Geist_Mono,
@@ -133,6 +133,14 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4ece2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d0805" },
+  ],
+  colorScheme: "dark",
+};
+
 // JSON-LD graph — single @graph with Person + WebSite. Per
 // Next.js docs (node_modules/next/dist/docs/01-app/02-guides/
 // json-ld.md): "a native <script> tag is the right choice here" —
@@ -243,8 +251,16 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
+          <a
+            href="#main-content"
+            className="sr-only fixed left-4 top-4 z-[100] rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            Skip to content
+          </a>
           <SiteNav />
-          {children}
+          <div id="main-content" tabIndex={-1} className="min-h-0 flex-1">
+            {children}
+          </div>
           <FirebaseAnalytics />
         </ThemeProvider>
         <SpeedInsights />

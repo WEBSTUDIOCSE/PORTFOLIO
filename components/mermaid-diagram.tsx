@@ -43,8 +43,8 @@ export default function MermaidDiagram({
     if (!el) return;
     // SSR-safety: IntersectionObserver is browser-only.
     if (typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
+      const fallback = window.setTimeout(() => setInView(true), 0);
+      return () => window.clearTimeout(fallback);
     }
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -94,6 +94,7 @@ export default function MermaidDiagram({
   return (
     <figure
       ref={figureRef}
+      aria-busy={!inView}
       className="overflow-x-auto rounded-xl border border-border bg-card p-4 sm:p-6"
     >
       <div

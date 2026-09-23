@@ -54,10 +54,10 @@ export default function Footer() {
         aria-hidden
         className="relative z-0 flex w-full flex-1 select-none flex-col items-center justify-center gap-2 overflow-hidden md:gap-4"
       >
-        <p className="m-0 cursor-default whitespace-nowrap p-0 text-center font-display text-[13vw] font-bold leading-[0.85] tracking-tight text-black/[0.12] transition-all duration-500 hover:scale-105 hover:text-black/[0.25]">
+        <p className="m-0 cursor-default whitespace-nowrap p-0 text-center font-display text-[13vw] font-bold leading-[0.85] tracking-tight text-black/[0.12] transition-[color,transform] duration-500 hover:scale-105 hover:text-black/[0.25]">
           SAURABH
         </p>
-        <p className="m-0 cursor-default whitespace-nowrap p-0 text-center font-display text-[13vw] font-bold leading-[0.85] tracking-tight text-black/[0.12] transition-all duration-500 hover:scale-105 hover:text-black/[0.25]">
+        <p className="m-0 cursor-default whitespace-nowrap p-0 text-center font-display text-[13vw] font-bold leading-[0.85] tracking-tight text-black/[0.12] transition-[color,transform] duration-500 hover:scale-105 hover:text-black/[0.25]">
           JADHAV
         </p>
       </div>
@@ -85,7 +85,7 @@ export default function Footer() {
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className="text-xs font-medium uppercase tracking-[0.1em] text-black/60 underline-offset-4 transition-colors hover:text-black hover:underline focus-visible:text-black focus-visible:underline focus-visible:outline-none"
+                      className="rounded-sm text-xs font-medium uppercase tracking-[0.1em] text-black/60 underline-offset-4 transition-colors hover:text-black hover:underline focus-visible:text-black focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]"
                     >
                       {l.label}
                     </Link>
@@ -112,7 +112,7 @@ export default function Footer() {
                   stays fully expanded — no hover-dependent motion at all. */}
               <ul
                 aria-label="Social links"
-                className={`flex max-w-[240px] list-none items-center overflow-hidden py-0 pl-0 pr-5 opacity-100 transition-all duration-500 ease-out ${
+                className={`flex max-w-[240px] list-none items-center overflow-hidden py-0 pl-0 pr-5 opacity-100 transition-[max-width,opacity] duration-500 ease-out ${
                   isEmailHovered
                     ? "sm:max-w-0 sm:opacity-0"
                     : "sm:max-w-[240px] sm:opacity-100"
@@ -127,7 +127,7 @@ export default function Footer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={s.label}
-                        className="flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none"
+                        className="rounded-sm flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]"
                       >
                         <Icon className="h-6 w-6" />
                       </a>
@@ -153,7 +153,7 @@ export default function Footer() {
                       e.preventDefault();
                       downloadFile(RESUME_URL, "saurabh-jadhav-resume.pdf");
                     }}
-                    className="flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none"
+                    className="rounded-sm flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]"
                   >
                     <SOCIAL_ICONS.resume className="h-6 w-6" />
                   </a>
@@ -176,7 +176,7 @@ export default function Footer() {
               <p className="text-[10px] uppercase tracking-[0.2em] opacity-60">
                 © {year} · Ratnagiri&nbsp;→&nbsp;Mumbai
               </p>
-              <ScrollToTop className="text-[10px] font-medium uppercase tracking-[0.2em] text-black/70 transition-colors hover:text-black focus-visible:text-black focus-visible:outline-none">
+              <ScrollToTop className="rounded-sm text-[10px] font-medium uppercase tracking-[0.2em] text-black/70 transition-colors hover:text-black focus-visible:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]">
                 Back to top ↑
               </ScrollToTop>
             </div>
@@ -215,14 +215,14 @@ function EmailButton({
       onBlur={() => onHoverChange(false)}
       onClick={handleCopy}
       aria-label={copied ? "Email copied" : `Copy email address ${EMAIL}`}
-      className="group relative flex shrink-0 cursor-pointer items-center focus-visible:outline-none"
+      className="group relative flex shrink-0 cursor-pointer items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]"
     >
       {/* Left text — user part of the address. Always expanded below
           sm: (no reliable touch ":hover" to reveal it otherwise);
           collapses-then-hover-reveals only at sm: and up. */}
       <span
         aria-hidden
-        className="flex max-w-[200px] items-center justify-end overflow-hidden whitespace-nowrap transition-all duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[200px] sm:group-focus-visible:max-w-[200px]"
+        className="flex max-w-[200px] items-center justify-end overflow-hidden whitespace-nowrap transition-[max-width] duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[200px] sm:group-focus-visible:max-w-[200px]"
       >
         <span className="pr-1.5 text-base font-normal tracking-tight sm:text-lg">
           {EMAIL_USER}
@@ -238,7 +238,7 @@ function EmailButton({
           expanded treatment as the left span above. */}
       <span
         aria-hidden
-        className="flex max-w-[220px] items-center justify-start overflow-hidden whitespace-nowrap transition-all duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[220px] sm:group-focus-visible:max-w-[220px]"
+        className="flex max-w-[220px] items-center justify-start overflow-hidden whitespace-nowrap transition-[max-width] duration-500 ease-out sm:max-w-0 sm:group-hover:max-w-[220px] sm:group-focus-visible:max-w-[220px]"
       >
         <span className="pl-1.5 text-base font-normal tracking-tight sm:text-lg">
           {EMAIL_DOMAIN}

@@ -51,6 +51,7 @@ export default function ChatWidget() {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const bubbleRef = useRef<HTMLButtonElement>(null);
 
   // The footer has its own "Reach out" row (email/socials/resume) in
   // the same bottom-right corner this widget occupies — without this,
@@ -88,10 +89,12 @@ export default function ChatWidget() {
   // Focus the input + trap Escape when the panel opens.
   useEffect(() => {
     if (!open) return;
-    setHasOpenedOnce(true);
     const t = setTimeout(() => inputRef.current?.focus(), 200);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        bubbleRef.current?.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -172,11 +175,12 @@ export default function ChatWidget() {
       {hasOpenedOnce && (
         <div
           ref={panelRef}
+          id="saurabh-chat-panel"
           role="dialog"
           aria-modal="false"
           aria-label="Chat with Saurabh's assistant"
           inert={!open ? true : undefined}
-          className={`flex h-[28rem] w-[calc(100vw-2rem)] max-w-[380px] origin-bottom-right flex-col overflow-hidden rounded-2xl border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-all duration-300 ease-out [color-scheme:light] motion-reduce:transition-none ${
+          className={`flex h-[28rem] w-[calc(100vw-2rem)] max-w-[380px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-2xl border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none ${
             open
               ? "translate-y-0 scale-100 opacity-100"
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
@@ -309,14 +313,15 @@ export default function ChatWidget() {
               rows={1}
               maxLength={1000}
               placeholder="Ask a question…"
-              className="no-scrollbar max-h-24 flex-1 resize-none overflow-y-auto rounded-xl border border-[#1a1a1a]/15 bg-white px-3 py-2 font-sans text-sm text-[#1a1a1a] placeholder:text-[#1a1a1a]/40 focus:outline-none focus:ring-2 focus:ring-[#8a6526]/40 [color-scheme:light]"
+              aria-label="Ask Saurabh's assistant"
+              className="no-scrollbar max-h-24 flex-1 resize-none overflow-y-auto rounded-xl border border-[#1a1a1a]/15 bg-white px-3 py-2 font-sans text-sm text-[#1a1a1a] placeholder:text-[#1a1a1a]/40 focus:outline-none focus:ring-2 focus:ring-[#8a6526]/40 focus-visible:ring-2 focus-visible:ring-[#8a6526]/60 [color-scheme:light]"
             />
             <button
               type="button"
               onClick={() => send()}
               disabled={sending || !input.trim()}
               aria-label="Send message"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-[#f4f1ea] transition-all hover:scale-105 hover:bg-[#1a1a1a]/85 disabled:scale-100 disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-[#f4f1ea] transition-[background-color,transform,opacity] hover:scale-105 hover:bg-[#1a1a1a]/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f4f1ea] disabled:scale-100 disabled:opacity-40"
             >
               <SendIcon className="h-4 w-4" />
             </button>
@@ -336,18 +341,23 @@ export default function ChatWidget() {
         )}
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close chat" : "Chat with Saurabh's assistant"}
           aria-expanded={open}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-[#f4f1ea] shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95"
+          ref={bubbleRef}
+          aria-controls="saurabh-chat-panel"
+          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-[#f4f1ea] shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          onClick={() => {
+            setHasOpenedOnce(true);
+            setOpen((v) => !v);
+          }}
         >
           <span
-            className={`absolute transition-all duration-200 ${open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
+            className={`absolute transition-[opacity,transform] duration-200 ${open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
           >
             <BotIcon className="h-6 w-6" />
           </span>
           <span
-            className={`absolute transition-all duration-200 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
+            className={`absolute transition-[opacity,transform] duration-200 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
           >
             <CloseIcon className="h-4 w-4" />
           </span>
@@ -401,6 +411,8 @@ function renderInlineBold(text: string) {
 function TypingDots() {
   return (
     <span
+      role="status"
+      aria-live="polite"
       aria-label="Assistant is typing"
       className="flex items-center gap-1 rounded-2xl bg-[#1a1a1a]/[0.06] px-4 py-3"
     >

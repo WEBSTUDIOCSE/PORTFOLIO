@@ -31,7 +31,7 @@ export default function SiteNav() {
   // Browser back / the in-page UI handle navigation off the page.
   const isJourney = pathname === "/journey";
 
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => !isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Refs for focus management on the mobile dialog.
@@ -41,10 +41,7 @@ export default function SiteNav() {
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
-    if (!isHome) {
-      setScrolled(true);
-      return;
-    }
+    if (!isHome) return;
     // Hero section is 400vh tall, sticky child 100vh. Sticky
     // unsticks at scrollY = 300vh, so the morph for Beat 5
     // ("I'm Saurabh.") runs ENTIRELY inside the locked range —
@@ -74,10 +71,6 @@ export default function SiteNav() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, [isHome]);
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
 
   // Mobile dialog a11y: focus into the dialog on open, trap Tab within
   // it, close on Escape, and restore focus to the trigger on close.
@@ -116,9 +109,10 @@ export default function SiteNav() {
     };
 
     document.addEventListener("keydown", onKeyDown);
+    const trigger = triggerRef.current;
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      triggerRef.current?.focus();
+      trigger?.focus();
     };
   }, [mobileOpen, closeMobile]);
 
@@ -134,7 +128,7 @@ export default function SiteNav() {
           off to inner so the page beneath stays interactive in the
           empty side regions. */}
       <div
-        className={`pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 transition-all duration-300 sm:top-5 sm:px-6 ${
+        className={`pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3 transition-[opacity,transform] duration-300 sm:top-5 sm:px-6 ${
           visible
             ? "translate-y-0 opacity-100"
             : "-translate-y-4 opacity-0"
@@ -168,7 +162,7 @@ export default function SiteNav() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="block rounded-full px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="block rounded-full px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   {l.label}
                 </Link>
@@ -184,7 +178,7 @@ export default function SiteNav() {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             aria-controls="site-mobile-menu"
-            className="ml-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/5 md:hidden"
+            className="ml-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:hidden"
           >
             {mobileOpen ? <IconClose /> : <IconMenu />}
           </button>
@@ -201,7 +195,7 @@ export default function SiteNav() {
         aria-modal="true"
         aria-label="Site menu"
         inert={!mobileOpen ? true : undefined}
-        className={`fixed inset-0 z-40 flex flex-col bg-background/95 backdrop-blur-md transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-40 flex overscroll-contain flex-col bg-background/95 backdrop-blur-md transition-opacity duration-300 md:hidden ${
           mobileOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -214,7 +208,7 @@ export default function SiteNav() {
               key={l.href}
               href={l.href}
               onClick={closeMobile}
-              className="font-display text-3xl font-light tracking-tight text-foreground transition-colors hover:text-primary"
+              className="font-display text-3xl font-light tracking-tight text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
               style={{
                 transitionDelay: mobileOpen ? `${i * 40}ms` : "0ms",
               }}

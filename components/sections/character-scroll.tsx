@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useTheme } from "@/lib/theme";
-import { useIsMounted } from "@/lib/use-is-mounted";
 
 // Source frame numbers — frame 60 is missing on disk, so we skip it.
 // 119 frames total: 1..59 and 61..120.
@@ -109,10 +107,6 @@ export default function CharacterScroll() {
   // frame loads so the scroll handler can redraw if the user is
   // currently sitting on (or past) that index.
   const requestDrawRef = useRef<(() => void) | null>(null);
-
-  const mounted = useIsMounted();
-  const { resolvedTheme } = useTheme();
-  const isDark = mounted && resolvedTheme === "dark";
 
   // On mount, decide:
   //   1. Frame count   (mobile = every-other, desktop = all)

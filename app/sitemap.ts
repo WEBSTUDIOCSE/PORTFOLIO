@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 1.0,
+      images: [`${BASE}/opengraph-image`],
     },
     {
       url: `${BASE}/journey`,
@@ -42,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
     changeFrequency: "monthly",
     priority: 0.7,
+    images: [`${BASE}/work/${p.slug}/opengraph-image`],
   }));
 
   // /writing/[slug] — one entry per published post. lastModified
@@ -52,6 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(p.date),
     changeFrequency: "monthly",
     priority: 0.6,
+    images: [`${BASE}/writing/${p.slug}/opengraph-image`],
   }));
 
   return [...staticRoutes, ...workRoutes, ...writingRoutes];

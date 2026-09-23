@@ -12,6 +12,8 @@ This is a personal portfolio site. Page content, project write-ups, and posts un
 
 ## Projects
 
+- [KnownIn](https://saurabhjadhav.in/work/knownin): A living professional identity workspace that keeps profile truth, resumes, applications, and public presence in sync through chat and 38 authenticated MCP tools. Live at [knownin.com](https://www.knownin.com/).
+- [Cubicle](https://saurabhjadhav.in/work/cubicle): An open-source, self-hosted multi-agent harness with a 3D office, delegated tasks, per-agent memory, web search, media generation, and voice collaboration. Source code is on [GitHub](https://github.com/SAURABHJRJADHAVCSE/cubicle).
 - [OpenClaw](https://saurabhjadhav.in/work/openclaw): A 15-agent autonomous AI system replacing a 5-7 person team, self-hosted on a $10/month VPS.
 - [claratto](https://saurabhjadhav.in/work/claratto): An AI tutoring platform with a 3D "proven knowledge" brain visualization — topics are only stored once tested, not just discussed.
 - [CinematicTale](https://saurabhjadhav.in/work/cinematictale): An AI storytelling SaaS that turns a one-sentence prompt into an illustrated storybook, comic, or short video.
