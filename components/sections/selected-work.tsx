@@ -139,7 +139,6 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
 
       {/* Right rail — metric, annotation, cue */}
       <div className="flex flex-col gap-3 md:col-span-3 md:items-end md:text-right">
-        <ProjectSignal slug={project.slug} number={project.number} />
         {projectLinks.length > 0 && (
           <div className="relative z-20 flex flex-wrap gap-1.5 md:justify-end">
             {projectLinks.map((link) => (
@@ -205,101 +204,6 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
       >
         <span className="sr-only">View project</span>
       </Link>
-    </article>
-  );
-}
-
-function ProjectSignal({
-  slug,
-  number,
-}: {
-  slug: string;
-  number: string;
-}) {
-  const isKnownIn = slug === "knownin";
-  const isCubicle = slug === "cubicle";
-  const gradientId = `signal-gradient-${slug}`;
-
-  return (
-    <div
-      aria-hidden
-      className="relative hidden h-24 w-full max-w-[220px] overflow-hidden rounded-lg border border-[#1a1a1a]/15 bg-[#1a1a1a] text-[#f4ece2] transition-[border-color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:border-[#1a1a1a]/35 md:flex"
-    >
-      <svg
-        viewBox="0 0 220 96"
-        className="absolute inset-0 h-full w-full"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="220" y2="96">
-            <stop stopColor={isKnownIn ? "#f3c969" : "#d7a5a5"} />
-            <stop offset="1" stopColor={isCubicle ? "#7a1f2b" : "#8a6526"} />
-          </linearGradient>
-        </defs>
-
-        {isKnownIn ? (
-          <>
-            <ellipse
-              cx="110"
-              cy="48"
-              rx="73"
-              ry="26"
-              stroke={`url(#${gradientId})`}
-              strokeOpacity="0.55"
-            />
-            <ellipse
-              cx="110"
-              cy="48"
-              rx="40"
-              ry="73"
-              transform="rotate(62 110 48)"
-              stroke={`url(#${gradientId})`}
-              strokeOpacity="0.32"
-            />
-            <circle cx="110" cy="48" r="11" fill={`url(#${gradientId})`} />
-            <circle cx="110" cy="48" r="4" fill="#1a1a1a" />
-            <circle cx="45" cy="48" r="3" fill="#f4ece2" />
-            <circle cx="175" cy="48" r="3" fill="#f4ece2" />
-          </>
-        ) : isCubicle ? (
-          <>
-            <path
-              d="M39 65 82 31l47 31 49-29"
-              stroke={`url(#${gradientId})`}
-              strokeWidth="1.5"
-              strokeOpacity="0.75"
-            />
-            <path
-              d="M82 31 84 76M129 62l2-42M178 33l-2 44"
-              stroke="#f4ece2"
-              strokeOpacity="0.18"
-            />
-            <circle cx="39" cy="65" r="7" fill="#f4ece2" fillOpacity="0.12" stroke="#f4ece2" strokeOpacity="0.5" />
-            <circle cx="82" cy="31" r="7" fill={`url(#${gradientId})`} />
-            <circle cx="129" cy="62" r="7" fill="#f4ece2" fillOpacity="0.12" stroke="#f4ece2" strokeOpacity="0.5" />
-            <circle cx="178" cy="33" r="7" fill={`url(#${gradientId})`} />
-            <circle cx="84" cy="76" r="4" fill="#f4ece2" fillOpacity="0.45" />
-            <circle cx="131" cy="20" r="4" fill="#f4ece2" fillOpacity="0.45" />
-            <circle cx="176" cy="77" r="4" fill="#f4ece2" fillOpacity="0.45" />
-          </>
-        ) : (
-          <>
-            <path
-              d="M31 69h39V43h39v26h39V27h39"
-              stroke={`url(#${gradientId})`}
-              strokeWidth="2"
-              strokeOpacity="0.8"
-            />
-            <rect x="31" y="26" width="39" height="17" rx="3" fill="#f4ece2" fillOpacity="0.1" />
-            <rect x="109" y="26" width="39" height="17" rx="3" fill="#f4ece2" fillOpacity="0.1" />
-            <rect x="148" y="69" width="39" height="17" rx="3" fill="#f4ece2" fillOpacity="0.1" />
-          </>
-        )}
-      </svg>
-      <span className="absolute bottom-2 left-3 font-mono text-[9px] uppercase tracking-[0.2em] text-[#f4ece2]/60">
-        {number} / system signal
-      </span>
-    </div>
+  </article>
   );
 }

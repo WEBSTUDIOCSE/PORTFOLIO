@@ -13,6 +13,7 @@ export default function JourneyVideoFloat() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [expanded, setExpanded] = useState(false);
+  const [nearFooter, setNearFooter] = useState(false);
 
   const prefersReducedMotion = () =>
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -44,10 +45,36 @@ export default function JourneyVideoFloat() {
     };
   }, []);
 
+  // Keep the footer's own contact controls unobstructed, matching the
+  // behavior of the chat widget in the opposite corner.
+  useEffect(() => {
+    const footer = document.getElementById("site-footer");
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setNearFooter(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setExpanded(false);
+          const video = videoRef.current;
+          video?.pause();
+          if (video) video.currentTime = 0;
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px" },
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
       ref={containerRef}
-      className={`fixed bottom-4 left-4 z-40 sm:bottom-6 sm:left-6 ${
+      inert={nearFooter ? true : undefined}
+      className={`fixed bottom-4 left-4 z-40 transition-opacity duration-300 motion-reduce:transition-none sm:bottom-6 sm:left-6 ${
+        nearFooter ? "pointer-events-none opacity-0" : "opacity-100"
+      } ${
         expanded ? "w-[min(19rem,calc(100vw-2rem))]" : "w-24"
       }`}
       onMouseEnter={startPreview}
