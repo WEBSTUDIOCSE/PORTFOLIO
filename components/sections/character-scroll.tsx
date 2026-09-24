@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-// The hero uses 120 scroll slots populated from the seven clean supplied poses.
-const ALL_FRAMES: number[] = Array.from({ length: 120 }, (_, i) => i + 1);
+// The hero uses the 105 sequential frames from the Flow export.
+const FRAME_COUNT = 105;
+const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
 
 // Desktop gets every scroll slot; mobile uses every other slot to halve
 // bandwidth and decode cost.
@@ -13,8 +14,8 @@ const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
 // Adaptive quality serving — two folders of the same 120 frames:
 //
-//   /assets/saurabh-rotation/      1920×1080 originals
-//   /assets/saurabh-rotation-lite/  960×540   re-encoded mobile frames
+//   /assets/saurabh-rotation-flow/      1920×1080 Flow frames
+//   /assets/saurabh-rotation-flow-lite/  960×540 re-encoded mobile frames
 //
 // Default is the hi-res set. Lite kicks in when ANY of:
 //   1. `navigator.connection.saveData === true`   (user opted into Data Saver)
@@ -28,10 +29,10 @@ const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 // `navigator.connection` — those users default to the hi-res set,
 // which on iOS is generally fine because Apple's networking is
 // optimized and most users are on wifi or 4G+ LTE.
-type FrameDir = "saurabh-rotation" | "saurabh-rotation-lite";
+type FrameDir = "saurabh-rotation-flow" | "saurabh-rotation-flow-lite";
 
-const HI = "saurabh-rotation" as const;
-const LITE = "saurabh-rotation-lite" as const;
+const HI = "saurabh-rotation-flow" as const;
+const LITE = "saurabh-rotation-flow-lite" as const;
 
 type NetworkConn = {
   effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
@@ -99,7 +100,8 @@ export default function CharacterScroll() {
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
   // Last index drawn — avoid redundant draws when scroll target ===
   // currently visible frame.
-  const drawnIdxRef = useRef<number>(-1);
+  // Keep the fractional scroll position so adjacent frames can be blended.
+  const drawnPositionRef = useRef<number>(-1);
   // Cross-effect bridge: the preload effect calls this when a new
   // frame loads so the scroll handler can redraw if the user is
   // currently sitting on (or past) that index.
@@ -135,7 +137,7 @@ export default function CharacterScroll() {
   useEffect(() => {
     let cancelled = false;
     imagesRef.current = new Array(frames.length).fill(null);
-    drawnIdxRef.current = -1;
+    drawnPositionRef.current = -1;
     const pending = new Set<number>();
 
     const loadOne = (i: number) => {
@@ -162,14 +164,17 @@ export default function CharacterScroll() {
     };
 
     loadFrameRef.current = (targetIdx: number) => {
-      const radius = 5;
-      const start = Math.max(0, targetIdx - radius);
-      const end = Math.min(frames.length - 1, targetIdx + radius);
+      // A wider decode window prevents a fast gesture from outrunning the
+      // image requests and displaying the same fallback pose.
+      const center = Math.round(targetIdx);
+      const radius = 12;
+      const start = Math.max(0, center - radius);
+      const end = Math.min(frames.length - 1, center + radius);
       for (let i = start; i <= end; i++) loadOne(i);
     };
 
     // Eager-load the first 8 (covers ~first viewport of scroll).
-    const eagerCount = 8;
+    const eagerCount = 12;
     for (let i = 0; i < Math.min(eagerCount, frames.length); i++) {
       loadOne(i);
     }
@@ -202,7 +207,7 @@ export default function CharacterScroll() {
       canvas.height = Math.round(cssHeight * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Resizing wipes the canvas — force a redraw at the new size.
-      drawnIdxRef.current = -1;
+      drawnPositionRef.current = -1;
     };
 
     // Fit math:
@@ -216,18 +221,39 @@ export default function CharacterScroll() {
     //   centered — the figure reads as floating in a black void.
     //   Anchoring to the bottom (with a small margin so it isn't
     //   flush against the edge) grounds the portrait instead.
-    const draw = (targetIdx: number) => {
+    const draw = (targetPosition: number) => {
       // Clamp down to nearest loaded — never call drawImage with null.
-      let idx = targetIdx;
-      while (idx > 0 && !imagesRef.current[idx]) idx--;
-      if (idx === drawnIdxRef.current) return;
-      const img = imagesRef.current[idx];
-      if (!img) return;
+      const fromIdx = Math.floor(targetPosition);
+      const toIdx = Math.min(framesRef.current.length - 1, fromIdx + 1);
+      const findLoaded = (start: number, direction: -1 | 1) => {
+        let idx = start;
+        while (idx >= 0 && idx < imagesRef.current.length) {
+          if (imagesRef.current[idx]) return idx;
+          idx += direction;
+        }
+        return -1;
+      };
+      const fromLoadedIdx = findLoaded(fromIdx, -1);
+      if (fromLoadedIdx < 0) return;
+      const nextLoadedIdx = imagesRef.current[toIdx]
+        ? toIdx
+        : findLoaded(toIdx, 1);
+      const toLoadedIdx = nextLoadedIdx < 0 ? fromLoadedIdx : nextLoadedIdx;
+      const fromImg = imagesRef.current[fromLoadedIdx];
+      const toImg = imagesRef.current[toLoadedIdx];
+      if (!fromImg || !toImg) return;
+      if (
+        targetPosition === drawnPositionRef.current &&
+        fromLoadedIdx === fromIdx &&
+        toLoadedIdx === toIdx
+      ) {
+        return;
+      }
 
       const cssW = canvas.clientWidth;
       const cssH = canvas.clientHeight;
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
+      const iw = fromImg.naturalWidth;
+      const ih = fromImg.naturalHeight;
       const isMobile = cssW < 640;
       const baseScale = Math.min(cssW / iw, cssH / ih);
       const scale = isMobile ? baseScale * 1.5 : baseScale;
@@ -236,9 +262,16 @@ export default function CharacterScroll() {
       const dx = (cssW - dw) / 2;
       const dy = isMobile ? cssH - dh - cssH * 0.06 : (cssH - dh) / 2;
 
+      const blend = targetPosition - fromIdx;
       ctx.clearRect(0, 0, cssW, cssH);
-      ctx.drawImage(img, dx, dy, dw, dh);
-      drawnIdxRef.current = idx;
+      ctx.globalAlpha = 1 - (fromLoadedIdx === toLoadedIdx ? 0 : blend);
+      ctx.drawImage(fromImg, dx, dy, dw, dh);
+      if (toLoadedIdx !== fromLoadedIdx && blend > 0) {
+        ctx.globalAlpha = blend;
+        ctx.drawImage(toImg, dx, dy, dw, dh);
+      }
+      ctx.globalAlpha = 1;
+      drawnPositionRef.current = targetPosition;
     };
 
     const computeProgress = () => {
@@ -252,12 +285,12 @@ export default function CharacterScroll() {
       raf = 0;
       const p = computeProgress();
       const fr = framesRef.current;
-      const target = Math.max(
+      const targetPosition = Math.max(
         0,
-        Math.min(fr.length - 1, Math.round(p * (fr.length - 1))),
+        Math.min(fr.length - 1, p * (fr.length - 1)),
       );
-      loadFrameRef.current(target);
-      draw(target);
+      loadFrameRef.current(Math.round(targetPosition));
+      draw(targetPosition);
 
       const o1 = band(p, 0, 0.02, 0.1, 0.15);
       const o2 = band(p, 0.15, 0.2, 0.3, 0.35);
