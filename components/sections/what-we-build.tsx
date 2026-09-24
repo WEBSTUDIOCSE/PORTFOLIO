@@ -34,7 +34,7 @@ const LAYERS = [
     title: "Full-Stack Web Apps",
     desc: "Production Next.js & React apps, Firebase-backed and deployed on Vercel — built and shipped solo to real users.",
     stack: ["Next.js", "React", "Firebase"],
-    videoBase: "/3d/3D_Svelte_logo_rotating_202607031937",
+    videoBase: "/3d/Firebase_flame_logo_rotating_202607031937",
     dark: true,
   },
   {
@@ -48,14 +48,14 @@ const LAYERS = [
     title: "AI-Generated Media",
     desc: "Image, video, and voice generation pipelines — Gemini, fal.ai, and Veo wired into consistent, production-grade creative workflows.",
     stack: ["Gemini", "fal.ai", "Veo"],
-    videoBase: "/3d/3D_Android_robot_rotating_202607031937",
+    videoBase: "/3d/3D_Svelte_logo_rotating_202607031937",
     dark: true,
   },
   {
     title: "Cloud & Automation",
     desc: "Self-hosted infrastructure on lean VPS budgets, GitHub Actions → Vercel CI/CD, and scheduled automation that runs with zero human in the loop.",
     stack: ["Docker", "GitHub Actions", "Vercel"],
-    videoBase: "/3d/Firebase_flame_logo_rotating_202607031937",
+    videoBase: "/3d/3D_Android_robot_rotating_202607031937",
     dark: false,
   },
 ] as const;
@@ -135,7 +135,7 @@ export default function WhatWeBuild() {
       ref={sectionRef}
       id="build"
       aria-labelledby="build-heading"
-      className="dotted-grid relative w-full bg-[#fde047] px-6 py-24 text-[#1a1a1a] sm:px-10 md:py-32"
+      className="dotted-grid relative w-full bg-[#fde047] px-4 py-24 text-[#1a1a1a] md:px-10 md:py-32"
     >
       {/* Header */}
       <div className="mx-auto mb-16 w-full max-w-6xl md:mb-24">
@@ -172,7 +172,7 @@ export default function WhatWeBuild() {
             style={{ top: `calc(4.5rem + ${idx * 1.5}rem)` }}
             className={`sticky mb-8 overflow-hidden rounded-[1.75rem] shadow-2xl will-change-transform md:mb-12 md:rounded-[2.5rem] ${
               layer.dark
-                ? "bg-white text-[#1a1a1a]"
+                ? "bg-[#151515] text-[#f4f1ea]"
                 : "bg-[#f4ece2] text-[#1a1a1a]"
             }`}
           >
@@ -195,7 +195,11 @@ export default function WhatWeBuild() {
                   {layer.stack.map((tech) => (
                     <span
                       key={tech}
-                      className="rounded-full border border-[#1a1a1a]/25 px-4 py-1.5 text-sm font-semibold text-[#1a1a1a]/80"
+                      className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${
+                        layer.dark
+                          ? "border-[#f4f1ea]/25 text-[#f4f1ea]/90"
+                          : "border-[#1a1a1a]/25 text-[#1a1a1a]/80"
+                      }`}
                     >
                       {tech}
                     </span>
