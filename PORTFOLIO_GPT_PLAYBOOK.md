@@ -158,3 +158,5 @@ unless the user explicitly asks for it in the current task.
 - Project detail route: `app/work/[slug]/page.tsx`
 - Chat route: `app/api/chat/route.ts`
 - Performance/config: `next.config.ts`, `app/layout.tsx`, `app/globals.css`
+- Homepage Journey teaser: `components/journey-video-float.tsx`; it uses a
+  lazy first-scene preview while the full reel remains isolated on `/journey`.
