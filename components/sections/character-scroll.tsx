@@ -3,21 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-// Source frame numbers — frame 60 is missing on disk, so we skip it.
-// 119 frames total: 1..59 and 61..120.
-const ALL_FRAMES: number[] = Array.from({ length: 119 }, (_, i) =>
-  i < 59 ? i + 1 : i + 2,
-);
+// The hero uses 120 scroll slots populated from the seven clean supplied poses.
+const ALL_FRAMES: number[] = Array.from({ length: 120 }, (_, i) => i + 1);
 
-// Desktop gets every frame (smoothest); mobile every-other (60
-// frames, half the bandwidth and decode cost — still smooth).
+// Desktop gets every scroll slot; mobile uses every other slot to halve
+// bandwidth and decode cost.
 const DESKTOP_FRAMES = ALL_FRAMES;
 const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
-// Adaptive quality serving — two folders of the same 119 frames:
+// Adaptive quality serving — two folders of the same 120 frames:
 //
-//   /assets/saurabh/        1920×1080 originals, ~100 KB each, 12 MB total
-//   /assets/saurabh-lite/    960×540   re-encoded, ~30 KB each, 3.5 MB total
+//   /assets/saurabh-rotation/      1920×1080 originals
+//   /assets/saurabh-rotation-lite/  960×540   re-encoded mobile frames
 //
 // Default is the hi-res set. Lite kicks in when ANY of:
 //   1. `navigator.connection.saveData === true`   (user opted into Data Saver)
@@ -31,10 +28,10 @@ const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 // `navigator.connection` — those users default to the hi-res set,
 // which on iOS is generally fine because Apple's networking is
 // optimized and most users are on wifi or 4G+ LTE.
-type FrameDir = "saurabh" | "saurabh-lite";
+type FrameDir = "saurabh-rotation" | "saurabh-rotation-lite";
 
-const HI = "saurabh" as const;
-const LITE = "saurabh-lite" as const;
+const HI = "saurabh-rotation" as const;
+const LITE = "saurabh-rotation-lite" as const;
 
 type NetworkConn = {
   effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
@@ -107,6 +104,10 @@ export default function CharacterScroll() {
   // frame loads so the scroll handler can redraw if the user is
   // currently sitting on (or past) that index.
   const requestDrawRef = useRef<(() => void) | null>(null);
+  // The scroll effect asks the preload effect for a small neighborhood
+  // around the frame the visitor is moving toward. Keeping this as a ref
+  // avoids restarting the scroll listener every time a frame arrives.
+  const loadFrameRef = useRef<(targetIdx: number) => void>(() => undefined);
 
   // On mount, decide:
   //   1. Frame count   (mobile = every-other, desktop = all)
@@ -126,21 +127,45 @@ export default function CharacterScroll() {
   // Preload frames into HTMLImageElement objects. Each load fires
   // a redraw request — if the user is sitting on a target that just
   // became available, it pops in cleanly.
+  //
+  // Only the first few frames are loaded on entry. The rest are fetched
+  // around the current scroll target on demand. Loading all 119 frames
+  // during idle made the homepage compete with the rest of the page for
+  // bandwidth and image decode time, even when the visitor never scrolled.
   useEffect(() => {
     let cancelled = false;
     imagesRef.current = new Array(frames.length).fill(null);
     drawnIdxRef.current = -1;
+    const pending = new Set<number>();
 
     const loadOne = (i: number) => {
-      if (cancelled || i >= frames.length) return;
+      if (
+        cancelled ||
+        i < 0 ||
+        i >= frames.length ||
+        imagesRef.current[i] ||
+        pending.has(i)
+      ) {
+        return;
+      }
+      pending.add(i);
       const img = new window.Image();
       img.decoding = "async";
       img.onload = () => {
+        pending.delete(i);
         if (cancelled) return;
         imagesRef.current[i] = img;
         requestDrawRef.current?.();
       };
+      img.onerror = () => pending.delete(i);
       img.src = framePath(frameDir, frames[i]);
+    };
+
+    loadFrameRef.current = (targetIdx: number) => {
+      const radius = 5;
+      const start = Math.max(0, targetIdx - radius);
+      const end = Math.min(frames.length - 1, targetIdx + radius);
+      for (let i = start; i <= end; i++) loadOne(i);
     };
 
     // Eager-load the first 8 (covers ~first viewport of scroll).
@@ -149,25 +174,9 @@ export default function CharacterScroll() {
       loadOne(i);
     }
 
-    // Defer rest to idle time so the rest of the page paints first.
-    const loadRest = () => {
-      for (let i = eagerCount; i < frames.length; i++) loadOne(i);
-    };
-    type IdleWindow = Window & {
-      requestIdleCallback?: (
-        cb: () => void,
-        opts?: { timeout?: number },
-      ) => number;
-    };
-    const w = window as IdleWindow;
-    if (w.requestIdleCallback) {
-      w.requestIdleCallback(loadRest, { timeout: 2000 });
-    } else {
-      setTimeout(loadRest, 800);
-    }
-
     return () => {
       cancelled = true;
+      loadFrameRef.current = () => undefined;
     };
   }, [frames, frameDir]);
 
@@ -247,6 +256,7 @@ export default function CharacterScroll() {
         0,
         Math.min(fr.length - 1, Math.round(p * (fr.length - 1))),
       );
+      loadFrameRef.current(target);
       draw(target);
 
       const o1 = band(p, 0, 0.02, 0.1, 0.15);

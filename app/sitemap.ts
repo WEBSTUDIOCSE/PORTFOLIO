@@ -11,27 +11,23 @@ import { PUBLISHED_POSTS } from "@/lib/writing";
 const BASE = "https://saurabhjadhav.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
 
   // Static routes. /style-guide is intentionally NOT here — it's
   // internal documentation, not for search. Robots disallows it too.
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 1.0,
       images: [`${BASE}/opengraph-image`],
     },
     {
       url: `${BASE}/journey`,
-      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${BASE}/writing`,
-      lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
@@ -40,7 +36,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // /work/[slug] — one entry per featured project.
   const workRoutes: MetadataRoute.Sitemap = PROJECTS.map((p) => ({
     url: `${BASE}/work/${p.slug}`,
-    lastModified: now,
     changeFrequency: "monthly",
     priority: 0.7,
     images: [`${BASE}/work/${p.slug}/opengraph-image`],

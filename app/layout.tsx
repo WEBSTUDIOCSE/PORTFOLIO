@@ -40,6 +40,7 @@ const caveat = Caveat({
   variable: "--font-hand",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
 // Greeting cursive — the Apple-hello flowing-script moment. ONE per
@@ -48,6 +49,7 @@ const dancingScript = Dancing_Script({
   variable: "--font-greet",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
 // Non-variable fonts — single weight string per docs.
@@ -55,6 +57,7 @@ const tiroDevanagari = Tiro_Devanagari_Marathi({
   variable: "--font-deva",
   subsets: ["devanagari", "latin"],
   weight: "400",
+  preload: false,
 });
 
 const permanentMarker = Permanent_Marker({
@@ -62,6 +65,7 @@ const permanentMarker = Permanent_Marker({
   subsets: ["latin"],
   weight: "400",
   display: "swap",
+  preload: false,
 });
 
 const architectsDaughter = Architects_Daughter({
@@ -69,6 +73,7 @@ const architectsDaughter = Architects_Daughter({
   subsets: ["latin"],
   weight: "400",
   display: "swap",
+  preload: false,
 });
 
 // metadataBase resolves any relative URLs in this object (e.g. the
