@@ -36,7 +36,7 @@ export default function JourneyVideoFloat() {
   return (
     <aside
       aria-label="Journey preview"
-      className={`fixed bottom-4 left-4 z-30 w-[min(18rem,calc(100vw-2rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-6 sm:left-6 ${
+      className={`fixed bottom-4 left-4 z-30 hidden w-[min(18rem,calc(100vw-2rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-6 sm:left-6 sm:block ${
         hidden
           ? "pointer-events-none translate-y-3 scale-95 opacity-0"
           : "translate-y-0 scale-100 opacity-100"

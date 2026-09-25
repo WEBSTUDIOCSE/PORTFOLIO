@@ -422,7 +422,7 @@ export default function ChatWidget() {
         {/* Attention pulse — stops for good once the widget has been
             opened at least once. */}
         {!hasOpenedOnce && (
-          <span className="chat-pet-nudge absolute bottom-[calc(100%+0.65rem)] right-0 whitespace-nowrap rounded-full border border-[#1a1a1a]/10 bg-[#fffdf7] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-[0.13em] text-[#1a1a1a]/70 shadow-lg">
+          <span className="chat-pet-nudge absolute bottom-[calc(100%+0.65rem)] right-0 hidden whitespace-nowrap rounded-full border border-[#1a1a1a]/10 bg-[#fffdf7] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-[0.13em] text-[#1a1a1a]/70 shadow-lg sm:block">
             Ask Mini Saurabh anything
           </span>
         )}
