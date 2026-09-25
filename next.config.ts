@@ -58,26 +58,14 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Long-cache the hero canvas frame sequences. There are two
-      // folders — saurabh-rotation/ (1920×1080 originals) and
-      // saurabh-rotation-lite/ (960×540 mobile assets).
-      // (960×540 compressed) — served adaptively based on the
-      // visitor's network / device profile (see character-scroll.tsx).
+      // Long-cache the transparent hero canvas frame sequence. The active
+      // folder is saurabh-rotation-transparent (see character-scroll.tsx).
       // Files aren't content-hashed in their names (ezgif-frame-NNN
       // is the original ezgif export pattern), so we use 24h max-age
       // with must-revalidate. Once cached, repeat home visits skip
       // the network entirely.
       {
-        source: "/assets/saurabh-rotation/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=86400, must-revalidate",
-          },
-        ],
-      },
-      {
-        source: "/assets/saurabh-rotation-lite/:path*",
+        source: "/assets/saurabh-rotation-transparent/:path*",
         headers: [
           {
             key: "Cache-Control",

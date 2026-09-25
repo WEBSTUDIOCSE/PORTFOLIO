@@ -14,8 +14,11 @@ export default function JourneyVideo() {
     const video = videoRef.current;
     if (!video) return;
 
-    video.load();
     if (!playing) return;
+
+    // Keep the story videos out of the initial page payload. Load the
+    // current scene only after the visitor explicitly presses Play.
+    if (video.readyState === HTMLMediaElement.HAVE_NOTHING) video.load();
 
     const playScene = () => {
       void video.play().catch(() => setPlaying(false));
@@ -41,7 +44,6 @@ export default function JourneyVideo() {
     }
 
     setPlaying(true);
-    void video.play().catch(() => setPlaying(false));
   };
 
   const toggleSound = () => {
@@ -91,7 +93,7 @@ export default function JourneyVideo() {
             src={scene.src}
             muted={muted}
             playsInline
-            preload={sceneIdx < 2 ? "auto" : "metadata"}
+            preload="none"
             onEnded={handleEnded}
             aria-label={`Journey scene ${sceneIdx + 1} of ${STORY_SCENES.length}`}
             className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
