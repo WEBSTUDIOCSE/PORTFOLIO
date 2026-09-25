@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-// The hero uses the 105 sequential frames from the Flow export.
+// The hero uses the 105 sequential frames from the transparent Flow export.
 const FRAME_COUNT = 105;
 const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
 
@@ -12,10 +12,10 @@ const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1
 const DESKTOP_FRAMES = ALL_FRAMES;
 const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
-// Adaptive quality serving — two folders of the same 120 frames:
+// Adaptive quality serving — two folders of the same 105 frames:
 //
-//   /assets/saurabh-rotation-flow/      1920×1080 Flow frames
-//   /assets/saurabh-rotation-flow-lite/  960×540 re-encoded mobile frames
+//   /assets/saurabh-rotation-transparent/       1920×1080 transparent frames
+//   /assets/saurabh-rotation-transparent-lite/   960×540 mobile frames
 //
 // Default is the hi-res set. Lite kicks in when ANY of:
 //   1. `navigator.connection.saveData === true`   (user opted into Data Saver)
@@ -29,10 +29,12 @@ const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 // `navigator.connection` — those users default to the hi-res set,
 // which on iOS is generally fine because Apple's networking is
 // optimized and most users are on wifi or 4G+ LTE.
-type FrameDir = "saurabh-rotation-flow" | "saurabh-rotation-flow-lite";
+type FrameDir =
+  | "saurabh-rotation-transparent"
+  | "saurabh-rotation-transparent-lite";
 
-const HI = "saurabh-rotation-flow" as const;
-const LITE = "saurabh-rotation-flow-lite" as const;
+const HI = "saurabh-rotation-transparent" as const;
+const LITE = "saurabh-rotation-transparent-lite" as const;
 
 type NetworkConn = {
   effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
