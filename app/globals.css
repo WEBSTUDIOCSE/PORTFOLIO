@@ -344,6 +344,282 @@
   animation: chat-bubble-pulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
+/* Nook — a small, tactile portfolio companion rather than a static bot
+   icon. The face is SVG, so it stays crisp at every widget size and the
+   mood changes are cheap CSS transforms instead of re-rendered images. */
+.chat-pet {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 70px;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  color: #171713;
+  animation: chat-pet-float 3.8s ease-in-out infinite;
+}
+
+.chat-pet svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chat-pet--tiny {
+  width: 30px;
+  height: 28px;
+}
+
+.chat-pet--mini {
+  width: 42px;
+  height: 37px;
+}
+
+.chat-pet--welcome {
+  width: 100px;
+  height: 86px;
+}
+
+.chat-pet--bubble {
+  width: 58px;
+  height: 50px;
+}
+
+.chat-pet__body {
+  fill: #d7ad5a;
+  stroke: #f4d997;
+  stroke-width: 2;
+}
+
+.chat-pet__screen {
+  fill: #171713;
+  stroke: #f8e7bb;
+  stroke-width: 1.5;
+}
+
+.chat-pet__eyes {
+  fill: #f8e7bb;
+}
+
+.chat-pet__mouth,
+.chat-pet__antenna,
+.chat-pet__arm,
+.chat-pet__belly {
+  stroke: #171713;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.chat-pet__ear {
+  fill: #b8832f;
+  stroke: #f4d997;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.chat-pet__signal {
+  fill: #ee754f;
+  animation: chat-pet-signal 1.8s ease-in-out infinite;
+}
+
+.chat-pet__arm {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.chat-pet__spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #ee754f;
+  opacity: 0.8;
+}
+
+.chat-pet__spark--one {
+  top: 12%;
+  right: 5%;
+}
+
+.chat-pet__spark--two {
+  bottom: 15%;
+  left: 3%;
+  width: 3px;
+  height: 3px;
+  background: #6d9c87;
+}
+
+.chat-pet--wave .chat-pet__arm--right {
+  animation: chat-pet-wave 420ms ease-in-out 3;
+}
+
+.chat-pet--dance {
+  animation: chat-pet-dance 520ms ease-in-out infinite alternate;
+}
+
+.chat-pet--dance .chat-pet__arm--left {
+  animation: chat-pet-arm-bounce 520ms ease-in-out infinite alternate;
+}
+
+.chat-pet--dance .chat-pet__arm--right {
+  animation: chat-pet-arm-bounce 520ms ease-in-out 160ms infinite alternate-reverse;
+}
+
+.chat-pet--thinking .chat-pet__signal {
+  animation-duration: 520ms;
+}
+
+.chat-pet--thinking .chat-pet__eyes {
+  transform: translateY(-2px);
+}
+
+.chat-pet--sleep {
+  animation: chat-pet-sleep 2.8s ease-in-out infinite;
+}
+
+.chat-pet--sleep .chat-pet__eyes {
+  transform: scaleY(0.18);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.chat-pet--happy .chat-pet__mouth {
+  d: path("M51 60c6 8 12 8 18 0");
+}
+
+.chat-pet-nudge {
+  animation: chat-pet-nudge 2.6s ease-in-out infinite;
+}
+
+.chat-action-button {
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+/* Mini Saurabh uses a transparent four-frame GIF. The taller aspect ratio
+   keeps the head-and-body silhouette readable in every widget size. */
+.chat-bubble-button {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.chat-pet {
+  width: 68px;
+  height: 108px;
+  animation: chat-pet-float 3.8s ease-in-out infinite;
+}
+
+.chat-pet__gif {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.chat-pet--tiny {
+  width: 28px;
+  height: 45px;
+}
+
+.chat-pet--mini {
+  width: 42px;
+  height: 67px;
+}
+
+.chat-pet--welcome {
+  width: 92px;
+  height: 147px;
+}
+
+.chat-pet--bubble {
+  width: 48px;
+  height: 77px;
+}
+
+.chat-pet:hover,
+.chat-pet:focus-visible,
+.chat-pet--dance {
+  animation: chat-pet-dance 520ms ease-in-out infinite alternate;
+}
+
+.chat-pet--wave {
+  animation: chat-pet-wave 420ms ease-in-out 3;
+}
+
+.chat-pet--sleep .chat-pet__gif {
+  animation: chat-pet-sprite-breathe 2.8s ease-in-out infinite;
+  filter: saturate(0.7) brightness(0.85);
+}
+
+.chat-pet-welcome {
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.chat-pet-welcome:hover {
+  border-color: rgb(138 101 38 / 30%);
+  box-shadow: 0 12px 30px rgb(26 26 26 / 7%);
+  transform: translateY(-1px);
+}
+
+@keyframes chat-pet-sprite-breathe {
+  0%, 100% { transform: translateY(2px) scaleY(0.98); }
+  50% { transform: translateY(4px) scaleY(0.94); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-pet,
+  .chat-pet__gif,
+  .chat-pet:hover,
+  .chat-pet:focus-visible,
+  .chat-pet--dance,
+  .chat-pet--wave,
+  .chat-pet--sleep .chat-pet__gif {
+    animation: none;
+  }
+}
+
+.chat-action-button:hover {
+  transform: translateY(-1px);
+}
+
+@keyframes chat-pet-float {
+  0%, 100% { transform: translateY(1px) rotate(-1deg); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+}
+
+@keyframes chat-pet-signal {
+  0%, 100% { transform: scale(0.75); opacity: 0.55; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+@keyframes chat-pet-wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-26deg); }
+}
+
+@keyframes chat-pet-dance {
+  from { transform: translateY(0) rotate(-5deg); }
+  to { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes chat-pet-arm-bounce {
+  from { transform: rotate(-18deg); }
+  to { transform: rotate(18deg); }
+}
+
+@keyframes chat-pet-sleep {
+  0%, 100% { transform: translateY(2px) rotate(0deg); }
+  50% { transform: translateY(5px) rotate(-3deg); }
+}
+
+@keyframes chat-pet-nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
 /* ============================================================
    Journey page — Saurabh Express design
    ============================================================ */

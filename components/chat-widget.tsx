@@ -25,6 +25,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type PetMood = "idle" | "wave" | "thinking" | "happy" | "dance" | "sleep";
 
 const MAX_HISTORY_TURNS = 6;
 const EMAIL = "saurabhjadhav.cse@gmail.com";
@@ -39,6 +40,12 @@ const TOPIC_SUGGESTIONS = [
   { label: "Skills & stack", prompt: "What technologies does Saurabh work with?" },
 ] as const;
 
+const PET_ACTIONS = [
+  { label: "Wave", mood: "wave" as const, note: "👋 Tiny wave delivered. What should we explore?" },
+  { label: "Dance", mood: "dance" as const, note: "✦ One micro victory dance. Now ask me about something Saurabh built." },
+  { label: "Nap", mood: "sleep" as const, note: "Shhh… I’m taking a three-second power nap. I’ll be right here." },
+] as const;
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
@@ -47,11 +54,25 @@ export default function ChatWidget() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nearFooter, setNearFooter] = useState(false);
+  const [petMood, setPetMood] = useState<PetMood>("idle");
 
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLButtonElement>(null);
+  const moodTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const playMood = useCallback((next: PetMood, duration = 1800) => {
+    if (moodTimerRef.current) clearTimeout(moodTimerRef.current);
+    setPetMood(next);
+    moodTimerRef.current = setTimeout(() => setPetMood("idle"), duration);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (moodTimerRef.current) clearTimeout(moodTimerRef.current);
+    };
+  }, []);
 
   // The footer has its own "Reach out" row (email/socials/resume) in
   // the same bottom-right corner this widget occupies — without this,
@@ -116,7 +137,9 @@ export default function ChatWidget() {
     setInput("");
     setSending(true);
     setError(null);
+    playMood("thinking", 60000);
 
+    let failed = false;
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -143,19 +166,39 @@ export default function ChatWidget() {
         });
       }
     } catch (err) {
+      failed = true;
       setError(err instanceof Error ? err.message : "Something went wrong.");
       // Drop the empty assistant placeholder bubble on failure.
       setMessages((m) => m.slice(0, -1));
     } finally {
       setSending(false);
+      playMood(failed ? "sleep" : "happy");
     }
-  }, [input, sending, messages]);
+  }, [input, sending, messages, playMood]);
 
   const onInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       send();
     }
+  };
+
+  const runPetAction = useCallback(
+    (action: (typeof PET_ACTIONS)[number]) => {
+      playMood(action.mood);
+      setMessages((current) => [
+        ...current,
+        { role: "assistant", content: action.note },
+      ]);
+    },
+    [playMood],
+  );
+
+  const toggleOpen = () => {
+    const next = !open;
+    setHasOpenedOnce(true);
+    setOpen(next);
+    if (next) playMood("wave");
   };
 
   const lastIsStreamingPlaceholder =
@@ -180,31 +223,31 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label="Chat with Saurabh's assistant"
           inert={!open ? true : undefined}
-          className={`flex h-[28rem] w-[calc(100vw-2rem)] max-w-[380px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-2xl border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none ${
+          className={`flex h-[34rem] w-[calc(100vw-2rem)] max-w-[400px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.75rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none ${
             open
               ? "translate-y-0 scale-100 opacity-100"
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
           }`}
         >
-          {/* Header — no close button here; the floating bubble
-              itself toggles open/closed (plus Escape), so a second
-              close affordance would just be redundant. */}
-          <div className="flex items-center gap-2.5 border-b border-[#1a1a1a]/10 bg-[#1a1a1a] px-4 py-3 text-[#f4f1ea]">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8a6526]">
-              <BotIcon className="h-4 w-4 text-[#f4f1ea]" />
-            </span>
-            <div>
-              <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
-                Saurabh&apos;s Assistant
-                <span
-                  aria-hidden
-                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"
-                />
-              </p>
-              <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
-                Projects · experience · contact
-              </p>
+          <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-4 py-3 text-[#f4f1ea]">
+            <div className="flex items-center gap-2.5">
+              <PetCharacter mood={petMood} size="mini" />
+              <div>
+                <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
+                  Mini Saurabh <span className="text-[#d9ad57]">·</span> portfolio sidekick
+                </p>
+                <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
+                  {petMood === "thinking" ? "thinking tiny thoughts" : "ready for a mission"}
+                </p>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setMessages([])}
+              className="rounded-full border border-white/15 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-[#f4f1ea]/60 transition-colors hover:border-[#d9ad57]/60 hover:text-[#f4f1ea]"
+            >
+              Reset
+            </button>
           </div>
 
           {/* Messages */}
@@ -216,9 +259,42 @@ export default function ChatWidget() {
           >
             {messages.length === 0 && (
               <div className="chat-message-enter flex flex-col gap-4">
+                <div className="chat-pet-welcome rounded-[1.4rem] border border-[#8a6526]/15 bg-[#fffdf7] p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                <p className="font-display text-lg font-medium tracking-tight text-[#1a1a1a]">
+                        Meet Mini Saurabh.
+                      </p>
+                      <p className="mt-1 max-w-[15rem] text-xs leading-relaxed text-[#1a1a1a]/60">
+                        A tiny animated version of Saurabh with a few tricks up his sleeve.
+                      </p>
+                    </div>
+                    <PetCharacter mood={petMood} size="welcome" />
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {PET_ACTIONS.map((action) => (
+                      <button
+                        key={action.label}
+                        type="button"
+                        onClick={() => runPetAction(action)}
+                        className="chat-action-button rounded-full border border-[#1a1a1a]/10 bg-[#f4f1ea] px-2.5 py-1.5 text-[11px] font-medium text-[#1a1a1a] transition-colors hover:border-[#8a6526]/40 hover:bg-[#8a6526]/10"
+                      >
+                        {action.label}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => send("Give me a quick tour of Saurabh's best work.")}
+                      disabled={sending}
+                      className="chat-action-button rounded-full border border-[#1a1a1a]/10 bg-[#1a1a1a] px-2.5 py-1.5 text-[11px] font-medium text-[#f4f1ea] transition-transform hover:-translate-y-0.5 disabled:opacity-40"
+                    >
+                      Find a project
+                    </button>
+                  </div>
+                </div>
                 <div className="flex items-start gap-2.5">
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#8a6526]">
-                    <BotIcon className="h-4 w-4 text-[#f4f1ea]" />
+                    <PetCharacter mood={petMood} size="tiny" />
                   </span>
                   <div className="rounded-2xl rounded-tl-sm bg-[#1a1a1a]/[0.06] px-3.5 py-2.5 text-[#1a1a1a]">
                     <p className="font-medium">Hi, I&apos;m Saurabh&apos;s assistant 👋</p>
@@ -273,8 +349,9 @@ export default function ChatWidget() {
               return (
                 <div
                   key={i}
-                  className={`chat-message-enter flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                  className={`chat-message-enter flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
+                  {m.role === "assistant" && <PetCharacter mood={petMood} size="tiny" />}
                   {isStreamingThis ? (
                     <TypingDots />
                   ) : (
@@ -301,6 +378,28 @@ export default function ChatWidget() {
                 {error}
               </p>
             )}
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto border-t border-[#1a1a1a]/[0.08] px-3 py-2 no-scrollbar">
+            <span className="shrink-0 px-1 text-[10px] uppercase tracking-[0.14em] text-[#1a1a1a]/35">
+              Actions
+            </span>
+            {PET_ACTIONS.map((action) => (
+              <button
+                key={action.label}
+                type="button"
+                onClick={() => runPetAction(action)}
+                className="chat-action-button shrink-0 rounded-full border border-[#1a1a1a]/10 bg-white px-2.5 py-1 text-[10px] font-medium text-[#1a1a1a]/75 hover:border-[#8a6526]/40 hover:text-[#1a1a1a]"
+              >
+                {action.label}
+              </button>
+            ))}
+            <a
+              href="/journey"
+              className="shrink-0 rounded-full border border-[#1a1a1a]/10 bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-medium text-[#f4f1ea] transition-transform hover:-translate-y-0.5"
+            >
+              Journey ↗
+            </a>
           </div>
 
           {/* Input */}
@@ -334,10 +433,9 @@ export default function ChatWidget() {
         {/* Attention pulse — stops for good once the widget has been
             opened at least once. */}
         {!hasOpenedOnce && (
-          <span
-            aria-hidden
-            className="chat-bubble-pulse pointer-events-none absolute inset-0 rounded-full bg-[#8a6526]"
-          />
+          <span className="chat-pet-nudge absolute bottom-[calc(100%+0.65rem)] right-0 whitespace-nowrap rounded-full border border-[#1a1a1a]/10 bg-[#fffdf7] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-[0.13em] text-[#1a1a1a]/70 shadow-lg">
+            Ask Mini Saurabh anything
+          </span>
         )}
         <button
           type="button"
@@ -345,16 +443,13 @@ export default function ChatWidget() {
           aria-expanded={open}
           ref={bubbleRef}
           aria-controls="saurabh-chat-panel"
-          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#1a1a1a] text-[#f4f1ea] shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          onClick={() => {
-            setHasOpenedOnce(true);
-            setOpen((v) => !v);
-          }}
+          className="chat-bubble-button relative flex h-16 w-16 items-center justify-center text-[#1a1a1a] transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          onClick={toggleOpen}
         >
           <span
             className={`absolute transition-[opacity,transform] duration-200 ${open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
           >
-            <BotIcon className="h-6 w-6" />
+            <PetCharacter mood={petMood} size="bubble" />
           </span>
           <span
             className={`absolute transition-[opacity,transform] duration-200 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
@@ -423,28 +518,20 @@ function TypingDots() {
   );
 }
 
-// A simple robot-face glyph — reads plainly as "AI assistant" rather
-// than a generic chat outline.
-function BotIcon(props: React.SVGProps<SVGSVGElement>) {
+type PetSize = "tiny" | "mini" | "welcome" | "bubble";
+
+function PetCharacter({ mood, size }: { mood: PetMood; size: PetSize }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-      {...props}
-    >
-      <path d="M12 3v2.5" />
-      <circle cx="12" cy="2.25" r="0.9" fill="currentColor" stroke="none" />
-      <rect x="4" y="6.5" width="16" height="13" rx="4" />
-      <path d="M4 12H2.5M21.5 12H20" />
-      <circle cx="9" cy="12.5" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="12.5" r="1.1" fill="currentColor" stroke="none" />
-      <path d="M9 16.5h6" />
-    </svg>
+    <span className={`chat-pet chat-pet--${size} chat-pet--${mood}`} aria-hidden="true">
+      {/* Animated GIFs must stay as native images so the browser preserves playback. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className="chat-pet__gif"
+        src="/assets/mini-saurabh.gif"
+        alt=""
+        draggable={false}
+      />
+    </span>
   );
 }
 
