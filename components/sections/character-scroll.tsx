@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-// The hero uses the complete 270-frame transparent export.
-const FRAME_COUNT = 270;
+// The hero uses the 218 unique frames from the transparent export.
+const FRAME_COUNT = 218;
 const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
 
 // Desktop gets every scroll slot; mobile uses every other slot to halve
@@ -12,13 +12,13 @@ const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1
 const DESKTOP_FRAMES = ALL_FRAMES;
 const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
-// Both viewport sizes use the same 1920×1080 transparent PNG sequence.
+// Both viewport sizes use the same 1920×1080 transparent WebP sequence.
 type FrameDir = "saurabh-rotation-transparent";
 
 const FRAME_DIR: FrameDir = "saurabh-rotation-transparent";
 
 function framePath(dir: FrameDir, n: number) {
-  return `/assets/${dir}/ezgif-frame-${String(n).padStart(3, "0")}.png`;
+  return `/assets/${dir}/ezgif-frame-${String(n).padStart(3, "0")}.webp`;
 }
 
 // Trapezoid window: 0 outside [a, d], ramps up over [a, b],
@@ -91,7 +91,7 @@ export default function CharacterScroll() {
   // became available, it pops in cleanly.
   //
   // Only the first few frames are loaded on entry. The rest are fetched
-  // around the current scroll target on demand. Loading all 270 frames
+  // around the current scroll target on demand. Loading all 218 frames
   // during idle made the homepage compete with the rest of the page for
   // bandwidth and image decode time, even when the visitor never scrolled.
   useEffect(() => {
@@ -127,14 +127,15 @@ export default function CharacterScroll() {
       // A wider decode window prevents a fast gesture from outrunning the
       // image requests and displaying the same fallback pose.
       const center = Math.round(targetIdx);
-      const radius = 12;
+      const radius = 18;
       const start = Math.max(0, center - radius);
       const end = Math.min(frames.length - 1, center + radius);
       for (let i = start; i <= end; i++) loadOne(i);
     };
 
-    // Eager-load the first 8 (covers ~first viewport of scroll).
-    const eagerCount = 12;
+    // Eager-load a wider opening window so the first gesture stays ahead of
+    // decoding even on a slower connection.
+    const eagerCount = 18;
     for (let i = 0; i < Math.min(eagerCount, frames.length); i++) {
       loadOne(i);
     }
@@ -195,13 +196,10 @@ export default function CharacterScroll() {
       };
       const fromLoadedIdx = findLoaded(fromIdx, -1);
       if (fromLoadedIdx < 0) return;
-      const nextLoadedIdx = imagesRef.current[toIdx]
-        ? toIdx
-        : findLoaded(toIdx, 1);
-      const toLoadedIdx = nextLoadedIdx < 0 ? fromLoadedIdx : nextLoadedIdx;
+      const toLoadedIdx = findLoaded(toIdx, 1);
       const fromImg = imagesRef.current[fromLoadedIdx];
-      const toImg = imagesRef.current[toLoadedIdx];
-      if (!fromImg || !toImg) return;
+      const toImg = toLoadedIdx >= 0 ? imagesRef.current[toLoadedIdx] : null;
+      if (!fromImg) return;
       if (
         targetPosition === drawnPositionRef.current &&
         fromLoadedIdx === fromIdx &&
@@ -222,11 +220,24 @@ export default function CharacterScroll() {
       const dx = (cssW - dw) / 2;
       const dy = isMobile ? cssH - dh - cssH * 0.06 : (cssH - dh) / 2;
 
-      const blend = targetPosition - fromIdx;
+      // Blend using the actual loaded neighbors. If the next requested frame
+      // is still decoding, this avoids fading toward a much later frame and
+      // then snapping backward when the missing frame arrives.
+      const blend =
+        toLoadedIdx > fromLoadedIdx
+          ? Math.max(
+              0,
+              Math.min(
+                1,
+                (targetPosition - fromLoadedIdx) /
+                  (toLoadedIdx - fromLoadedIdx),
+              ),
+            )
+          : 0;
       ctx.clearRect(0, 0, cssW, cssH);
-      ctx.globalAlpha = 1 - (fromLoadedIdx === toLoadedIdx ? 0 : blend);
+      ctx.globalAlpha = 1 - blend;
       ctx.drawImage(fromImg, dx, dy, dw, dh);
-      if (toLoadedIdx !== fromLoadedIdx && blend > 0) {
+      if (toImg && toLoadedIdx !== fromLoadedIdx && blend > 0) {
         ctx.globalAlpha = blend;
         ctx.drawImage(toImg, dx, dy, dw, dh);
       }
