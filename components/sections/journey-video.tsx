@@ -1,0 +1,138 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { STORY_SCENES } from "@/app/journey/components/storyScenes.js";
+
+export default function JourneyVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [sceneIdx, setSceneIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const scene = STORY_SCENES[sceneIdx];
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.load();
+    if (!playing) return;
+
+    const playScene = () => {
+      void video.play().catch(() => setPlaying(false));
+    };
+
+    if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+      playScene();
+      return;
+    }
+
+    video.addEventListener("canplay", playScene, { once: true });
+    return () => video.removeEventListener("canplay", playScene);
+  }, [sceneIdx, playing]);
+
+  const togglePreview = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (playing) {
+      video.pause();
+      setPlaying(false);
+      return;
+    }
+
+    setPlaying(true);
+    void video.play().catch(() => setPlaying(false));
+  };
+
+  const toggleSound = () => {
+    const nextMuted = !muted;
+    setMuted(nextMuted);
+    if (videoRef.current) videoRef.current.muted = nextMuted;
+  };
+
+  const handleEnded = () => {
+    if (sceneIdx < STORY_SCENES.length - 1) {
+      setSceneIdx((current) => current + 1);
+      return;
+    }
+
+    setPlaying(false);
+    setSceneIdx(0);
+  };
+
+  return (
+    <section
+      aria-labelledby="journey-video-title"
+      className="relative overflow-hidden bg-[#171713] px-5 py-20 text-[#f4f1ea] sm:px-8 sm:py-28 lg:px-12"
+    >
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[1fr_0.7fr] lg:items-end">
+          <div>
+            <p className="mb-4 font-sans text-[10px] uppercase tracking-[0.24em] text-[#d9ad57]">
+              the journey
+            </p>
+            <h2
+              id="journey-video-title"
+              className="max-w-3xl font-display text-4xl font-light leading-[0.98] tracking-[-0.04em] sm:text-6xl"
+            >
+              The work is only half the story.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[#f4f1ea]/60 lg:justify-self-end">
+            Watch the complete story here—from the first frame to the final
+            scene, without leaving the homepage.
+          </p>
+        </div>
+
+        <div className="group relative aspect-[16/8] min-h-[19rem] overflow-hidden rounded-[2rem] border border-white/15 bg-[#0d0d0b] shadow-2xl shadow-black/30 sm:min-h-[26rem]">
+          <video
+            ref={videoRef}
+            src={scene.src}
+            muted={muted}
+            playsInline
+            preload={sceneIdx < 2 ? "auto" : "metadata"}
+            onEnded={handleEnded}
+            aria-label={`Journey scene ${sceneIdx + 1} of ${STORY_SCENES.length}`}
+            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,11,.72),rgba(13,13,11,.08)_65%,rgba(13,13,11,.3)),linear-gradient(0deg,rgba(13,13,11,.8),transparent_55%)]" />
+
+          <div className="absolute left-6 top-6 flex items-center gap-2">
+            <button
+              type="button"
+              aria-label={playing ? "Pause Journey" : "Play Journey"}
+              aria-pressed={playing}
+              onClick={togglePreview}
+              className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-[#f4f1ea] text-[#171713] shadow-xl transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171713] motion-reduce:transition-none"
+            >
+              <span aria-hidden="true" className="text-lg">
+                {playing ? "Ⅱ" : "▶"}
+              </span>
+            </button>
+            <button
+              type="button"
+              aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
+              aria-pressed={!muted}
+              onClick={toggleSound}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/35 text-sm text-white backdrop-blur-sm transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+            >
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+            </button>
+          </div>
+
+          <div className="absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="font-display text-2xl tracking-tight sm:text-3xl">The Journey</p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
+                Scene {String(sceneIdx + 1).padStart(2, "0")} / {String(STORY_SCENES.length).padStart(2, "0")}
+              </p>
+            </div>
+            <span className="hidden rounded-full border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-white/60 sm:inline-flex">
+              Sound {muted ? "off" : "on"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

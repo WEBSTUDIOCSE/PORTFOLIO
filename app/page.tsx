@@ -1,6 +1,7 @@
 import CharacterScroll from "@/components/sections/character-scroll";
 import WhatWeBuild from "@/components/sections/what-we-build";
 import SelectedWork from "@/components/sections/selected-work";
+import JourneyVideo from "@/components/sections/journey-video";
 import About from "@/components/sections/about";
 // Story section hidden for now — re-enable once the story video is ready.
 // import Story from "@/components/sections/story";
@@ -9,7 +10,6 @@ import Experience from "@/components/sections/experience";
 // import Testimonials from "@/components/sections/testimonials";
 import Footer from "@/components/sections/footer";
 import ChatWidget from "@/components/chat-widget";
-import JourneyVideoFloat from "@/components/journey-video-float";
 import ScrollFX from "@/components/scroll-fx";
 
 // Section order is research-backed (see plan file):
@@ -41,13 +41,13 @@ export default function Home() {
       <CharacterScroll />
       <WhatWeBuild />
       <SelectedWork />
+      <JourneyVideo />
       {/* <Story /> hidden for now — enable once the story video is ready */}
       <Experience />
       <About />
       {/* <Testimonials /> hidden for now — enable later with real quotes */}
       <Footer />
       <ChatWidget />
-      <JourneyVideoFloat />
       {/* GSAP scroll effects — deferred import, reveals via data-*
           attributes on the sections above. See components/scroll-fx.tsx. */}
       <ScrollFX />

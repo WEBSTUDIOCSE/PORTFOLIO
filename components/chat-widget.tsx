@@ -389,12 +389,6 @@ export default function ChatWidget() {
                 {action.label}
               </button>
             ))}
-            <a
-              href="/journey"
-              className="shrink-0 rounded-full border border-[#1a1a1a]/10 bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-medium text-[#f4f1ea] transition-transform hover:-translate-y-0.5"
-            >
-              Journey ↗
-            </a>
           </div>
 
           {/* Input */}
