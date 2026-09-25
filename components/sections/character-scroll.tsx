@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-// The hero uses the 105 sequential frames from the transparent Flow export.
-const FRAME_COUNT = 105;
+// The hero uses the complete 270-frame transparent export.
+const FRAME_COUNT = 270;
 const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1);
 
 // Desktop gets every scroll slot; mobile uses every other slot to halve
@@ -12,48 +12,13 @@ const ALL_FRAMES: number[] = Array.from({ length: FRAME_COUNT }, (_, i) => i + 1
 const DESKTOP_FRAMES = ALL_FRAMES;
 const MOBILE_FRAMES = ALL_FRAMES.filter((_, i) => i % 2 === 0);
 
-// Adaptive quality serving — two folders of the same 105 frames:
-//
-//   /assets/saurabh-rotation-transparent/       1920×1080 transparent frames
-//   /assets/saurabh-rotation-transparent-lite/   960×540 mobile frames
-//
-// Default is the hi-res set. Lite kicks in when ANY of:
-//   1. `navigator.connection.saveData === true`   (user opted into Data Saver)
-//   2. `effectiveType` is "slow-2g", "2g", or "3g"
-//   3. Viewport width < 640px                     (mobile — small screen
-//      can't resolve hi-res pixels anyway, so the perceptual difference
-//      is zero while the bandwidth difference is 3-4×)
-//
-// Network Information API is well-supported on Chromium browsers
-// (the majority of mobile traffic in India). Safari doesn't expose
-// `navigator.connection` — those users default to the hi-res set,
-// which on iOS is generally fine because Apple's networking is
-// optimized and most users are on wifi or 4G+ LTE.
-type FrameDir =
-  | "saurabh-rotation-transparent"
-  | "saurabh-rotation-transparent-lite";
+// Both viewport sizes use the same 1920×1080 transparent PNG sequence.
+type FrameDir = "saurabh-rotation-transparent";
 
-const HI = "saurabh-rotation-transparent" as const;
-const LITE = "saurabh-rotation-transparent-lite" as const;
-
-type NetworkConn = {
-  effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
-  saveData?: boolean;
-};
-
-function pickFrameDir(): FrameDir {
-  if (typeof window === "undefined") return HI;
-  if (window.matchMedia("(max-width: 640px)").matches) return LITE;
-  const conn = (navigator as Navigator & { connection?: NetworkConn })
-    .connection;
-  if (!conn) return HI;
-  if (conn.saveData) return LITE;
-  if (conn.effectiveType && conn.effectiveType !== "4g") return LITE;
-  return HI;
-}
+const FRAME_DIR: FrameDir = "saurabh-rotation-transparent";
 
 function framePath(dir: FrameDir, n: number) {
-  return `/assets/${dir}/ezgif-frame-${String(n).padStart(3, "0")}.webp`;
+  return `/assets/${dir}/ezgif-frame-${String(n).padStart(3, "0")}.png`;
 }
 
 // Trapezoid window: 0 outside [a, d], ramps up over [a, b],
@@ -90,11 +55,7 @@ export default function CharacterScroll() {
     framesRef.current = frames;
   }, [frames]);
 
-  // Hi-res default; flipped to lite on mount if the visitor's network
-  // / device profile asks for it. We start at HI because that's the
-  // SSR-safe default — flickering one extra HTTP request on mount is
-  // cheaper than rendering a low-res canvas momentarily.
-  const [frameDir, setFrameDir] = useState<FrameDir>(HI);
+  const frameDir = FRAME_DIR;
 
   // HTMLImageElement[] indexed by position in `frames`. null until
   // loaded. We draw whatever's loaded; targets without a loaded image
@@ -113,15 +74,12 @@ export default function CharacterScroll() {
   // avoids restarting the scroll listener every time a frame arrives.
   const loadFrameRef = useRef<(targetIdx: number) => void>(() => undefined);
 
-  // On mount, decide:
-  //   1. Frame count   (mobile = every-other, desktop = all)
-  //   2. Source folder (lite vs hi-res — see pickFrameDir comment)
-  // Both can flip if the viewport resizes across the 640px boundary.
+  // On mount, use every other frame on mobile to reduce decode and bandwidth
+  // pressure while keeping the complete sequence on larger screens.
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
     const sync = () => {
       setFrames(mq.matches ? MOBILE_FRAMES : DESKTOP_FRAMES);
-      setFrameDir(pickFrameDir());
     };
     sync();
     mq.addEventListener("change", sync);
@@ -133,7 +91,7 @@ export default function CharacterScroll() {
   // became available, it pops in cleanly.
   //
   // Only the first few frames are loaded on entry. The rest are fetched
-  // around the current scroll target on demand. Loading all 119 frames
+  // around the current scroll target on demand. Loading all 270 frames
   // during idle made the homepage compete with the rest of the page for
   // bandwidth and image decode time, even when the visitor never scrolled.
   useEffect(() => {
