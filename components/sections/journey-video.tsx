@@ -62,6 +62,7 @@ export default function JourneyVideo() {
 
   return (
     <section
+      id="journey-video-section"
       aria-labelledby="journey-video-title"
       className="relative overflow-hidden bg-[#171713] px-5 py-20 text-[#f4f1ea] sm:px-8 sm:py-28 lg:px-12"
     >

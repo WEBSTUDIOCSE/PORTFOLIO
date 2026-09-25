@@ -2,6 +2,7 @@ import CharacterScroll from "@/components/sections/character-scroll";
 import WhatWeBuild from "@/components/sections/what-we-build";
 import SelectedWork from "@/components/sections/selected-work";
 import JourneyVideo from "@/components/sections/journey-video";
+import JourneyVideoFloat from "@/components/journey-video-float";
 import About from "@/components/sections/about";
 // Story section hidden for now — re-enable once the story video is ready.
 // import Story from "@/components/sections/story";
@@ -48,6 +49,7 @@ export default function Home() {
       {/* <Testimonials /> hidden for now — enable later with real quotes */}
       <Footer />
       <ChatWidget />
+      <JourneyVideoFloat />
       {/* GSAP scroll effects — deferred import, reveals via data-*
           attributes on the sections above. See components/scroll-fx.tsx. */}
       <ScrollFX />
