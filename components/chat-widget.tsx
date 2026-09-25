@@ -527,7 +527,7 @@ function PetCharacter({ mood, size }: { mood: PetMood; size: PetSize }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className="chat-pet__gif"
-        src="/assets/mini-saurabh.gif"
+        src="/assets/mini-saurabh-4k.gif"
         alt=""
         draggable={false}
       />
