@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProjectLinks, PROJECTS, type Project } from "@/lib/projects";
-import MermaidDiagram from "@/components/mermaid-diagram";
+import ArchitectureFlow from "@/components/architecture-flow";
 import { PERSON_ID, SITE_URL, jsonLd } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
@@ -60,11 +60,6 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
   const projectLinks = getProjectLinks(project);
   const contentSections = [
     { id: "problem", label: "Problem", visible: Boolean(project.problem) },
-    {
-      id: "approach",
-      label: "Approach",
-      visible: Boolean(project.approach?.length),
-    },
     {
       id: "architecture",
       label: "Architecture",
@@ -151,7 +146,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
       />
 
       {/* Back link */}
-      <div className="mx-auto max-w-3xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
+      <div className="mx-auto max-w-5xl px-6 pb-4 pt-28 sm:px-10 sm:pt-32">
         <Link
           href="/#work"
           className="rounded-full font-sans text-[10px] uppercase tracking-[0.3em] text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
@@ -161,7 +156,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
       </div>
 
       {/* Hero */}
-      <header className="mx-auto max-w-3xl px-6 pb-16 sm:px-10">
+      <header className="mx-auto max-w-5xl px-6 pb-16 sm:px-10">
         <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary">
           {project.number} · {project.year}
         </p>
@@ -236,7 +231,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
       {/* Problem · Approach · Outcome · Lessons */}
       <article
         id="project-content"
-        className="mx-auto max-w-3xl space-y-16 px-6 pb-24 sm:px-10"
+        className="mx-auto max-w-6xl space-y-16 px-6 pb-24 sm:px-10"
       >
         {project.problem && (
           <Block id="problem" kicker="The problem">
@@ -246,15 +241,10 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
           </Block>
         )}
 
-        {project.approach && project.approach.length > 0 && (
-          <Block id="approach" kicker="Approach">
-            <Bullets items={project.approach} />
-          </Block>
-        )}
-
         {project.diagram && (
-          <Block id="architecture" kicker="Architecture">
-            <MermaidDiagram
+          <Block id="architecture" kicker="Architecture" wide>
+            <ArchitectureFlow
+              steps={project.approach ?? []}
               chart={project.diagram}
               caption={project.diagramCaption}
             />
@@ -309,7 +299,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
 
       {/* Prev / Next */}
       <nav className="border-t border-border bg-background px-6 py-10 sm:px-10">
-        <div className="mx-auto flex max-w-3xl items-stretch justify-between gap-4">
+        <div className="mx-auto flex max-w-5xl items-stretch justify-between gap-4">
           {prev ? (
             <Link
               href={`/work/${prev.slug}`}
@@ -367,14 +357,16 @@ function Block({
   id,
   kicker,
   children,
+  wide = false,
 }: {
   id?: string;
   kicker: string;
   children: React.ReactNode;
+  wide?: boolean;
 }) {
   return (
-    <section id={id}>
-      <p className="font-sans italic text-2xl text-primary">{kicker}</p>
+    <section id={id} className={wide ? "max-w-6xl" : "max-w-3xl"}>
+      <h2 className="font-sans italic text-2xl text-primary">{kicker}</h2>
       <div className="mt-4">{children}</div>
     </section>
   );

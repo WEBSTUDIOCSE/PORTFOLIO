@@ -140,7 +140,7 @@ export const PROJECTS: Project[] = [
   subgraph Outputs[Controlled projections]
     MainResume[Live Main Resume]
     Tailor[Tailored resume + fit report]
-    PDF[@react-pdf/renderer]
+    PDF["@react-pdf/renderer"]
     Applications[Application tracker]
   end
 
@@ -262,7 +262,7 @@ export const PROJECTS: Project[] = [
   end
 
   TURN[coturn TURN relay]
-  Sarvam[Sarvam STT / TTS boundary]
+  Sarvam["Sarvam STT / TTS boundary"]
 
   User --> Caddy
   Caddy --> Web
@@ -436,7 +436,7 @@ export const PROJECTS: Project[] = [
   Auth[[Firebase Auth]]
 
   subgraph Onboard[Syllabus to curriculum]
-    Upload[Upload syllabus · PDF/DOCX/TXT]
+    Upload["Upload syllabus · PDF/DOCX/TXT"]
     Parse[[Gemini · parse]]
     Curriculum[(Subjects to Topics · difficulty · prerequisites)]
     Persona[AI teacher persona per topic]
@@ -525,8 +525,8 @@ export const PROJECTS: Project[] = [
   subgraph External
     Auth[[Firebase Auth]]
     Upstash[[Upstash Redis]]
-    Gemini[[Gemini Nano Banana / Imagen / Text]]
-    Kie[[Kie.AI Veo / Flux]]
+    Gemini[["Gemini Nano Banana / Imagen / Text"]]
+    Kie[["Kie.AI Veo / Flux"]]
     Razorpay[[Razorpay Checkout]]
   end
 

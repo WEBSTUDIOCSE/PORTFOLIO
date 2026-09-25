@@ -70,8 +70,23 @@ export default function MermaidDiagram({
           theme: "default",
           flowchart: {
             curve: "basis",
-            useMaxWidth: true,
-            padding: 16,
+            // Keep the map at a readable working width. The viewport below
+            // handles horizontal scrolling on narrow screens instead of
+            // compressing a systems diagram into illegible text.
+            useMaxWidth: false,
+            padding: 20,
+          },
+          themeVariables: {
+            background: "#fffaf1",
+            primaryColor: "#fffaf1",
+            primaryTextColor: "#1a1a1a",
+            primaryBorderColor: "#1a1a1a",
+            lineColor: "#8a6526",
+            secondaryColor: "#f4ece2",
+            tertiaryColor: "#ead9b7",
+            clusterBkg: "#f4ece2",
+            clusterBorder: "#c7a96a",
+            fontSize: "16px",
           },
           fontFamily: "var(--font-geist-sans)",
           securityLevel: "strict",
@@ -95,27 +110,52 @@ export default function MermaidDiagram({
     <figure
       ref={figureRef}
       aria-busy={!inView}
-      className="overflow-x-auto rounded-xl border border-border bg-card p-4 sm:p-6"
+      className="overflow-hidden rounded-[1.75rem] border border-[#1a1a1a]/15 bg-[#fffaf1] shadow-[0_18px_50px_rgba(26,26,26,0.07)]"
     >
+      <div className="flex items-start justify-between gap-4 border-b border-[#1a1a1a]/10 px-5 py-4 sm:px-7">
+        <div>
+          <p className="font-sans text-[10px] font-bold uppercase tracking-[0.24em] text-[#8a6526]">
+            System map
+          </p>
+          <h3 className="mt-1 font-display text-xl text-[#1a1a1a] sm:text-2xl">
+            How the pieces connect
+          </h3>
+        </div>
+        <span className="hidden shrink-0 pt-1 font-sans text-[10px] uppercase tracking-[0.16em] text-[#1a1a1a]/45 sm:block">
+          ← read left to right
+        </span>
+      </div>
+
       <div
-        ref={containerRef}
-        role="img"
-        aria-label="Architecture diagram"
-        className="mermaid-container flex min-h-[200px] items-center justify-center [&_svg]:max-w-full [&_svg]:!h-auto"
+        className="overflow-x-auto overscroll-x-contain p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-inset sm:p-7"
+        tabIndex={0}
+        aria-label="Scrollable architecture diagram"
       >
-        {!inView && (
-          <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Diagram · loads on scroll
-          </span>
-        )}
+        <div
+          ref={containerRef}
+          role="img"
+          aria-label="Architecture diagram"
+          className="mermaid-container flex min-h-[18rem] min-w-[720px] items-center justify-center [&_svg]:!h-auto [&_svg]:!max-w-none"
+        >
+          {!inView && (
+            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/45">
+              Diagram · loads on scroll
+            </span>
+          )}
+        </div>
       </div>
       {error && (
-        <p className="mt-3 font-sans text-xs text-destructive">
-          Diagram render failed: {error}
-        </p>
+        <div role="alert" className="border-t border-[#8a6526]/20 bg-[#f4ece2] px-5 py-4 text-sm text-[#1a1a1a]/70 sm:px-7">
+          <p className="font-medium text-[#1a1a1a]">
+            This system map could not render in this browser.
+          </p>
+          <p className="mt-1 text-xs">
+            The architecture summary below still describes the complete flow.
+          </p>
+        </div>
       )}
       {caption && (
-        <figcaption className="mt-4 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">
+        <figcaption className="border-t border-[#1a1a1a]/10 px-5 py-5 text-sm leading-relaxed text-[#1a1a1a]/65 sm:px-7">
           {caption}
         </figcaption>
       )}
