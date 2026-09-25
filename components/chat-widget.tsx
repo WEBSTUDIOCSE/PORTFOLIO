@@ -230,8 +230,7 @@ export default function ChatWidget() {
           }`}
         >
           <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-4 py-3 text-[#f4f1ea]">
-            <div className="flex items-center gap-2.5">
-              <PetCharacter mood={petMood} size="mini" />
+            <div className="pl-1">
               <div>
                 <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
                   Mini Saurabh <span className="text-[#d9ad57]">·</span> portfolio sidekick
@@ -292,11 +291,8 @@ export default function ChatWidget() {
                     </button>
                   </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#8a6526]">
-                    <PetCharacter mood={petMood} size="tiny" />
-                  </span>
-                  <div className="rounded-2xl rounded-tl-sm bg-[#1a1a1a]/[0.06] px-3.5 py-2.5 text-[#1a1a1a]">
+                <div className="flex items-start">
+                  <div className="rounded-2xl bg-[#1a1a1a]/[0.06] px-3.5 py-2.5 text-[#1a1a1a]">
                     <p className="font-medium">Hi, I&apos;m Saurabh&apos;s assistant 👋</p>
                     <p className="mt-1 text-[#1a1a1a]/70">
                       Ask me about his projects, experience, or skills — or
@@ -305,7 +301,7 @@ export default function ChatWidget() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 pl-[42px]">
+                <div className="flex flex-wrap gap-2">
                   <a
                     href={`mailto:${EMAIL}`}
                     className="flex items-center gap-1.5 rounded-full border border-[#1a1a1a]/15 bg-white px-3 py-1.5 text-xs font-medium text-[#1a1a1a] transition-colors hover:border-[#8a6526]/40 hover:bg-[#8a6526]/10"
@@ -323,7 +319,7 @@ export default function ChatWidget() {
                   </a>
                 </div>
 
-                <div className="flex flex-col gap-1.5 pl-[42px]">
+                <div className="flex flex-col gap-1.5">
                   <p className="text-[10px] uppercase tracking-[0.1em] text-[#1a1a1a]/40">
                     Or ask about
                   </p>
@@ -351,7 +347,6 @@ export default function ChatWidget() {
                   key={i}
                   className={`chat-message-enter flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {m.role === "assistant" && <PetCharacter mood={petMood} size="tiny" />}
                   {isStreamingThis ? (
                     <TypingDots />
                   ) : (
@@ -521,13 +516,23 @@ function TypingDots() {
 type PetSize = "tiny" | "mini" | "welcome" | "bubble";
 
 function PetCharacter({ mood, size }: { mood: PetMood; size: PetSize }) {
+  const [hovered, setHovered] = useState(false);
+  const animated = hovered || mood === "wave" || mood === "dance";
+
   return (
-    <span className={`chat-pet chat-pet--${size} chat-pet--${mood}`} aria-hidden="true">
+    <span
+      className={`chat-pet chat-pet--${size} chat-pet--${mood}`}
+      aria-hidden="true"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
       {/* Animated GIFs must stay as native images so the browser preserves playback. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        className="chat-pet__gif"
-        src="/assets/mini-saurabh-4k.gif"
+        className="chat-pet__image"
+        src={animated ? "/assets/mini-saurabh-4k.gif" : "/assets/mini-saurabh-4k-still.png"}
         alt=""
         draggable={false}
       />

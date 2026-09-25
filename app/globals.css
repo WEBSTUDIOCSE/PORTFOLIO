@@ -511,12 +511,12 @@
   animation: chat-pet-float 3.8s ease-in-out infinite;
 }
 
-.chat-pet__gif {
+.chat-pet__image {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  image-rendering: pixelated;
+  image-rendering: auto;
 }
 
 .chat-pet--tiny {
@@ -549,7 +549,7 @@
   animation: chat-pet-wave 420ms ease-in-out 3;
 }
 
-.chat-pet--sleep .chat-pet__gif {
+.chat-pet--sleep .chat-pet__image {
   animation: chat-pet-sprite-breathe 2.8s ease-in-out infinite;
   filter: saturate(0.7) brightness(0.85);
 }
@@ -571,12 +571,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .chat-pet,
-  .chat-pet__gif,
+  .chat-pet__image,
   .chat-pet:hover,
   .chat-pet:focus-visible,
   .chat-pet--dance,
   .chat-pet--wave,
-  .chat-pet--sleep .chat-pet__gif {
+  .chat-pet--sleep .chat-pet__image {
     animation: none;
   }
 }
