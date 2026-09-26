@@ -223,7 +223,7 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label="Chat with Saurabh's assistant"
           inert={!open ? true : undefined}
-          className={`flex h-[min(34rem,calc(100dvh-5rem))] w-[calc(100vw-1.5rem)] max-w-[360px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.5rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none sm:max-w-[370px] ${
+          className={`flex h-[min(34rem,calc(100dvh-5rem))] w-[calc(100vw-1.5rem)] max-w-[360px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.5rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none sm:max-w-[370px] lg:h-[min(30rem,calc(100dvh-6rem))] lg:max-w-[320px] xl:max-w-[340px] ${
             open
               ? "translate-y-0 scale-100 opacity-100"
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
@@ -233,7 +233,7 @@ export default function ChatWidget() {
             <div className="pl-1">
               <div>
                 <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
-                  Mini Saurabh <span className="text-[#d9ad57]">·</span> portfolio sidekick
+                  Mini Saurabh <span className="text-[#d9ad57]">·</span> sidekick
                 </p>
                 <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
                   {petMood === "thinking" ? "thinking tiny thoughts" : "ready for a mission"}
@@ -267,18 +267,18 @@ export default function ChatWidget() {
             ref={listRef}
             role="log"
             aria-live="polite"
-            className="no-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto px-3.5 py-3 font-sans text-sm leading-relaxed"
+            className="no-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto px-3.5 py-3 font-sans text-sm leading-relaxed lg:px-3 lg:py-2.5"
           >
             {messages.length === 0 && (
               <div className="chat-message-enter flex flex-col gap-4">
-                <div className="chat-pet-welcome rounded-[1.4rem] border border-[#8a6526]/15 bg-[#fffdf7] p-3">
+                <div className="chat-pet-welcome rounded-[1.4rem] border border-[#8a6526]/15 bg-[#fffdf7] p-3 lg:rounded-2xl lg:p-2.5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                <p className="font-display text-lg font-medium tracking-tight text-[#1a1a1a]">
-                        Meet Mini Saurabh.
+                <p className="font-display text-lg font-medium tracking-tight text-[#1a1a1a] lg:text-base">
+                        Meet Mini.
                       </p>
-                      <p className="mt-1 max-w-[15rem] text-xs leading-relaxed text-[#1a1a1a]/60">
-                        A tiny animated version of Saurabh with a few tricks up his sleeve.
+                      <p className="mt-1 max-w-[15rem] text-xs leading-relaxed text-[#1a1a1a]/60 lg:text-[11px]">
+                        A tiny version of Saurabh, ready to help.
                       </p>
                     </div>
                     <PetCharacter mood={petMood} size="welcome" />
@@ -386,22 +386,6 @@ export default function ChatWidget() {
                 {error}
               </p>
             )}
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto border-t border-[#1a1a1a]/[0.08] px-3 py-2 no-scrollbar">
-            <span className="shrink-0 px-1 text-[10px] uppercase tracking-[0.14em] text-[#1a1a1a]/35">
-              Actions
-            </span>
-            {PET_ACTIONS.map((action) => (
-              <button
-                key={action.label}
-                type="button"
-                onClick={() => runPetAction(action)}
-                className="chat-action-button shrink-0 rounded-full border border-[#1a1a1a]/10 bg-white px-2.5 py-1 text-[10px] font-medium text-[#1a1a1a]/75 hover:border-[#8a6526]/40 hover:text-[#1a1a1a]"
-              >
-                {action.label}
-              </button>
-            ))}
           </div>
 
           {/* Input */}

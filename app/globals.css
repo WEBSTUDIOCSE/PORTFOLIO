@@ -534,6 +534,13 @@
   height: 147px;
 }
 
+@media (min-width: 1024px) {
+  .chat-pet--welcome {
+    width: 58px;
+    height: 93px;
+  }
+}
+
 .chat-pet--bubble {
   width: 48px;
   height: 77px;
