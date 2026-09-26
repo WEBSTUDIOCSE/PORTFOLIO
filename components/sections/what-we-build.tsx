@@ -109,17 +109,16 @@ export default function WhatWeBuild() {
         cards.slice(0, -1).forEach((card, i) => {
           const veil = card.querySelector<HTMLDivElement>(".layer-veil");
 
-          gsap.timeline({
+          gsap.to(veil, {
+            opacity: 0.45,
+            ease: "none",
             scrollTrigger: {
               trigger: cards[i + 1],
               start: "top bottom",
               end: "top 15%",
               scrub: true,
             },
-            defaults: { ease: "none" },
-          })
-            .to(card, { scale: 0.94, yPercent: -2, transformOrigin: "center top" }, 0)
-            .to(veil, { opacity: 0.45 }, 0);
+          });
         });
       }, sectionRef);
     })();
@@ -170,7 +169,7 @@ export default function WhatWeBuild() {
               cardRefs.current[idx] = el;
             }}
             style={{ top: `calc(4.5rem + ${idx * 1.5}rem)` }}
-            className={`sticky mb-8 overflow-hidden rounded-[1.75rem] shadow-2xl will-change-transform md:mb-12 md:rounded-[2.5rem] ${
+            className={`isolate sticky mb-8 overflow-hidden rounded-[1.75rem] shadow-2xl md:mb-12 md:rounded-[2.5rem] ${
               layer.dark
                 ? "bg-[#151515] text-[#f4f1ea]"
                 : "bg-[#f4ece2] text-[#1a1a1a]"
@@ -182,7 +181,7 @@ export default function WhatWeBuild() {
               className="layer-veil pointer-events-none absolute inset-0 z-20 bg-black opacity-0"
             />
 
-            <div className="grid min-h-[60vh] md:min-h-[70vh] md:grid-cols-2">
+            <div className="grid min-h-[60vh] md:h-[70vh] md:min-h-0 md:grid-cols-2">
               {/* Text */}
               <div className="flex flex-col justify-center p-8 md:p-12 lg:p-14">
                 <h3 className="mb-5 text-4xl font-bold leading-[1.02] tracking-tight md:text-5xl lg:text-6xl">
@@ -211,7 +210,7 @@ export default function WhatWeBuild() {
                   now (no .webm re-export exists for the current
                   clips), so a single <source> avoids a guaranteed
                   404 fetch attempt per card. Decorative only, aria-hidden. */}
-              <div className="relative min-h-[240px] bg-black md:min-h-0">
+              <div className="relative min-h-[240px] overflow-hidden bg-black md:min-h-0">
                 <video
                   loop
                   muted

@@ -24,14 +24,25 @@ export default function JourneyVideoFloat({
 
   useEffect(() => {
     const section = document.getElementById(JOURNEY_SECTION_ID);
+    const footer = document.getElementById("site-footer");
     if (!section) return;
 
+    const visibility = new Map<Element, boolean>();
+
     const observer = new IntersectionObserver(
-      ([entry]) => setHidden(entry.isIntersecting),
+      (entries) => {
+        entries.forEach((entry) => {
+          visibility.set(entry.target, entry.isIntersecting);
+        });
+        setHidden(
+          Boolean(visibility.get(section) || (footer && visibility.get(footer))),
+        );
+      },
       { threshold: 0.12 },
     );
 
     observer.observe(section);
+    if (footer) observer.observe(footer);
     return () => observer.disconnect();
   }, []);
 
@@ -50,7 +61,7 @@ export default function JourneyVideoFloat({
   return (
     <aside
       aria-label="Journey preview"
-      className={`fixed bottom-[5.25rem] left-3 z-30 block w-[min(17rem,calc(100vw-5rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-5 sm:left-5 sm:w-[min(21rem,calc(100vw-2.5rem))] ${
+      className={`fixed bottom-[5.25rem] left-3 z-30 hidden w-[min(17rem,calc(100vw-5rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-5 sm:left-5 sm:block sm:w-[min(21rem,calc(100vw-2.5rem))] ${
         hidden
           ? "pointer-events-none translate-y-3 scale-95 opacity-0"
           : "translate-y-0 scale-100 opacity-100"

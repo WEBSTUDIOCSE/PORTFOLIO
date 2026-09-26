@@ -4,8 +4,7 @@
 // the work and the history first, then the person" — recruiters who
 // reached this point already like what they saw and now want context.
 //
-// Uses an existing hero WebP frame as a placeholder portrait. Swap
-// to a proper headshot later by replacing the src path.
+// Uses the editorial portrait prepared for the About section.
 //
 // Bio paragraphs get a scroll-scrubbed "reading" reveal: each word
 // starts dim and brightens to full opacity as the section scrolls
@@ -98,19 +97,15 @@ export default function About() {
             className="flex flex-col items-center md:col-span-2 md:items-start"
             data-reveal
           >
-            <div className="relative">
+            <div className="w-full max-w-sm">
               {/* Dashed brass orbit — slow spin, pauses for
                   reduced-motion via the global guard. */}
-              <span
-                aria-hidden
-                className="fx-portrait-ring absolute -inset-3 rounded-full border border-dashed border-primary/40"
-              />
-              <div className="relative h-56 w-56 overflow-hidden rounded-full border border-border bg-muted sm:h-64 sm:w-64">
+              <div className="relative aspect-square w-full overflow-hidden rounded-[1.5rem] border border-border bg-muted shadow-[0_18px_50px_rgba(26,26,26,0.12)]">
                 <Image
-                  src="/assets/saurabh-about.jpg"
-                  alt="Saurabh Jadhav"
+                  src="/assets/saurabh-about-editorial.png"
+                  alt="Saurabh Jadhav in a black hoodie against a graphic blue, white, and lime backdrop"
                   fill
-                  sizes="512px"
+                  sizes="(min-width: 1024px) 28rem, (min-width: 640px) 20rem, calc(100vw - 3rem)"
                   className="object-cover"
                 />
               </div>
