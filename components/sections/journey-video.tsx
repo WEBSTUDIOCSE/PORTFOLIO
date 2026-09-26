@@ -11,6 +11,7 @@ export default function JourneyVideo() {
   const [muted, setMuted] = useState(true);
   const [sectionVisible, setSectionVisible] = useState(true);
   const [floatingDismissed, setFloatingDismissed] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const scene = STORY_SCENES[sceneIdx];
   const showFloatingPlayer = playing && !sectionVisible && !floatingDismissed;
 
@@ -24,6 +25,15 @@ export default function JourneyVideo() {
     );
     observer.observe(section);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const syncFullscreen = () => {
+      setFullscreen(document.fullscreenElement === videoRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
   }, []);
 
   useEffect(() => {
@@ -73,6 +83,21 @@ export default function JourneyVideo() {
     videoRef.current?.pause();
     setPlaying(false);
     setFloatingDismissed(true);
+  };
+
+  const toggleFullscreen = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await video.requestFullscreen();
+      }
+    } catch {
+      // Fullscreen can be denied by browser policy; playback remains usable.
+    }
   };
 
   const handleEnded = () => {
@@ -157,6 +182,15 @@ export default function JourneyVideo() {
             >
               <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
             </button>
+            <button
+              type="button"
+              aria-label={fullscreen ? "Exit Journey fullscreen" : "Open Journey fullscreen"}
+              aria-pressed={fullscreen}
+              onClick={toggleFullscreen}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/35 text-sm text-white backdrop-blur-sm transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+            >
+              <span aria-hidden="true">⛶</span>
+            </button>
           </div>
 
           <div className="absolute inset-x-6 bottom-6 flex items-end justify-between gap-4">
@@ -205,6 +239,15 @@ export default function JourneyVideo() {
                 className="rounded-full border border-white/20 px-2.5 py-1.5 font-sans text-[10px] uppercase tracking-[0.12em] text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
               >
                 {muted ? "Sound off" : "Sound on"}
+              </button>
+              <button
+                type="button"
+                aria-label={fullscreen ? "Exit Journey fullscreen" : "Open Journey fullscreen"}
+                aria-pressed={fullscreen}
+                onClick={toggleFullscreen}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-sm text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+              >
+                <span aria-hidden="true">⛶</span>
               </button>
               <button
                 type="button"
