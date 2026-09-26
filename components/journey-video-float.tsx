@@ -50,15 +50,15 @@ export default function JourneyVideoFloat({
   return (
     <aside
       aria-label="Journey preview"
-      className={`fixed bottom-3 left-3 z-30 block w-[min(21.5rem,calc(100vw-1.5rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-5 sm:left-5 sm:w-[min(24rem,calc(100vw-2.5rem))] ${
+      className={`fixed bottom-[5.25rem] left-3 z-30 block w-[min(17rem,calc(100vw-5rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-5 sm:left-5 sm:w-[min(21rem,calc(100vw-2.5rem))] ${
         hidden
           ? "pointer-events-none translate-y-3 scale-95 opacity-0"
           : "translate-y-0 scale-100 opacity-100"
       } motion-reduce:transition-none`}
     >
-      <div className="overflow-hidden rounded-[1.35rem] border border-white/15 bg-[#171713]/95 shadow-[0_18px_55px_rgba(0,0,0,0.35)] ring-1 ring-black/10 backdrop-blur-xl">
-        <div className="flex gap-3 p-3 sm:gap-3.5 sm:p-3.5">
-          <div className="relative aspect-[16/10] h-auto w-[6.75rem] shrink-0 overflow-hidden rounded-[0.9rem] bg-[#0d0d0b] sm:w-32">
+      <div className="overflow-hidden rounded-2xl border border-white/15 bg-[#171713]/95 shadow-[0_14px_40px_rgba(0,0,0,0.32)] ring-1 ring-black/10 backdrop-blur-xl">
+        <div className="flex gap-2.5 p-2.5 sm:gap-3 sm:p-3">
+          <div className="relative aspect-[16/10] h-auto w-[5rem] shrink-0 overflow-hidden rounded-xl bg-[#0d0d0b] sm:w-28">
             <video
               src={STORY_SCENES[0].src}
               autoPlay
@@ -70,7 +70,7 @@ export default function JourneyVideoFloat({
               className="h-full w-full object-cover opacity-80"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-            <span className="absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/45 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
+            <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/45 px-1.5 py-0.5 text-[7px] font-medium uppercase tracking-[0.13em] text-white/85 backdrop-blur-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-[#d9ad57]" aria-hidden="true" />
               Preview
             </span>
@@ -89,23 +89,24 @@ export default function JourneyVideoFloat({
                 The Journey
               </p>
             </div>
-            <p className="mt-1.5 font-display text-[1.05rem] leading-[1.06] tracking-[-0.02em] text-[#f4f1ea] sm:text-lg">
+            <p className="mt-1 font-display text-base leading-[1.06] tracking-[-0.02em] text-[#f4f1ea] sm:truncate sm:text-[1.05rem]">
               The work is only half the story.
             </p>
             <button
               type="button"
               onClick={viewFullStory}
-              className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#f4f1ea]/65 transition-colors hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171713]"
+              className="mt-2 inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.13em] text-[#f4f1ea]/65 transition-colors hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171713]"
             >
-              View full story
+              <span className="sm:hidden">View story</span>
+              <span className="hidden sm:inline">View full story</span>
               <span aria-hidden="true" className="text-sm leading-none">↘</span>
             </button>
           </div>
         </div>
 
         {hasStarted && (
-          <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/10 px-3 py-2.5 sm:px-3.5">
-            <span className="min-w-0 truncate text-[9px] font-medium uppercase tracking-[0.16em] text-white/45">
+          <div className="flex items-center justify-between gap-2 border-t border-white/10 bg-black/10 px-2.5 py-2 sm:px-3">
+            <span className="hidden min-w-0 truncate text-[9px] font-medium uppercase tracking-[0.16em] text-white/45 sm:inline">
               {playing ? "Now playing" : "Story paused"}
             </span>
             <div className="flex shrink-0 items-center gap-1.5">
@@ -114,7 +115,7 @@ export default function JourneyVideoFloat({
                 aria-label={playing ? "Pause Journey" : "Play Journey"}
                 aria-pressed={playing}
                 onClick={onTogglePlay}
-                className="rounded-full bg-[#f4f1ea] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
+                className="rounded-full bg-[#f4f1ea] px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.1em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
               >
                 {playing ? "Pause" : "Play"}
               </button>
@@ -123,7 +124,7 @@ export default function JourneyVideoFloat({
                 aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
                 aria-pressed={!muted}
                 onClick={onToggleSound}
-                className="rounded-full border border-white/20 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.1em] text-white/70 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+                className="rounded-full border border-white/20 px-2.5 py-1 text-[8px] font-medium uppercase tracking-[0.1em] text-white/70 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
               >
                 {muted ? "Sound on" : "Sound off"}
               </button>

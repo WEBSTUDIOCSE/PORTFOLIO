@@ -209,7 +209,7 @@ export default function ChatWidget() {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
+      className={`fixed bottom-3 right-3 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
         nearFooter && !open ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -223,13 +223,13 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label="Chat with Saurabh's assistant"
           inert={!open ? true : undefined}
-          className={`flex h-[34rem] w-[calc(100vw-2rem)] max-w-[400px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.75rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none ${
+          className={`flex h-[min(34rem,calc(100dvh-5rem))] w-[calc(100vw-1.5rem)] max-w-[360px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.5rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none sm:max-w-[370px] ${
             open
               ? "translate-y-0 scale-100 opacity-100"
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
           }`}
         >
-          <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-4 py-3 text-[#f4f1ea]">
+          <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-4 py-2.5 text-[#f4f1ea]">
             <div className="pl-1">
               <div>
                 <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
@@ -240,13 +240,26 @@ export default function ChatWidget() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setMessages([])}
-              className="rounded-full border border-white/15 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-[#f4f1ea]/60 transition-colors hover:border-[#d9ad57]/60 hover:text-[#f4f1ea]"
-            >
-              Reset
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMessages([])}
+                className="rounded-full border border-white/15 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-[#f4f1ea]/60 transition-colors hover:border-[#d9ad57]/60 hover:text-[#f4f1ea]"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  bubbleRef.current?.focus();
+                }}
+                aria-label="Close chat"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[#f4f1ea] transition-colors hover:border-[#d9ad57] hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+              >
+                <CloseIcon className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -254,7 +267,7 @@ export default function ChatWidget() {
             ref={listRef}
             role="log"
             aria-live="polite"
-            className="no-scrollbar flex-1 space-y-3 overflow-y-auto px-4 py-4 font-sans text-sm leading-relaxed"
+            className="no-scrollbar min-h-0 flex-1 space-y-3 overflow-y-auto px-3.5 py-3 font-sans text-sm leading-relaxed"
           >
             {messages.length === 0 && (
               <div className="chat-message-enter flex flex-col gap-4">
@@ -432,7 +445,7 @@ export default function ChatWidget() {
           aria-expanded={open}
           ref={bubbleRef}
           aria-controls="saurabh-chat-panel"
-          className="chat-bubble-button relative flex h-16 w-16 items-center justify-center text-[#1a1a1a] transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="chat-bubble-button relative flex h-14 w-14 items-center justify-center text-[#1a1a1a] transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-16 sm:w-16"
           onClick={toggleOpen}
         >
           <span
@@ -443,7 +456,9 @@ export default function ChatWidget() {
           <span
             className={`absolute transition-[opacity,transform] duration-200 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
           >
-            <CloseIcon className="h-4 w-4" />
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#f4f1ea] text-[#171713] shadow-lg shadow-black/25">
+              <CloseIcon className="h-5 w-5" />
+            </span>
           </span>
         </button>
       </div>
