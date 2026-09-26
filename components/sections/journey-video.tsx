@@ -19,8 +19,8 @@ export default function JourneyVideo() {
     if (!section) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setSectionVisible(entry.isIntersecting),
-      { threshold: 0.2 },
+      ([entry]) => setSectionVisible(entry.intersectionRatio > 0.2),
+      { threshold: [0, 0.2] },
     );
     observer.observe(section);
     return () => observer.disconnect();
