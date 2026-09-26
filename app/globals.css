@@ -578,7 +578,9 @@
   .chat-pet--wave,
   .chat-pet--sleep .chat-pet__image {
     animation: none;
+    transition: none;
   }
+
 }
 
 .chat-action-button:hover {

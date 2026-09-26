@@ -422,8 +422,8 @@ export default function ChatWidget() {
         {/* Attention pulse — stops for good once the widget has been
             opened at least once. */}
         {!hasOpenedOnce && (
-          <span className="chat-pet-nudge absolute bottom-[calc(100%+0.65rem)] right-0 hidden whitespace-nowrap rounded-full border border-[#1a1a1a]/10 bg-[#fffdf7] px-3 py-1.5 font-sans text-[10px] font-medium uppercase tracking-[0.13em] text-[#1a1a1a]/70 shadow-lg sm:block">
-            Ask Mini Saurabh anything
+          <span className="chat-pet-nudge absolute bottom-[calc(100%+0.55rem)] right-0 hidden whitespace-nowrap rounded-full border border-[#1a1a1a]/10 bg-[#fffdf7]/95 px-2.5 py-1 font-sans text-[9px] font-medium uppercase tracking-[0.1em] text-[#1a1a1a]/70 shadow-md backdrop-blur-sm sm:block">
+            Ask me anything
           </span>
         )}
         <button
@@ -509,9 +509,18 @@ function TypingDots() {
 
 type PetSize = "tiny" | "mini" | "welcome" | "bubble";
 
-function PetCharacter({ mood, size }: { mood: PetMood; size: PetSize }) {
+function PetCharacter({
+  mood,
+  size,
+}: {
+  mood: PetMood;
+  size: PetSize;
+}) {
   const [hovered, setHovered] = useState(false);
   const animated = hovered || mood === "wave" || mood === "dance";
+  const spriteSrc = animated
+    ? "/assets/mini-saurabh-4k.gif"
+    : "/assets/mini-saurabh-4k-still.png";
 
   return (
     <span
@@ -524,12 +533,7 @@ function PetCharacter({ mood, size }: { mood: PetMood; size: PetSize }) {
     >
       {/* Animated GIFs must stay as native images so the browser preserves playback. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className="chat-pet__image"
-        src={animated ? "/assets/mini-saurabh-4k.gif" : "/assets/mini-saurabh-4k-still.png"}
-        alt=""
-        draggable={false}
-      />
+      <img className="chat-pet__image" src={spriteSrc} alt="" draggable={false} />
     </span>
   );
 }

@@ -1,13 +1,7 @@
 'use client';
 
-import { downloadFile } from '@/lib/download-file';
-
-// Direct download — no gated lead-capture form. Same fallback path
-// the old ResumeForm used. RESUME_URL is cross-origin (Firebase
-// Storage), so the plain `download` attribute is silently ignored by
-// the browser and just navigates instead of downloading — see
-// lib/download-file.ts.
-const RESUME_URL = process.env.NEXT_PUBLIC_RESUME_URL ?? '/resume.pdf';
+// Direct download — one local PDF shared with the main portfolio.
+const RESUME_URL = '/resume/saurabh-jadhav-resume.pdf';
 
 // Final-stop overlay for the Contact station. Fixed-position card
 // above the Canvas (z=10) so the train + route-map stay obscured
@@ -109,13 +103,8 @@ export default function ContactStation({ scrollT, index }) {
             {/* Resume — direct download, same card treatment as Email/Phone */}
             <a
               href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              download="saurabh-jadhav-resume.pdf"
               aria-label="Download resume PDF"
-              onClick={(e) => {
-                e.preventDefault();
-                downloadFile(RESUME_URL, 'saurabh-jadhav-resume.pdf');
-              }}
               className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-white/10 bg-black/40 p-4 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-black/60 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
             >
               <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">

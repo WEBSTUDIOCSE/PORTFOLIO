@@ -12,6 +12,7 @@ import {
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 import SiteNav from "@/components/site-nav";
+import ChatWidget from "@/components/chat-widget";
 import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -266,6 +267,7 @@ export default async function RootLayout({
           <div id="main-content" tabIndex={-1} className="min-h-0 flex-1">
             {children}
           </div>
+          <ChatWidget />
           <FirebaseAnalytics />
         </ThemeProvider>
         <SpeedInsights />

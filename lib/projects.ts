@@ -670,4 +670,8 @@ export function getProjectLinks(project: Project) {
   return links;
 }
 
-export const FEATURED_PROJECTS = PROJECTS.filter((p) => p.featured);
+const FEATURED_ORDER = ["knownin", "claratto", "openclaw", "cubicle"] as const;
+
+export const FEATURED_PROJECTS = FEATURED_ORDER.map((slug) =>
+  PROJECTS.find((project) => project.slug === slug),
+).filter((project): project is Project => Boolean(project?.featured));

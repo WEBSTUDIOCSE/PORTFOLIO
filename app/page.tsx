@@ -2,7 +2,6 @@ import CharacterScroll from "@/components/sections/character-scroll";
 import WhatWeBuild from "@/components/sections/what-we-build";
 import SelectedWork from "@/components/sections/selected-work";
 import JourneyVideo from "@/components/sections/journey-video";
-import JourneyVideoFloat from "@/components/journey-video-float";
 import About from "@/components/sections/about";
 // Story section hidden for now — re-enable once the story video is ready.
 // import Story from "@/components/sections/story";
@@ -10,7 +9,6 @@ import Experience from "@/components/sections/experience";
 // Testimonials hidden for now — re-enable once real quotes are collected.
 // import Testimonials from "@/components/sections/testimonials";
 import Footer from "@/components/sections/footer";
-import ChatWidget from "@/components/chat-widget";
 import ScrollFX from "@/components/scroll-fx";
 
 // Section order is research-backed (see plan file):
@@ -31,11 +29,11 @@ import ScrollFX from "@/components/scroll-fx";
 // Reads chronologically: who I am → what I build → what I've shipped →
 // where I've worked → who I am → housekeeping + how to reach me.
 //
-// ChatWidget is a fixed floating widget in the same slot the TC
+// ChatWidget is mounted once in app/layout.tsx so it is available on every route.
 // (Ticket Checker) mascot used to occupy — replaced entirely, see
 // components/chat-widget.tsx. Answers questions about Saurabh using
 // projects/experience/writing + his resume as a knowledge base
-// (GLM-backed, see app/api/chat/route.ts). Lives at root of home only.
+// (GLM-backed, see app/api/chat/route.ts).
 export default function Home() {
   return (
     <>
@@ -48,8 +46,6 @@ export default function Home() {
       <About />
       {/* <Testimonials /> hidden for now — enable later with real quotes */}
       <Footer />
-      <ChatWidget />
-      <JourneyVideoFloat />
       {/* GSAP scroll effects — deferred import, reveals via data-*
           attributes on the sections above. See components/scroll-fx.tsx. */}
       <ScrollFX />

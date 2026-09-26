@@ -43,8 +43,8 @@ Scripts: `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
 
 - `NEXT_PUBLIC_FIREBASE_*` — Firebase client config (public by design)
 - `FIREBASE_SERVICE_ACCOUNT_KEY_B64` — admin SDK service account, base64 (server-only)
-- `RESEND_API_KEY`, `CONTACT_EMAIL_TO` — contact / resume email
-- `NEXT_PUBLIC_RESUME_URL` — resume PDF URL (falls back to `/resume.pdf`)
+- `RESEND_API_KEY`, `CONTACT_EMAIL_TO` — contact email
+- Resume PDF — `public/resume/saurabh-jadhav-resume.pdf`
 - `NEXT_PUBLIC_GOOGLE_VERIFICATION` — Google Search Console token
 
 ## Project structure

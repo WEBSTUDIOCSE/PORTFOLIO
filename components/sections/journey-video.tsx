@@ -4,11 +4,27 @@ import { useEffect, useRef, useState } from "react";
 import { STORY_SCENES } from "@/app/journey/components/storyScenes.js";
 
 export default function JourneyVideo() {
+  const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [sceneIdx, setSceneIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [sectionVisible, setSectionVisible] = useState(true);
+  const [floatingDismissed, setFloatingDismissed] = useState(false);
   const scene = STORY_SCENES[sceneIdx];
+  const showFloatingPlayer = playing && !sectionVisible && !floatingDismissed;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setSectionVisible(entry.isIntersecting),
+      { threshold: 0.2 },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -43,6 +59,7 @@ export default function JourneyVideo() {
       return;
     }
 
+    setFloatingDismissed(false);
     setPlaying(true);
   };
 
@@ -50,6 +67,12 @@ export default function JourneyVideo() {
     const nextMuted = !muted;
     setMuted(nextMuted);
     if (videoRef.current) videoRef.current.muted = nextMuted;
+  };
+
+  const closeFloatingPlayer = () => {
+    videoRef.current?.pause();
+    setPlaying(false);
+    setFloatingDismissed(true);
   };
 
   const handleEnded = () => {
@@ -64,6 +87,7 @@ export default function JourneyVideo() {
 
   return (
     <section
+      ref={sectionRef}
       id="journey-video-section"
       aria-labelledby="journey-video-title"
       className="relative overflow-hidden bg-[#171713] px-5 py-20 text-[#f4f1ea] sm:px-8 sm:py-28 lg:px-12"
@@ -96,11 +120,23 @@ export default function JourneyVideo() {
             preload="none"
             onEnded={handleEnded}
             aria-label={`Journey scene ${sceneIdx + 1} of ${STORY_SCENES.length}`}
-            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
+            className={
+              showFloatingPlayer
+                ? "fixed bottom-4 left-4 z-[60] aspect-video h-auto w-[calc(100vw-2rem)] rounded-2xl border border-white/20 object-cover opacity-95 shadow-2xl shadow-black/50 sm:bottom-6 sm:left-6 sm:w-[min(26rem,calc(100vw-3rem))] motion-reduce:transition-none"
+                : "absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
+            }
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,11,.72),rgba(13,13,11,.08)_65%,rgba(13,13,11,.3)),linear-gradient(0deg,rgba(13,13,11,.8),transparent_55%)]" />
+          <div
+            className={`absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,11,.72),rgba(13,13,11,.08)_65%,rgba(13,13,11,.3)),linear-gradient(0deg,rgba(13,13,11,.8),transparent_55%)] transition-opacity duration-300 motion-reduce:transition-none ${
+              showFloatingPlayer ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+          />
 
-          <div className="absolute left-6 top-6 flex items-center gap-2">
+          <div
+            className={`absolute left-6 top-6 flex items-center gap-2 transition-opacity duration-300 motion-reduce:transition-none ${
+              showFloatingPlayer ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+          >
             <button
               type="button"
               aria-label={playing ? "Pause Journey" : "Play Journey"}
@@ -136,6 +172,52 @@ export default function JourneyVideo() {
           </div>
         </div>
       </div>
+
+      {showFloatingPlayer && (
+        <aside
+          aria-label="Floating Journey player"
+          className="pointer-events-none fixed bottom-4 left-4 z-[61] aspect-video w-[calc(100vw-2rem)] sm:bottom-6 sm:left-6 sm:w-[min(26rem,calc(100vw-3rem))]"
+        >
+          <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 rounded-b-2xl bg-[#0d0d0b]/90 px-3 py-2.5 text-[#f4f1ea] backdrop-blur-md sm:px-4">
+            <div className="min-w-0">
+              <p className="truncate font-display text-sm leading-tight sm:text-base">
+                The Journey
+              </p>
+              <p className="mt-0.5 font-sans text-[9px] uppercase tracking-[0.16em] text-white/55">
+                Scene {String(sceneIdx + 1).padStart(2, "0")} / {String(STORY_SCENES.length).padStart(2, "0")}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <button
+                type="button"
+                aria-label={playing ? "Pause Journey" : "Play Journey"}
+                aria-pressed={playing}
+                onClick={togglePreview}
+                className="rounded-full border border-white/20 bg-[#f4f1ea] px-3 py-1.5 font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
+              >
+                {playing ? "Pause" : "Play"}
+              </button>
+              <button
+                type="button"
+                aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
+                aria-pressed={!muted}
+                onClick={toggleSound}
+                className="rounded-full border border-white/20 px-2.5 py-1.5 font-sans text-[10px] uppercase tracking-[0.12em] text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+              >
+                {muted ? "Sound off" : "Sound on"}
+              </button>
+              <button
+                type="button"
+                aria-label="Close floating Journey player"
+                onClick={closeFloatingPlayer}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-sm text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+      )}
     </section>
   );
 }

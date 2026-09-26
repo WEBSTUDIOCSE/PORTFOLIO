@@ -33,7 +33,6 @@ function getResend(): Resend {
   }
   return new Resend(key);
 }
-
 function getRecipient(): string {
   const to = process.env.CONTACT_EMAIL_TO;
   if (!to) {
@@ -41,7 +40,6 @@ function getRecipient(): string {
   }
   return to;
 }
-
 // ─── Email shape helpers ────────────────────────────────────────
 
 function escapeHtml(s: string): string {
@@ -91,55 +89,6 @@ export async function sendContactEmail(data: {
 
   // replyTo sets the Reply-To header so hitting Reply in Gmail goes
   // straight to the sender, not back to Resend.
-  return resend.emails.send({
-    from: FROM_ADDRESS,
-    to: getRecipient(),
-    replyTo: data.email,
-    subject,
-    text,
-    html,
-  });
-}
-
-export async function sendResumeRequestEmail(data: {
-  name: string;
-  email: string;
-  role: string;
-  company: string;
-}) {
-  const resend = getResend();
-  const subject = `Resume request: ${data.name} · ${data.company}`;
-
-  const text =
-    `Resume request received.\n\n` +
-    `Name:    ${data.name}\n` +
-    `Email:   ${data.email}\n` +
-    `Company: ${data.company}\n` +
-    `Role:    ${data.role}` +
-    plainTextSignature();
-
-  const html = `
-    <div style="font-family:-apple-system,Helvetica,Arial,sans-serif;line-height:1.5;color:#1a1410;max-width:600px;">
-      <p style="font-family:monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#7a1f2b;margin:0 0 16px 0;">
-        Portfolio · Resume request
-      </p>
-      <table style="border-collapse:collapse;">
-        <tr><td style="padding:4px 16px 4px 0;color:#5a4435;font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;">Name</td>
-            <td style="padding:4px 0;"><strong>${escapeHtml(data.name)}</strong></td></tr>
-        <tr><td style="padding:4px 16px 4px 0;color:#5a4435;font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;">Email</td>
-            <td style="padding:4px 0;">${escapeHtml(data.email)}</td></tr>
-        <tr><td style="padding:4px 16px 4px 0;color:#5a4435;font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;">Company</td>
-            <td style="padding:4px 0;">${escapeHtml(data.company)}</td></tr>
-        <tr><td style="padding:4px 16px 4px 0;color:#5a4435;font-family:monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;">Role</td>
-            <td style="padding:4px 0;">${escapeHtml(data.role)}</td></tr>
-      </table>
-      <hr style="border:none;border-top:1px solid rgba(26,20,16,0.15);margin:24px 0 8px 0;" />
-      <p style="font-family:monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#5a4435;margin:0;">
-        Reply directly — it goes to ${escapeHtml(data.email)}
-      </p>
-    </div>
-  `;
-
   return resend.emails.send({
     from: FROM_ADDRESS,
     to: getRecipient(),

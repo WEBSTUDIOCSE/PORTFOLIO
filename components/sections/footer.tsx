@@ -18,14 +18,13 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { SOCIAL_ICONS, type SocialIconName } from "@/components/social-icons";
 import ScrollToTop from "@/components/scroll-to-top";
-import { downloadFile } from "@/lib/download-file";
 
 const EMAIL = "saurabhjadhav.cse@gmail.com";
 const [EMAIL_USER, EMAIL_DOMAIN] = EMAIL.split("@");
 
-// Direct download — no gated lead-capture form anymore. Same fallback
-// path the old ResumeForm used.
-const RESUME_URL = process.env.NEXT_PUBLIC_RESUME_URL ?? "/resume.pdf";
+// Direct download — no gated lead-capture form; the local PDF is the
+// single resume source for the portfolio.
+const RESUME_URL = "/resume/saurabh-jadhav-resume.pdf";
 
 const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "/#work" },
@@ -134,25 +133,12 @@ export default function Footer() {
                     </li>
                   );
                 })}
-                {/* Resume — same icon-row treatment as the socials,
-                    direct download instead of the old gated form.
-                    RESUME_URL is cross-origin (Firebase Storage), so
-                    the plain `download` attribute is silently ignored
-                    by the browser and just navigates instead of
-                    downloading — fetch-and-blob forces a real
-                    download; target="_blank" + the href stay as a
-                    graceful no-JS fallback (opens in a new tab rather
-                    than leaving the page). */}
+                {/* Resume — one local PDF, downloaded directly. */}
                 <li className="ml-3">
                   <a
                     href={RESUME_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    download="saurabh-jadhav-resume.pdf"
                     aria-label="Download resume PDF"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      downloadFile(RESUME_URL, "saurabh-jadhav-resume.pdf");
-                    }}
                     className="rounded-sm flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fde047]"
                   >
                     <SOCIAL_ICONS.resume className="h-6 w-6" />

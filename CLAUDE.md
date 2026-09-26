@@ -139,9 +139,9 @@ Floating widget (replaced the old TC mascot, same bottom-right slot) answering q
 about Saurabh — GLM (Zhipu AI free tier) streamed via a Route Handler, not a Server Action
 (Server Actions don't stream cleanly to a `fetch`-based client). Knowledge base = `lib/projects.ts`
 + `lib/experience.ts` + `lib/writing.ts` compiled once at module load (`lib/chat/knowledge-base.ts`),
-plus the live resume PDF fetched from `NEXT_PUBLIC_RESUME_URL` and parsed via `unpdf`, cached
-server-side with a 1-hour TTL (`lib/chat/resume-cache.ts`) — this is the only thing that
-refreshes without a redeploy. Conversations are **ephemeral**: nothing about message
+plus the local resume PDF at `public/resume/saurabh-jadhav-resume.pdf`, parsed via `unpdf` and
+cached server-side with a 1-hour TTL (`lib/chat/resume-cache.ts`). Conversations are **ephemeral**:
+nothing about message
 content is stored anywhere server-side. Rate-limited two ways: per-IP in-memory
 (`lib/rate-limit.ts`'s `chatRateLimit`) and a durable cross-instance global daily cap
 (`lib/chat/daily-cap.ts`, Firestore `chatUsage/{date}` doc via the Admin SDK) — the per-IP
@@ -257,7 +257,7 @@ restore the local author.
 
 Copy `.env.example` → `.env.local` (gitignored). Keys: Firebase client config
 (`NEXT_PUBLIC_FIREBASE_*` — public by design), `FIREBASE_SERVICE_ACCOUNT_KEY_B64`
-(server-only), `RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `NEXT_PUBLIC_RESUME_URL`,
+(server-only), `RESEND_API_KEY`, `CONTACT_EMAIL_TO`,
 `NEXT_PUBLIC_GOOGLE_VERIFICATION`, `ZHIPU_API_KEY` (server-only, chat widget),
 optionally `ZHIPU_MODEL` / `ZHIPU_API_BASE_URL` / `CHAT_DAILY_BUDGET`.
 

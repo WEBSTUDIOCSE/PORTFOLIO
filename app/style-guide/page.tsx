@@ -401,7 +401,7 @@ const COMPONENTS_IN_USE = [
   {
     name: "ResumeIcon + direct download",
     path: "components/social-icons.tsx, components/sections/footer.tsx",
-    note: "Resume is a direct download link in the Footer's icon row (NEXT_PUBLIC_RESUME_URL, falls back to /resume.pdf) — no gated form. The old ResumeForm (name/email/company capture) was removed.",
+    note: "Resume is a direct download link in the Footer's icon row, backed by public/resume/saurabh-jadhav-resume.pdf — no gated form.",
   },
   {
     name: "Firebase Admin SDK",
