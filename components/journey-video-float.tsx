@@ -107,7 +107,7 @@ export default function JourneyVideoFloat({
                   onClick={onToggleSound}
                   className="rounded-full border border-white/20 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
                 >
-                  {muted ? "Sound off" : "Sound on"}
+                  {muted ? "Sound on" : "Sound off"}
                 </button>
               </div>
             )}

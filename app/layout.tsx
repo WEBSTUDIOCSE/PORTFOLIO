@@ -251,7 +251,8 @@ export default async function RootLayout({
         {/* Native <script> for JSON-LD per Next.js docs. */}
         <script
           type="application/ld+json"
-          nonce={nonce}
+          nonce={nonce || undefined}
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: jsonLd(ROOT_JSON_LD) }}
         />
       </head>
