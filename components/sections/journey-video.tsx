@@ -212,10 +212,13 @@ export default function JourneyVideo() {
           aria-label="Floating Journey player"
           className="pointer-events-none fixed bottom-4 left-4 z-[61] aspect-video w-[calc(100vw-2rem)] sm:bottom-6 sm:left-6 sm:w-[min(26rem,calc(100vw-3rem))]"
         >
-          <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 rounded-b-2xl bg-[#0d0d0b]/90 px-3 py-2.5 text-[#f4f1ea] backdrop-blur-md sm:px-4">
+          <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex items-start justify-between gap-3 rounded-b-2xl bg-[#0d0d0b]/90 px-3 py-2.5 text-[#f4f1ea] backdrop-blur-md sm:px-4">
             <div className="min-w-0">
               <p className="truncate font-display text-sm leading-tight sm:text-base">
                 The Journey
+              </p>
+              <p className="mt-1 max-w-[13rem] font-display text-xs leading-tight text-white/75 sm:text-sm">
+                The work is only half the story.
               </p>
               <p className="mt-0.5 font-sans text-[9px] uppercase tracking-[0.16em] text-white/55">
                 Scene {String(sceneIdx + 1).padStart(2, "0")} / {String(STORY_SCENES.length).padStart(2, "0")}
