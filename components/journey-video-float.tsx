@@ -5,7 +5,21 @@ import { STORY_SCENES } from "@/app/journey/components/storyScenes.js";
 
 const JOURNEY_SECTION_ID = "journey-video-section";
 
-export default function JourneyVideoFloat() {
+type JourneyVideoFloatProps = {
+  hasStarted: boolean;
+  muted: boolean;
+  onTogglePlay: () => void;
+  onToggleSound: () => void;
+  playing: boolean;
+};
+
+export default function JourneyVideoFloat({
+  hasStarted,
+  muted,
+  onTogglePlay,
+  onToggleSound,
+  playing,
+}: JourneyVideoFloatProps) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
@@ -36,7 +50,7 @@ export default function JourneyVideoFloat() {
   return (
     <aside
       aria-label="Journey preview"
-      className={`fixed bottom-4 left-4 z-30 hidden w-[min(18rem,calc(100vw-2rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-6 sm:left-6 sm:block ${
+      className={`fixed bottom-4 left-4 z-30 block w-[min(18rem,calc(100vw-2rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-6 sm:left-6 ${
         hidden
           ? "pointer-events-none translate-y-3 scale-95 opacity-0"
           : "translate-y-0 scale-100 opacity-100"
@@ -75,6 +89,28 @@ export default function JourneyVideoFloat() {
               View full story
               <span aria-hidden="true">↘</span>
             </button>
+            {hasStarted && (
+              <div className="mt-2 flex items-center gap-1.5">
+                <button
+                  type="button"
+                  aria-label={playing ? "Pause Journey" : "Play Journey"}
+                  aria-pressed={playing}
+                  onClick={onTogglePlay}
+                  className="rounded-full border border-white/20 bg-[#f4f1ea] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
+                >
+                  {playing ? "Pause" : "Play"}
+                </button>
+                <button
+                  type="button"
+                  aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
+                  aria-pressed={!muted}
+                  onClick={onToggleSound}
+                  className="rounded-full border border-white/20 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+                >
+                  {muted ? "Sound off" : "Sound on"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
