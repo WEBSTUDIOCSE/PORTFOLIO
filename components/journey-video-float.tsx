@@ -50,15 +50,15 @@ export default function JourneyVideoFloat({
   return (
     <aside
       aria-label="Journey preview"
-      className={`fixed bottom-4 left-4 z-30 block w-[min(18rem,calc(100vw-2rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-6 sm:left-6 ${
+      className={`fixed bottom-3 left-3 z-30 block w-[min(21.5rem,calc(100vw-1.5rem))] origin-bottom-left transition-[opacity,transform] duration-300 sm:bottom-5 sm:left-5 sm:w-[min(24rem,calc(100vw-2.5rem))] ${
         hidden
           ? "pointer-events-none translate-y-3 scale-95 opacity-0"
           : "translate-y-0 scale-100 opacity-100"
       } motion-reduce:transition-none`}
     >
-      <div className="overflow-hidden rounded-2xl border border-white/20 bg-[#171713]/95 shadow-2xl shadow-black/35 backdrop-blur-md">
-        <div className="flex gap-3 p-2.5">
-          <div className="relative h-[4.5rem] w-24 shrink-0 overflow-hidden rounded-xl bg-[#0d0d0b] sm:h-20 sm:w-32">
+      <div className="overflow-hidden rounded-[1.35rem] border border-white/15 bg-[#171713]/95 shadow-[0_18px_55px_rgba(0,0,0,0.35)] ring-1 ring-black/10 backdrop-blur-xl">
+        <div className="flex gap-3 p-3 sm:gap-3.5 sm:p-3.5">
+          <div className="relative aspect-[16/10] h-auto w-[6.75rem] shrink-0 overflow-hidden rounded-[0.9rem] bg-[#0d0d0b] sm:w-32">
             <video
               src={STORY_SCENES[0].src}
               autoPlay
@@ -69,50 +69,67 @@ export default function JourneyVideoFloat({
               aria-label="Journey video preview"
               className="h-full w-full object-cover opacity-80"
             />
-            <span className="absolute bottom-1.5 left-1.5 rounded-full bg-black/60 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.14em] text-white/80">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+            <span className="absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/45 px-2 py-1 text-[8px] font-medium uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#d9ad57]" aria-hidden="true" />
               Preview
             </span>
+            {hasStarted && playing && (
+              <span className="absolute bottom-2 left-2 inline-flex items-center gap-1.5 text-[8px] font-medium uppercase tracking-[0.14em] text-white/80">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#d9ad57]" aria-hidden="true" />
+                Playing
+              </span>
+            )}
           </div>
 
           <div className="min-w-0 flex-1 py-0.5">
-            <p className="font-sans text-[9px] uppercase tracking-[0.18em] text-[#d9ad57]">
-              The Journey
-            </p>
-            <p className="mt-1 font-display text-sm leading-tight text-[#f4f1ea]">
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#d9ad57]" aria-hidden="true" />
+              <p className="font-sans text-[9px] font-medium uppercase tracking-[0.2em] text-[#d9ad57]">
+                The Journey
+              </p>
+            </div>
+            <p className="mt-1.5 font-display text-[1.05rem] leading-[1.06] tracking-[-0.02em] text-[#f4f1ea] sm:text-lg">
               The work is only half the story.
             </p>
             <button
               type="button"
               onClick={viewFullStory}
-              className="mt-2 inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#f4f1ea]/70 transition-colors hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171713]"
+              className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#f4f1ea]/65 transition-colors hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171713]"
             >
               View full story
-              <span aria-hidden="true">↘</span>
+              <span aria-hidden="true" className="text-sm leading-none">↘</span>
             </button>
-            {hasStarted && (
-              <div className="mt-2 flex items-center gap-1.5">
-                <button
-                  type="button"
-                  aria-label={playing ? "Pause Journey" : "Play Journey"}
-                  aria-pressed={playing}
-                  onClick={onTogglePlay}
-                  className="rounded-full border border-white/20 bg-[#f4f1ea] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
-                >
-                  {playing ? "Pause" : "Play"}
-                </button>
-                <button
-                  type="button"
-                  aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
-                  aria-pressed={!muted}
-                  onClick={onToggleSound}
-                  className="rounded-full border border-white/20 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
-                >
-                  {muted ? "Sound on" : "Sound off"}
-                </button>
-              </div>
-            )}
           </div>
         </div>
+
+        {hasStarted && (
+          <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-black/10 px-3 py-2.5 sm:px-3.5">
+            <span className="min-w-0 truncate text-[9px] font-medium uppercase tracking-[0.16em] text-white/45">
+              {playing ? "Now playing" : "Story paused"}
+            </span>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <button
+                type="button"
+                aria-label={playing ? "Pause Journey" : "Play Journey"}
+                aria-pressed={playing}
+                onClick={onTogglePlay}
+                className="rounded-full bg-[#f4f1ea] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#171713] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] motion-reduce:transition-none"
+              >
+                {playing ? "Pause" : "Play"}
+              </button>
+              <button
+                type="button"
+                aria-label={muted ? "Turn Journey sound on" : "Mute Journey sound"}
+                aria-pressed={!muted}
+                onClick={onToggleSound}
+                className="rounded-full border border-white/20 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.1em] text-white/70 transition-colors hover:border-[#d9ad57] hover:text-[#d9ad57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+              >
+                {muted ? "Sound on" : "Sound off"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );
