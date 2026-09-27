@@ -200,7 +200,9 @@ export default function ChatWidget() {
 
   return (
     <div
-      className={`fixed bottom-4 right-3 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
+      className={`fixed bottom-2 right-2 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
+        open ? "max-sm:gap-0" : ""
+      } ${
         nearFooter && !open ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -214,7 +216,7 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label="Chat with Saurabh's assistant"
           inert={!open ? true : undefined}
-          className={`flex h-[min(34rem,calc(100dvh-5rem))] w-[calc(100vw-1.5rem)] max-w-[360px] origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.5rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none sm:max-w-[370px] lg:h-[min(30rem,calc(100dvh-6rem))] lg:max-w-[320px] xl:max-w-[340px] ${
+          className={`flex h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-none origin-bottom-right flex-col overscroll-contain overflow-hidden rounded-[1.5rem] border border-[#1a1a1a]/10 bg-[#f4f1ea] text-[#1a1a1a] shadow-2xl transition-[opacity,transform] duration-300 ease-out [color-scheme:light] motion-reduce:transition-none sm:h-[min(34rem,calc(100dvh-5rem))] sm:w-[calc(100vw-1.5rem)] sm:max-w-[370px] lg:h-[min(30rem,calc(100dvh-6rem))] lg:max-w-[320px] xl:max-w-[340px] ${
             open
               ? "translate-y-0 scale-100 opacity-100"
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
@@ -400,7 +402,9 @@ export default function ChatWidget() {
           aria-expanded={open}
           ref={bubbleRef}
           aria-controls="saurabh-chat-panel"
-          className="chat-bubble-button relative flex h-14 w-14 items-center justify-center text-[#1a1a1a] transition-transform duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-16 sm:w-16"
+          className={`chat-bubble-button relative flex h-14 w-14 items-center justify-center text-[#1a1a1a] transition-[opacity,transform,width,height] duration-200 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-16 sm:w-16 ${
+            open ? "max-sm:pointer-events-none max-sm:invisible max-sm:h-0 max-sm:w-0 max-sm:overflow-hidden" : ""
+          }`}
           onClick={toggleOpen}
         >
           <span
