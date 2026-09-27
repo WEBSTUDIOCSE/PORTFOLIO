@@ -6,10 +6,10 @@ import JourneyClient from './JourneyClient.jsx';
 // now. Revert this alongside the diorama if/when it comes back.
 export const metadata = {
   title: 'Saurabh Jadhav — Journey',
-  description: 'A short film through my story — from curiosity to code.',
+  description: 'Follow Saurabh Jadhav\'s journey from curiosity to code through a short film about building products, AI systems, and a career in software engineering.',
   openGraph: {
     title: 'Saurabh Jadhav — Journey',
-    description: 'A short film through my story — from curiosity to code.',
+    description: 'Follow Saurabh Jadhav\'s journey from curiosity to code through a short film about building products, AI systems, and a career in software engineering.',
     url: 'https://saurabhjadhav.in/journey',
     siteName: 'Saurabh Jadhav',
     locale: 'en_IN',

@@ -108,8 +108,7 @@ export const metadata: Metadata = {
     url: "https://saurabhjadhav.in",
     siteName: "Saurabh Jadhav",
     title: "Saurabh Jadhav — Full Stack & AI Engineer",
-    description:
-      "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: SITE_OG_IMAGE,
@@ -122,8 +121,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Saurabh Jadhav — Full Stack & AI Engineer",
-    description:
-      "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+    description: SITE_DESCRIPTION,
     creator: "@saurabhjadhav",
     images: [SITE_OG_IMAGE],
   },
