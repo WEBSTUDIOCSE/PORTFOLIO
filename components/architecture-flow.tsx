@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import MermaidDiagram from "@/components/mermaid-diagram";
 
 type ArchitectureFlowProps = {
@@ -44,10 +44,29 @@ export default function ArchitectureFlow({
   const [activeStep, setActiveStep] = useState(0);
   const [showMap, setShowMap] = useState(false);
   const [view, setView] = useState<View>("flow");
+  const [isPlaying, setIsPlaying] = useState(false);
   const baseId = useId().replace(/:/g, "_");
   const safeSteps = steps.length > 0 ? steps : ["The system is described in the full map below."];
+  const stepCount = safeSteps.length;
   const currentStep = safeSteps[Math.min(activeStep, safeSteps.length - 1)];
   const safeUseCases = useCases.length > 0 ? useCases : ["Explore the system map to see how this product works end to end."];
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const startTimer = window.setTimeout(() => setIsPlaying(true), 0);
+    return () => window.clearTimeout(startTimer);
+  }, []);
+
+  useEffect(() => {
+    if (view !== "flow" || !isPlaying || stepCount < 2) return;
+
+    const timer = window.setInterval(() => {
+      setActiveStep((current) => (current >= stepCount - 1 ? 0 : current + 1));
+    }, 2200);
+
+    return () => window.clearInterval(timer);
+  }, [isPlaying, stepCount, view]);
 
   return (
     <div className="space-y-5">
@@ -98,13 +117,43 @@ export default function ArchitectureFlow({
 
         {view === "flow" && (
           <div id={`${baseId}-flow`} role="tabpanel">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1a1a1a]/10 bg-[#f4ece2] px-5 py-4 sm:px-8">
+              <div className="flex items-center gap-3" aria-live="polite">
+                <span className={`relative flex h-2.5 w-2.5 ${isPlaying ? "" : "opacity-45"}`}>
+                  {isPlaying && <span aria-hidden className="absolute inset-0 rounded-full bg-[#d9ad57] motion-safe:animate-ping" />}
+                  <span aria-hidden className="relative h-2.5 w-2.5 rounded-full bg-[#d9ad57]" />
+                </span>
+                <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/65">
+                  {isPlaying ? "Flow running" : "Flow paused"}
+                </span>
+                <span className="text-sm text-[#1a1a1a]/45">
+                  Step {String(activeStep + 1).padStart(2, "0")} / {String(stepCount).padStart(2, "0")}
+                </span>
+              </div>
+              <button
+                type="button"
+                aria-pressed={isPlaying}
+                onClick={() => setIsPlaying((playing) => !playing)}
+                className="rounded-full border border-[#1a1a1a]/20 bg-[#fffaf1] px-3.5 py-2 font-sans text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1a1a] transition-[background-color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#8a6526] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f4ece2] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              >
+                {isPlaying ? "Pause flow" : "Play flow"}
+              </button>
+            </div>
+
             <div className="overflow-x-auto px-5 py-6 sm:px-8 sm:py-8">
+              <div className="mb-7 h-1 overflow-hidden rounded-full bg-[#1a1a1a]/10" aria-hidden>
+                <span
+                  className="block h-full rounded-full bg-[#d9ad57] transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: `${((activeStep + 1) / stepCount) * 100}%` }}
+                />
+              </div>
               <ol
                 className="flex min-w-max gap-3 md:grid md:min-w-0 md:gap-0"
                 style={{ gridTemplateColumns: `repeat(${Math.min(safeSteps.length, 4)}, minmax(0, 1fr))` }}
               >
                 {safeSteps.map((step, index) => {
                   const selected = index === activeStep;
+                  const completed = index < activeStep;
                   const stepId = `${baseId}-step-${index}`;
                   return (
                     <li key={stepId} className="flex items-center md:min-w-0">
@@ -112,10 +161,13 @@ export default function ArchitectureFlow({
                         type="button"
                         aria-current={selected ? "step" : undefined}
                         aria-controls={`${baseId}-detail`}
-                        onClick={() => setActiveStep(index)}
+                        onClick={() => {
+                          setActiveStep(index);
+                          setIsPlaying(false);
+                        }}
                         className={`group relative w-[13.5rem] rounded-2xl border p-4 text-left transition-[background-color,border-color,transform] duration-200 md:w-auto md:flex-1 md:rounded-none md:border-x-0 md:border-t-0 md:border-b-0 md:p-0 md:pr-5 motion-reduce:transition-none ${
                           selected
-                            ? "border-[#1a1a1a] bg-[#1a1a1a] text-[#f4f1ea] md:bg-transparent md:text-[#1a1a1a]"
+                            ? "border-[#1a1a1a] bg-[#1a1a1a] text-[#f4f1ea] shadow-[0_0_0_3px_rgba(217,173,87,0.35)] md:bg-transparent md:text-[#1a1a1a] md:shadow-none"
                             : "border-[#1a1a1a]/15 bg-transparent text-[#1a1a1a]/55 hover:-translate-y-0.5 hover:border-[#8a6526]/60 hover:text-[#1a1a1a] md:hover:translate-y-0"
                         }`}
                       >
@@ -132,7 +184,7 @@ export default function ArchitectureFlow({
                         </span>
                       </button>
                       {index < safeSteps.length - 1 && (
-                        <span aria-hidden className="mx-3 hidden h-px flex-1 bg-[#1a1a1a]/15 md:block" />
+                        <span aria-hidden className={`mx-3 hidden h-px flex-1 transition-colors duration-500 md:block motion-reduce:transition-none ${completed ? "bg-[#d9ad57]" : "bg-[#1a1a1a]/15"}`} />
                       )}
                     </li>
                   );

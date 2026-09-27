@@ -53,7 +53,7 @@ export default function SelectedWork() {
               key={project.slug}
               project={project}
               index={index}
-              wide={index === 0 || index === FEATURED_PROJECTS.length - 1}
+              wide={index === 0}
             />
           ))}
         </div>
@@ -85,12 +85,12 @@ function ProjectCard({
 
   return (
     <article
-      className={`group relative flex min-h-[28rem] flex-col overflow-hidden rounded-[1.75rem] border p-6 shadow-[0_18px_50px_rgba(26,26,26,0.06)] transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-8 lg:p-10 ${surface} ${
+      className={`group relative flex min-h-[24rem] flex-col overflow-hidden rounded-[1.75rem] border p-6 shadow-[0_18px_50px_rgba(26,26,26,0.06)] transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:min-h-[25rem] sm:p-8 lg:p-10 ${surface} ${
         wide ? "md:col-span-2" : ""
       }`}
     >
       <div
-        className={`flex flex-1 flex-col gap-10 ${
+        className={`flex flex-1 flex-col gap-8 ${
           wide ? "md:grid md:grid-cols-[1.15fr_0.85fr] md:gap-12" : ""
         }`}
       >
@@ -106,7 +106,7 @@ function ProjectCard({
             )}
           </div>
 
-          <div className="mt-auto pt-16 md:pt-20">
+          <div className="mt-10">
             <p className={`mb-4 font-display text-3xl font-light ${muted}`}>
               {String(index + 1).padStart(2, "0")}
             </p>
@@ -124,7 +124,7 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className={`flex flex-col justify-between gap-8 ${wide ? "md:border-l md:pl-10" : ""} ${subtleBorder}`}>
+        <div className={`flex flex-col gap-8 rounded-2xl p-5 ${light ? "bg-[#f4ece2]/65" : "bg-[#f4f1ea]/5"} ${wide ? "md:border-l md:pl-10" : ""} ${subtleBorder}`}>
           <div>
             {project.metric && (
               <p className="max-w-sm font-display text-2xl font-medium leading-tight tracking-tight sm:text-3xl">

@@ -702,7 +702,13 @@ export function getProjectLinks(project: Project) {
   return links;
 }
 
-const FEATURED_ORDER = ["knownin", "claratto", "openclaw", "cubicle"] as const;
+const FEATURED_ORDER = [
+  "knownin",
+  "claratto",
+  "openclaw",
+  "cubicle",
+  "cinematictale",
+] as const;
 
 export const FEATURED_PROJECTS = FEATURED_ORDER.map((slug) =>
   PROJECTS.find((project) => project.slug === slug),
