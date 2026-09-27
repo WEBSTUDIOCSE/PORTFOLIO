@@ -19,10 +19,10 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
   const projectsInGroup = new Set(activeGroup.skills.flatMap((skill) => skill.projectSlugs));
 
   return (
-    <div className="mt-8 lg:mt-0">
+    <div className="mt-8 min-w-0 lg:mt-0">
       <div
         aria-label="Skill areas"
-        className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+            className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4"
         role="tablist"
       >
         {groups.map((group, index) => {
@@ -38,7 +38,7 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
                 setActiveGroupIndex(index);
                 setActiveSkillIndex(0);
               }}
-              className={`group rounded-2xl border p-3 text-left transition-[background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] motion-reduce:transition-none sm:p-4 ${
+              className={`group min-w-0 rounded-2xl border p-3 text-left transition-[background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] motion-reduce:transition-none sm:p-4 ${
                 selected
                   ? "border-[#d9ad57] bg-[#d9ad57] text-[#1a1a1a] shadow-[0_12px_30px_rgba(217,173,87,0.18)]"
                   : "border-[#f4f1ea]/15 bg-[#24231f] text-[#f4f1ea]/65 hover:-translate-y-0.5 hover:border-[#d9ad57]/70 hover:text-[#f4f1ea] motion-reduce:hover:translate-y-0"
@@ -52,7 +52,7 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
                   {group.skills.length} skills
                 </span>
               </span>
-              <span className="mt-5 block font-display text-base leading-tight sm:text-lg">
+              <span className="mt-5 block min-w-0 break-words font-display text-base leading-tight sm:text-lg">
                 {group.label}
               </span>
             </button>
@@ -63,14 +63,14 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
       <div
         id={`skills-panel-${activeGroup.id}`}
         role="tabpanel"
-        className="mt-3 overflow-hidden rounded-[1.25rem] border border-[#f4f1ea]/15 bg-[#24231f]"
+        className="mt-3 min-w-0 overflow-hidden rounded-[1.25rem] border border-[#f4f1ea]/15 bg-[#24231f]"
       >
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[#f4f1ea]/10 p-4 sm:gap-6 sm:p-6 lg:p-8">
           <div className="max-w-2xl">
             <p className="font-sans text-[10px] font-bold uppercase tracking-[0.24em] text-[#d9ad57]">
               Capability layer {String(activeGroupIndex + 1).padStart(2, "0")} / {String(groups.length).padStart(2, "0")}
             </p>
-            <h3 className="mt-3 font-display text-2xl font-light leading-[1.02] tracking-[-0.03em] text-[#f4f1ea] sm:text-4xl">
+            <h3 className="mt-3 max-w-2xl break-words font-display text-2xl font-light leading-[1.02] tracking-[-0.03em] text-[#f4f1ea] sm:text-4xl">
               {activeGroup.title}
             </h3>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#f4f1ea]/60 sm:text-base">
@@ -97,7 +97,7 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
                 type="button"
                 aria-pressed={selected}
                 onClick={() => setActiveSkillIndex(index)}
-                className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-[background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] motion-reduce:transition-none sm:p-5 ${
+                className={`group relative min-w-0 overflow-hidden rounded-2xl border p-4 text-left transition-[background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] motion-reduce:transition-none sm:p-5 ${
                   selected
                     ? "border-[#d9ad57]/70 bg-[#f4f1ea] text-[#1a1a1a] shadow-[0_12px_30px_rgba(0,0,0,0.16)]"
                     : "border-[#f4f1ea]/10 bg-[#1a1a1a]/35 text-[#f4f1ea] hover:-translate-y-0.5 hover:border-[#f4f1ea]/30 hover:bg-[#1a1a1a]/60 motion-reduce:hover:translate-y-0"
@@ -111,7 +111,7 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
                     {skill.projects.length} {skill.projects.length === 1 ? "project" : "projects"}
                   </span>
                 </span>
-                <span className="mt-5 block font-display text-xl leading-tight tracking-[-0.02em] sm:text-2xl lg:text-xl xl:text-2xl">
+                <span className="mt-5 block min-w-0 break-words font-display text-xl leading-tight tracking-[-0.02em] sm:text-2xl lg:text-xl xl:text-2xl">
                   {skill.name}
                 </span>
                 <span className={`mt-2 block text-sm leading-relaxed ${selected ? "text-[#1a1a1a]/65" : "text-[#f4f1ea]/55"}`}>
@@ -152,7 +152,7 @@ export default function SkillsExplorer({ groups }: { groups: ResolvedSkillGroup[
                 <Link
                   key={project.slug}
                   href={`/work/${project.slug}`}
-                  className="group inline-flex items-center gap-2 rounded-full border border-[#1a1a1a]/15 bg-[#fffaf1] px-3 py-2 text-sm transition-[border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#8a6526] hover:text-[#8a6526] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                  className="group inline-flex max-w-full items-center gap-2 break-words rounded-full border border-[#1a1a1a]/15 bg-[#fffaf1] px-3 py-2 text-sm transition-[border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#8a6526] hover:text-[#8a6526] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8a6526] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 >
                   {project.title}
                   <span aria-hidden className="text-[#8a6526]">↗</span>

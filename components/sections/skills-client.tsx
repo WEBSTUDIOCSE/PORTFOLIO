@@ -7,6 +7,8 @@ import ResumeReceiptButton, { ResumeReceiptPanel } from "@/components/resume-rec
 export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] }) {
   const [resumeOpen, setResumeOpen] = useState(false);
   const [resumeRunId, setResumeRunId] = useState(0);
+  const skillCount = groups.reduce((total, group) => total + group.skills.length, 0);
+  const productCount = new Set(groups.flatMap((group) => group.skills.flatMap((skill) => skill.projectSlugs))).size;
 
   const openResume = () => {
     setResumeOpen(true);
@@ -43,6 +45,11 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
             <div className="mt-6 flex flex-wrap items-center gap-3" data-reveal>
               <ResumeReceiptButton isOpen={resumeOpen} onOpen={openResume} />
             </div>
+            <div className="mt-8 grid max-w-md grid-cols-3 border-t border-[#f4f1ea]/15 pt-5" data-reveal>
+              <Stat value={groups.length} label="Practice areas" />
+              <Stat value={skillCount} label="Capabilities" />
+              <Stat value={productCount} label="Shipped systems" />
+            </div>
           </header>
 
           <div className="min-w-0">
@@ -58,5 +65,18 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
         </div>
       </div>
     </section>
+  );
+}
+
+function Stat({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="min-w-0 pr-3">
+      <p className="font-display text-2xl font-light leading-none text-[#d9ad57] sm:text-3xl">
+        {String(value).padStart(2, "0")}
+      </p>
+      <p className="mt-2 font-sans text-[9px] uppercase leading-relaxed tracking-[0.16em] text-[#f4f1ea]/45">
+        {label}
+      </p>
+    </div>
   );
 }

@@ -96,7 +96,7 @@ function ProjectCard({
             : "md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-8"
         }`}
       >
-        <div className="flex flex-col">
+        <div className="min-w-0 flex flex-col">
           <div className="flex items-center justify-between gap-4">
             <p className={`font-sans text-[10px] uppercase tracking-[0.3em] ${muted}`}>
               {project.number} · {project.year}
@@ -112,7 +112,13 @@ function ProjectCard({
             <p className={`mb-4 font-display text-3xl font-light ${muted}`}>
               {String(index + 1).padStart(2, "0")}
             </p>
-            <h3 className="max-w-3xl font-display text-balance text-4xl font-light leading-[0.98] tracking-[-0.035em] sm:text-5xl lg:text-6xl">
+            <h3
+              className={`min-w-0 max-w-full font-display text-balance font-light leading-[0.98] tracking-[-0.035em] [overflow-wrap:anywhere] ${
+                wide
+                  ? "text-4xl sm:text-5xl lg:text-6xl"
+                  : "text-4xl sm:text-5xl lg:text-[3.15rem]"
+              }`}
+            >
               {name}
             </h3>
             {descriptor && (
@@ -158,7 +164,7 @@ function ProjectCard({
               {project.stack.slice(0, 7).map((stackItem) => (
                 <span
                   key={stackItem}
-                  className={`rounded-full border px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] ${subtleBorder} ${muted}`}
+                  className={`max-w-full break-words rounded-full border px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.12em] ${subtleBorder} ${muted}`}
                 >
                   {stackItem}
                 </span>

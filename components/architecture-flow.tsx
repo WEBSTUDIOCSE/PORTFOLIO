@@ -42,7 +42,7 @@ export default function ArchitectureFlow({
   useCases = [],
 }: ArchitectureFlowProps) {
   const [activeStep, setActiveStep] = useState(0);
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState(true);
   const [view, setView] = useState<View>("flow");
   const [isPlaying, setIsPlaying] = useState(false);
   const baseId = useId().replace(/:/g, "_");
@@ -149,7 +149,7 @@ export default function ArchitectureFlow({
               </div>
               <ol
                 className="flex min-w-max gap-3 md:grid md:min-w-0 md:gap-0"
-                style={{ gridTemplateColumns: `repeat(${Math.min(safeSteps.length, 4)}, minmax(0, 1fr))` }}
+                style={{ gridTemplateColumns: `repeat(${safeSteps.length}, minmax(0, 1fr))` }}
               >
                 {safeSteps.map((step, index) => {
                   const selected = index === activeStep;
@@ -217,7 +217,7 @@ export default function ArchitectureFlow({
                     Full system map
                   </p>
                   <p className="mt-1 text-sm text-[#1a1a1a]/60">
-                    Open the detailed dependency view when you want the infrastructure level.
+                    The grouped dependency view stays visible so the infrastructure is readable at a glance.
                   </p>
                 </div>
                 <button

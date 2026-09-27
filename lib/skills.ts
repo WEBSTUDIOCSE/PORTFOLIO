@@ -26,7 +26,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "Next.js + React",
         summary: "Product foundations for authenticated, content-heavy, and AI-native web apps.",
-        projectSlugs: ["knownin", "claratto", "cinematictale", "elite-mindset-forge"],
+        projectSlugs: ["knownin", "claratto", "cinematictale", "elite-mindset-forge", "prpilot"],
       },
       {
         name: "3D product UI",
@@ -36,7 +36,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "PDF + document systems",
         summary: "Structured data turned into useful, exportable documents and tailored work artifacts.",
-        projectSlugs: ["knownin", "openclaw"],
+        projectSlugs: ["knownin", "openclaw", "prpilot"],
       },
       {
         name: "Responsive product design",
@@ -65,7 +65,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "AI orchestration",
         summary: "Routing, delegation, durable context, circuit breakers, and human confirmation around model work.",
-        projectSlugs: ["cubicle", "openclaw", "cinematictale"],
+        projectSlugs: ["cubicle", "openclaw", "cinematictale", "prpilot"],
       },
       {
         name: "Generative media",
@@ -89,17 +89,17 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "FastAPI + async workers",
         summary: "Protected control planes, queues, scheduled work, and long-running tasks that do not block the UI.",
-        projectSlugs: ["cubicle"],
+        projectSlugs: ["cubicle", "prpilot"],
       },
       {
         name: "PostgreSQL + pgvector",
         summary: "Durable records and searchable agent memory underneath a realtime experience.",
-        projectSlugs: ["cubicle"],
+        projectSlugs: ["cubicle", "prpilot"],
       },
       {
         name: "Realtime + voice",
         summary: "Socket events, WebRTC paths, push notifications, and webhook loops that close the product loop.",
-        projectSlugs: ["cubicle", "claratto", "elite-mindset-forge", "cinematictale"],
+        projectSlugs: ["cubicle", "claratto", "elite-mindset-forge", "cinematictale", "prpilot"],
       },
     ],
   },
@@ -113,7 +113,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "Docker + self-hosting",
         summary: "Composable infrastructure with ownership over data, services, files, and deployment boundaries.",
-        projectSlugs: ["cubicle", "openclaw"],
+        projectSlugs: ["cubicle", "openclaw", "prpilot"],
       },
       {
         name: "Billing + access control",
@@ -128,7 +128,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
       {
         name: "Vercel + production delivery",
         summary: "A clean path from a tested branch to a public product, with the boring operational details handled deliberately.",
-        projectSlugs: ["knownin", "openclaw", "elite-mindset-forge"],
+        projectSlugs: ["knownin", "openclaw", "elite-mindset-forge", "prpilot"],
       },
     ],
   },

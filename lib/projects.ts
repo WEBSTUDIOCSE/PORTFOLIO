@@ -191,11 +191,13 @@ export const PROJECTS: Project[] = [
       "Next.js 16",
       "React Three Fiber",
       "FastAPI",
+      "Socket.io",
       "Celery",
       "Redis",
       "PostgreSQL",
       "pgvector",
       "LiteLLM",
+      "Tavily",
       "WebRTC",
       "Docker",
     ],
@@ -424,7 +426,18 @@ export const PROJECTS: Project[] = [
       "Users learn any topic through a multi-turn Socratic AI tutor, get tested, and watch a persistent 3D brain visualization grow as topics are proven — not just marked complete. Live and monetised — Razorpay subscriptions, credit-based usage tiers, Firebase auth, syllabus-to-curriculum AI generation, voice-based mock interviews.",
     role: "Founder · solo engineer",
     year: "2025",
-    stack: ["Next.js 16", "Firebase", "Gemini", "Three.js", "Razorpay"],
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "Firebase Auth / Firestore",
+      "Gemini + Vercel AI SDK",
+      "Three.js / React Three Fiber",
+      "Firestore vector index",
+      "Upstash Redis",
+      "Sarvam voice",
+      "Razorpay",
+      "Zod",
+    ],
     metric: "Live · claratto.com",
     href: "https://claratto.com",
     featured: true,
@@ -509,7 +522,18 @@ export const PROJECTS: Project[] = [
       "Users create characters, generate narratives, produce AI images via PuLID face-swap. Live and monetised — Razorpay subscriptions, Firebase auth, 7-phase launch playbook.",
     role: "Founder · solo engineer",
     year: "2025",
-    stack: ["Next.js 16", "Firebase", "Gemini", "fal.ai", "Razorpay"],
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "Firebase Auth / Firestore / Storage",
+      "Google GenAI",
+      "Kie.AI",
+      "PuLID / fal.ai",
+      "Upstash Redis",
+      "Razorpay",
+      "Signed webhooks",
+      "PWA",
+    ],
     metric: "Live · cinematictale.com",
     href: "https://cinematictale.com",
     featured: true,
@@ -595,9 +619,13 @@ export const PROJECTS: Project[] = [
       "Gemini Pro",
       "Imagen",
       "Veo",
-      "Firebase",
-      "Instagram API",
+      "Firebase Auth / Firestore / Storage",
+      "Cloud Functions",
+      "Kling AI",
+      "Instagram / Facebook Graph API",
+      "FCM",
       "PWA",
+      "GitHub Actions → Vercel",
     ],
     metric: "AI-agent driven · runs itself · @elitemindset.forge",
     href: "https://www.elitemindsetforge.com/",
@@ -683,6 +711,83 @@ export const PROJECTS: Project[] = [
     diagramCaption:
       "The website is a pure read-only consumer — content originates in a separate Agent Portal backend, kicked off by scheduled Firebase triggers at specific times of day. The Engine calls the AI models (Gemini Pro + RAG for trilingual text; Imagen / Veo / Kling for visuals) and writes the result to a shared Firestore. From there it fans out in parallel: Autogram Poster auto-posts to Instagram + Facebook, a Firestore trigger multicasts FCM push notifications to subscribers, and elitemindsetforge.com just renders whatever's already in the database. Nothing is generated on the website itself.",
   },
+  {
+    slug: "prpilot",
+    number: "P-007",
+    title: "PRPilot — self-hosted AI code review",
+    oneLiner:
+      "An open-source GitHub App that turns pull requests into queued, multi-model code reviews while keeping source code, findings, and audit history on infrastructure teams control.",
+    role: "Founder · solo engineer",
+    year: "2026",
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "FastAPI",
+      "Kafka",
+      "Celery",
+      "Redis",
+      "PostgreSQL",
+      "LiteLLM",
+      "GitHub App / API",
+      "Docker / Kubernetes",
+    ],
+    metric: "Self-hosted · multi-model · MIT",
+    href: "https://github.com/SAURABHRJADHAVCSE/prpilot",
+    github: "https://github.com/SAURABHRJADHAVCSE/prpilot",
+    status: "Open source",
+    links: [
+      {
+        label: "GitHub repository",
+        href: "https://github.com/SAURABHRJADHAVCSE/prpilot",
+      },
+    ],
+    highlight: "↗ code review as a durable system, not a chat prompt",
+    featured: true,
+    useCases: [
+      "Review pull requests automatically from a signed GitHub webhook.",
+      "Queue and replay expensive model work without losing events or double-reviewing a commit.",
+      "Give teams a dashboard for review findings, provider choice, costs, and audit history.",
+    ],
+    problem:
+      "AI code review is useful only when it is dependable, explainable, and safe to run against real repositories. A synchronous webhook handler cannot absorb model latency or provider failures, while a hosted reviewer can make source code and findings leave the team's infrastructure. PRPilot separates ingestion, queueing, model execution, persistence, and GitHub delivery so every review can be retried, audited, and self-hosted.",
+    approach: [
+      "A GitHub App receives pull-request events at a FastAPI webhook receiver. HMAC verification rejects forged payloads before any repository content enters the system, and Redis-backed idempotency prevents duplicate reviews when GitHub retries delivery.",
+      "The receiver publishes a durable job to Kafka instead of waiting on a model. Celery workers consume the job, load the pull-request diff, and keep the webhook path fast and replayable under load.",
+      "LiteLLM creates one provider boundary for Claude, GPT, Gemini, Ollama, and other OpenAI-compatible models. Review policy, model choice, and deployment stay configurable without rewriting the worker.",
+      "Findings, review status, audit events, and team settings are persisted in PostgreSQL. Redis handles locks and short-lived coordination; it is not used as the system of record.",
+      "The Next.js dashboard reads the same API and database to show review history and operations state, while the GitHub API posts the completed review back to the pull request.",
+    ],
+    outcome: [
+      "Open-source, self-hostable GitHub App with MIT licensing.",
+      "Durable Kafka → Celery processing keeps webhook ingestion independent from model latency.",
+      "Multi-provider review routing through LiteLLM, including local Ollama deployments.",
+      "Dashboard, audit history, Redis idempotency, and PostgreSQL persistence around every review.",
+    ],
+    lessons: [
+      "Webhook ingestion, model execution, and GitHub delivery should be separate failure domains.",
+      "Idempotency belongs at the boundary because retries are normal behaviour, not exceptional behaviour.",
+      "A model gateway is most valuable when it preserves product policy while providers remain replaceable.",
+    ],
+    diagram: `flowchart LR
+  GitHub[GitHub App + pull request] --> Receiver[FastAPI webhook receiver]
+  Receiver --> Verify[HMAC verify + idempotency]
+  Verify --> Kafka[(Kafka event stream)]
+  Kafka --> Worker[Celery review worker]
+  Worker --> Gateway[LiteLLM gateway]
+  Gateway --> Models[[Claude · GPT · Gemini · Ollama]]
+  Worker --> Findings[Review findings + audit event]
+  Findings --> Database[(PostgreSQL)]
+  Findings --> GitHubAPI[GitHub API]
+  GitHubAPI --> GitHub
+
+  Redis[(Redis locks + dedup)] -.-> Receiver
+  Redis -.-> Worker
+  Dashboard[Next.js operations dashboard] --> API[FastAPI API]
+  API --> Database
+  API --> Redis`,
+    diagramCaption:
+      "PRPilot is intentionally a pipeline: GitHub sends a signed event, FastAPI verifies and deduplicates it, Kafka makes the work durable, and Celery performs the review outside the webhook request. LiteLLM keeps model providers swappable; PostgreSQL stores the durable review and audit record; Redis handles locks and idempotency; the dashboard observes the system; and the GitHub API closes the loop by publishing the result back to the pull request.",
+  },
 ];
 
 export function getProjectLinks(project: Project) {
@@ -708,6 +813,8 @@ const FEATURED_ORDER = [
   "openclaw",
   "cubicle",
   "cinematictale",
+  "elite-mindset-forge",
+  "prpilot",
 ] as const;
 
 export const FEATURED_PROJECTS = FEATURED_ORDER.map((slug) =>
