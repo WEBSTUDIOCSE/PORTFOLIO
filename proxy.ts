@@ -5,6 +5,7 @@ export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
   const isDev = process.env.NODE_ENV !== "production";
+  const isResumePreview = request.nextUrl.pathname.startsWith("/resume/");
 
   // CSP policy — strict nonce-based script-src
   const csp = [
@@ -42,8 +43,8 @@ export function proxy(request: NextRequest) {
     // blocks the frame and logs a CSP violation on every page load —
     // that console error is what was failing Lighthouse's
     // errors-in-console / inspector-issues best-practices audits.
-    `frame-src https://vercel.live`,
-    `frame-ancestors 'none'`,
+    `frame-src 'self' https://vercel.live`,
+    isResumePreview ? `frame-ancestors 'self'` : `frame-ancestors 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
   ].join("; ");
@@ -61,7 +62,7 @@ export function proxy(request: NextRequest) {
   // OWASP-recommended headers
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Frame-Options", isResumePreview ? "SAMEORIGIN" : "DENY");
   response.headers.set("X-DNS-Prefetch-Control", "on");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
