@@ -17,10 +17,10 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
     <section
       id="skills"
       aria-labelledby="skills-heading"
-      className="bg-[#1a1a1a] px-4 py-16 text-[#f4f1ea] sm:px-6 sm:py-20 lg:min-h-[100svh] lg:px-10 lg:py-16 xl:py-20"
+      className="bg-[#1a1a1a] px-4 py-12 text-[#f4f1ea] sm:px-6 sm:py-20 lg:min-h-[100svh] lg:px-10 lg:py-16 xl:py-20"
     >
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-10 lg:grid-cols-[minmax(20rem,0.58fr)_minmax(0,1.42fr)] lg:items-start lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(20rem,0.58fr)_minmax(0,1.42fr)] lg:items-start lg:gap-10">
           <header className="lg:sticky lg:top-24">
             <div data-reveal>
               <p className="font-sans text-[10px] font-bold uppercase tracking-[0.3em] text-[#d9ad57]">
@@ -30,12 +30,12 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
             </div>
             <h2
               id="skills-heading"
-              className="mt-8 max-w-md font-display text-balance text-4xl font-light leading-[0.96] tracking-[-0.04em] sm:text-5xl lg:mt-10 lg:text-6xl xl:text-7xl"
+              className="mt-7 max-w-md font-display text-balance text-[2.65rem] font-light leading-[0.96] tracking-[-0.04em] sm:text-5xl lg:mt-10 lg:text-6xl xl:text-7xl"
               data-reveal
             >
               Skills with receipts.
             </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-[#f4f1ea]/65 sm:text-base" data-reveal>
+            <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-[#f4f1ea]/65 sm:text-base" data-reveal>
               A recruiter-readable map of the capabilities behind the products. These are
               not a keyword cloud—they are capabilities attached to systems I
               have designed, shipped, and maintained.

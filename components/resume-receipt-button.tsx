@@ -43,25 +43,25 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
     >
       <div className="flex items-start justify-center px-0 pb-0 pt-0 sm:px-0 sm:pt-1">
         <div className="w-full max-w-[38rem] [perspective:900px]">
-          <div className="relative pt-2">
-            <div className="resume-printer__head relative z-30 mx-0 rounded-[0.8rem] border border-[#f4f1ea]/15 bg-[#1b1b18] px-4 pb-2.5 pt-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)] [transform:translateZ(14px)] sm:px-5">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <span className="shrink-0 font-mono text-[8px] uppercase tracking-[0.2em] text-[#f4f1ea]/45">
+          <div className="relative pt-1 sm:pt-2">
+            <div className="resume-printer__head relative z-30 mx-0 rounded-[0.8rem] border border-[#f4f1ea]/15 bg-[#1b1b18] px-3 pb-2.5 pt-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)] [transform:translateZ(14px)] sm:px-5">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-3 sm:gap-y-2">
+                <span className="shrink-0 font-mono text-[7px] uppercase tracking-[0.18em] text-[#f4f1ea]/45 sm:text-[8px] sm:tracking-[0.2em]">
                   printer
                 </span>
-                <span className="inline-flex shrink-0 items-center gap-1.5 font-mono text-[8px] uppercase tracking-[0.16em] text-[#67d391]/80">
+                <span className="inline-flex shrink-0 items-center gap-1 font-mono text-[7px] uppercase tracking-[0.13em] text-[#67d391]/80 sm:gap-1.5 sm:text-[8px] sm:tracking-[0.16em]">
                   <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#67d391]" />
                   online
                 </span>
                 <a
                   href={RESUME_URL}
                   download
-                  className="ml-auto inline-flex shrink-0 items-center rounded-full border border-[#d9ad57]/50 px-3 py-1.5 font-sans text-[9px] font-bold uppercase tracking-[0.12em] text-[#d9ad57] transition-colors hover:border-[#e7c374] hover:bg-[#d9ad57]/10 hover:text-[#e7c374] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57]"
+                  className="ml-auto inline-flex shrink-0 items-center rounded-full border border-[#d9ad57]/50 px-2.5 py-1.5 font-sans text-[8px] font-bold uppercase tracking-[0.1em] text-[#d9ad57] transition-colors hover:border-[#e7c374] hover:bg-[#d9ad57]/10 hover:text-[#e7c374] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] sm:px-3 sm:text-[9px] sm:tracking-[0.12em]"
                 >
                   Download PDF
                 </a>
               </div>
-              <div className="mt-3 h-2 rounded-full bg-black shadow-[inset_0_1px_3px_rgba(255,255,255,0.12)]">
+              <div className="mt-2.5 h-1.5 rounded-full bg-black shadow-[inset_0_1px_3px_rgba(255,255,255,0.12)] sm:mt-3 sm:h-2">
                 <span className="resume-printer__progress block h-full w-full rounded-full bg-[#d9ad57]/65" />
               </div>
             </div>
@@ -71,7 +71,7 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
               className="resume-receipt-feed relative z-10 mx-1 -mt-1 sm:mx-2"
             >
               <div className="resume-receipt-window">
-                <article className="resume-receipt relative bg-[#fffaf1] px-4 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-3">
+                <article className="resume-receipt relative bg-[#fffaf1] px-3 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-3">
                   <div className="resume-receipt__preview overflow-hidden bg-white">
                     <ResumePdfPreview />
                   </div>
