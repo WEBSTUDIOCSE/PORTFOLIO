@@ -1,14 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getDocumentProxy, renderPageAsImage } from "unpdf";
 
 const RESUME_URL = "/resume/saurabh-jadhav-resume.pdf";
 
-export default function ResumePdfPreview() {
+type ResumePdfPreviewProps = {
+  onReady?: () => void;
+};
+
+export default function ResumePdfPreview({ onReady }: ResumePdfPreviewProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
+  const onReadyRef = useRef(onReady);
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,10 +39,12 @@ export default function ResumePdfPreview() {
 
         if (!cancelled) {
           setImageUrl(renderedPage);
+          onReadyRef.current?.();
         }
       } catch {
         if (!cancelled) {
           setHasError(true);
+          onReadyRef.current?.();
         }
       }
     }

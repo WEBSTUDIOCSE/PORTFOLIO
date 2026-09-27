@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import ResumePdfPreview from "@/components/resume-pdf-preview";
 
 const RESUME_URL = "/resume/saurabh-jadhav-resume.pdf";
@@ -35,6 +36,8 @@ export default function ResumeReceiptButton({
 }
 
 export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
+  const [pdfReady, setPdfReady] = useState(false);
+
   return (
     <section
       id="resume-printer-preview"
@@ -62,18 +65,20 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
                 </a>
               </div>
               <div className="mt-2.5 h-1.5 rounded-full bg-black shadow-[inset_0_1px_3px_rgba(255,255,255,0.12)] sm:mt-3 sm:h-2">
-                <span className="resume-printer__progress block h-full w-full rounded-full bg-[#d9ad57]/65" />
+                <span
+                  className={`${pdfReady ? "resume-printer__progress" : "opacity-30"} block h-full w-full rounded-full bg-[#d9ad57]/65`}
+                />
               </div>
             </div>
 
             <div
               key={runId}
-              className="resume-receipt-feed relative z-10 mx-1 -mt-1 sm:mx-2"
+              className={`${pdfReady ? "resume-receipt-feed" : "opacity-0"} relative z-10 mx-1 -mt-1 sm:mx-2`}
             >
               <div className="resume-receipt-window">
                 <article className="resume-receipt relative bg-[#fffaf1] px-3 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-3">
                   <div className="resume-receipt__preview overflow-hidden bg-white">
-                    <ResumePdfPreview />
+                    <ResumePdfPreview onReady={() => setPdfReady(true)} />
                   </div>
                 </article>
               </div>
