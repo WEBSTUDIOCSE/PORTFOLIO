@@ -114,8 +114,8 @@ export default function About() {
                   reduced-motion via the global guard. */}
               <div className="relative aspect-square w-full overflow-hidden rounded-[1.35rem] bg-[#eaf3f4]">
                 <Image
-                  src="/assets/saurabh-about-card.png"
-                  alt="Portrait of Saurabh Jadhav in a black hoodie"
+                  src="/assets/saurabh-about-editorial.png"
+                  alt="Saurabh Jadhav in a black hoodie against a graphic blue, white, and lime backdrop"
                   fill
                   sizes="(min-width: 1024px) 28rem, (min-width: 640px) 20rem, calc(100vw - 3rem)"
                   className="object-cover"
