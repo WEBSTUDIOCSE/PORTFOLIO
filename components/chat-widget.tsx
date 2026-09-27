@@ -40,12 +40,6 @@ const TOPIC_SUGGESTIONS = [
   { label: "Skills & stack", prompt: "What technologies does Saurabh work with?" },
 ] as const;
 
-const PET_ACTIONS = [
-  { label: "Wave", mood: "wave" as const, note: "👋 Tiny wave delivered. What should we explore?" },
-  { label: "Dance", mood: "dance" as const, note: "✦ One micro victory dance. Now ask me about something Saurabh built." },
-  { label: "Nap", mood: "sleep" as const, note: "Shhh… I’m taking a three-second power nap. I’ll be right here." },
-] as const;
-
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
@@ -183,17 +177,6 @@ export default function ChatWidget() {
     }
   };
 
-  const runPetAction = useCallback(
-    (action: (typeof PET_ACTIONS)[number]) => {
-      playMood(action.mood);
-      setMessages((current) => [
-        ...current,
-        { role: "assistant", content: action.note },
-      ]);
-    },
-    [playMood],
-  );
-
   const toggleOpen = () => {
     const next = !open;
     setHasOpenedOnce(true);
@@ -282,26 +265,6 @@ export default function ChatWidget() {
                       </p>
                     </div>
                     <PetCharacter mood={petMood} size="welcome" />
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {PET_ACTIONS.map((action) => (
-                      <button
-                        key={action.label}
-                        type="button"
-                        onClick={() => runPetAction(action)}
-                        className="chat-action-button rounded-full border border-[#1a1a1a]/10 bg-[#f4f1ea] px-2.5 py-1.5 text-[11px] font-medium text-[#1a1a1a] transition-colors hover:border-[#8a6526]/40 hover:bg-[#8a6526]/10"
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => send("Give me a quick tour of Saurabh's best work.")}
-                      disabled={sending}
-                      className="chat-action-button rounded-full border border-[#1a1a1a]/10 bg-[#1a1a1a] px-2.5 py-1.5 text-[11px] font-medium text-[#f4f1ea] transition-transform hover:-translate-y-0.5 disabled:opacity-40"
-                    >
-                      Find a project
-                    </button>
                   </div>
                 </div>
                 <div className="flex items-start">

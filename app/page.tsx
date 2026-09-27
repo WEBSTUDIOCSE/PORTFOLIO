@@ -1,5 +1,6 @@
 import CharacterScroll from "@/components/sections/character-scroll";
 import WhatWeBuild from "@/components/sections/what-we-build";
+import Skills from "@/components/sections/skills";
 import SelectedWork from "@/components/sections/selected-work";
 import JourneyVideo from "@/components/sections/journey-video";
 import About from "@/components/sections/about";
@@ -39,6 +40,7 @@ export default function Home() {
     <>
       <CharacterScroll />
       <WhatWeBuild />
+      <Skills />
       <SelectedWork />
       <JourneyVideo />
       {/* <Story /> hidden for now — enable once the story video is ready */}

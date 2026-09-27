@@ -62,7 +62,7 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
     { id: "problem", label: "Problem", visible: Boolean(project.problem) },
     {
       id: "architecture",
-      label: "Architecture",
+      label: "Architecture + use",
       visible: Boolean(project.diagram),
     },
     { id: "outcome", label: "Outcome", visible: Boolean(project.outcome?.length) },
@@ -247,6 +247,8 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
               steps={project.approach ?? []}
               chart={project.diagram}
               caption={project.diagramCaption}
+              stack={project.stack}
+              useCases={project.useCases}
             />
           </Block>
         )}

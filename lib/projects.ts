@@ -51,6 +51,8 @@ export type Project = {
   // ─── Detail-page fields (rendered on /work/[slug]) ───────
   /** The problem this project solves — one paragraph. */
   problem?: string;
+  /** Concrete jobs or scenarios the system is designed to support. */
+  useCases?: string[];
   /** Approach / architecture — bullet points. */
   approach?: string[];
   /** Outcome / impact — bullet points with numbers where possible. */
@@ -93,6 +95,11 @@ export const PROJECTS: Project[] = [
     links: [{ label: "Live product", href: "https://www.knownin.com" }],
     highlight: "↗ the source of truth for a working life",
     featured: true,
+    useCases: [
+      "Keep a living professional profile accurate through chat or structured edits.",
+      "Generate job-specific resumes from verified skills, experience, and projects.",
+      "Connect AI clients through scoped MCP tools without exposing private application data.",
+    ],
     problem:
       "A professional identity usually lives in disconnected resumes, job portals, chat threads, and stale profile links. Every application asks for the same facts again, while tailored resumes risk drifting away from what is actually true. KnownIn makes one structured profile the source of truth and turns every downstream surface into a controlled projection of it.",
     approach: [
@@ -204,6 +211,11 @@ export const PROJECTS: Project[] = [
     ],
     highlight: "↗ an office where the agents actually work",
     featured: true,
+    useCases: [
+      "Watch multi-agent work, queue state, and progress in one visual workspace.",
+      "Route tasks across CLI and API model providers behind one self-hosted control plane.",
+      "Give agents durable memory, real files, web search, media tools, and voice access.",
+    ],
     problem:
       "Most multi-agent tools leave the operator staring at terminal logs or a chat transcript. That makes it hard to understand who is working, what is blocked, where files landed, or whether the system is making progress. Cubicle turns the harness into a place: agents have desks, live status, task context, memory, files, and a direct line back to the person running the office.",
     approach: [
@@ -311,6 +323,11 @@ export const PROJECTS: Project[] = [
     metric: "15 agents · 3 agencies · 0 headcount",
     highlight: "← my favourite system",
     featured: true,
+    useCases: [
+      "Turn one Telegram request into a coordinated build, QA, deploy, and launch cycle.",
+      "Run separate development, creative, and LinkedIn pipelines with specialised agents.",
+      "Keep agent context, shared state, and generated assets on infrastructure you own.",
+    ],
     linkedinPosts: [
       {
         urn: "urn:li:ugcPost:7449521566910062592",
@@ -411,6 +428,11 @@ export const PROJECTS: Project[] = [
     metric: "Live · claratto.com",
     href: "https://claratto.com",
     featured: true,
+    useCases: [
+      "Turn a syllabus into a structured curriculum with topics, prerequisites, and teacher personas.",
+      "Learn through comprehension-gated Socratic sessions, recall, and teach-back.",
+      "Prove mastery visually and practise interviews without confusing progress with completion.",
+    ],
     problem:
       "Most AI tutors just answer questions or dump information — they don't verify you actually learned anything, and there's no persistent sense of progress beyond a checklist. I wanted a tutor that teaches in a genuinely Socratic, multi-turn way, tests comprehension before marking anything \"done,\" and gives the learner something tangible to watch grow as proof of mastery — not just another progress bar.",
     approach: [
@@ -491,6 +513,11 @@ export const PROJECTS: Project[] = [
     metric: "Live · cinematictale.com",
     href: "https://cinematictale.com",
     featured: true,
+    useCases: [
+      "Create illustrated stories where the same character stays recognisable across scenes.",
+      "Generate images and video through a resilient primary-and-fallback media pipeline.",
+      "Operate a paid creative product with authenticated users, credits, and subscriptions.",
+    ],
     problem:
       "Generating AI imagery for stories has a fundamental coherence problem: every frame produces a different person. Without character consistency, you can generate \"a girl walking down a street\" twenty times and get twenty different girls. That's not storytelling — that's a slideshow.",
     approach: [
@@ -575,6 +602,11 @@ export const PROJECTS: Project[] = [
     metric: "AI-agent driven · runs itself · @elitemindset.forge",
     href: "https://www.elitemindsetforge.com/",
     featured: true,
+    useCases: [
+      "Run a multilingual content brand from scheduled generation to automatic publishing.",
+      "Fan one source of truth out to a website, Instagram, Facebook, and push subscribers.",
+      "Keep an installable content experience fresh without making the website a generation backend.",
+    ],
     problem:
       "Running a content-driven Instagram brand solo means daily posting becomes the founder's second full-time job — there's no slot in the daily routine to manage multiple pages manually. I wanted the brand to run itself: content generated, expanded, published, and notified without a human in the loop.",
     approach: [

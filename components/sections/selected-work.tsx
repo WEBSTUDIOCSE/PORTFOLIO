@@ -136,6 +136,16 @@ function ProjectCard({
                 {project.highlight}
               </p>
             )}
+            {project.useCases?.[0] && (
+              <div className={`mt-8 border-l-2 pl-4 ${light ? "border-[#8a6526]/50" : "border-[#d9ad57]/70"}`}>
+                <p className={`font-sans text-[10px] uppercase tracking-[0.25em] ${muted}`}>
+                  Built for
+                </p>
+                <p className={`mt-2 max-w-sm text-sm leading-relaxed ${muted}`}>
+                  {project.useCases[0]}
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
