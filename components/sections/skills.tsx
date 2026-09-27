@@ -36,10 +36,10 @@ export default function Skills() {
               id="skills-heading"
               className="max-w-4xl font-display text-balance text-5xl font-light leading-[0.95] tracking-[-0.04em] sm:text-6xl lg:text-8xl"
             >
-              The tools are only half the skill.
+              Skills with receipts.
             </h2>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#f4f1ea]/65 sm:text-lg">
-              Pick a layer to see how it shows up in real products. These are
+              A recruiter-readable map of the capabilities behind the products. These are
               not a keyword cloud—they are capabilities attached to systems I
               have designed, shipped, and maintained.
             </p>
