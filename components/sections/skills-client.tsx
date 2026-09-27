@@ -42,9 +42,6 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3" data-reveal>
               <ResumeReceiptButton isOpen={resumeOpen} onOpen={openResume} />
-              <span className="font-sans text-[10px] uppercase tracking-[0.18em] text-[#f4f1ea]/40">
-                {resumeOpen ? "PDF · live preview" : "Explore the stack"}
-              </span>
             </div>
           </header>
 

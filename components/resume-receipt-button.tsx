@@ -26,7 +26,7 @@ export default function ResumeReceiptButton({
       className="group inline-flex items-center gap-3 rounded-full bg-[#d9ad57] px-5 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.18em] text-[#1a1a1a] shadow-[0_10px_28px_rgba(217,173,87,0.18)] transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[#e7c374] hover:shadow-[0_14px_34px_rgba(217,173,87,0.26)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9ad57] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <span aria-hidden className="h-2 w-2 rounded-full bg-[#1a1a1a]/55" />
-      {isOpen ? "Replay resume" : "Get resume"}
+      Resume
       <span aria-hidden className="text-sm transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none">
         ↗
       </span>
