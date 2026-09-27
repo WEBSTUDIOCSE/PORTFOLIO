@@ -51,6 +51,9 @@ export default function AutoFitOrtho({
     needsUpdate.current = true;
   }, [camera, sizeW, sizeH, targetWidth, targetHeight, padding, groundY, bottomMargin]);
 
+  // React Three Fiber owns this mutable Three.js camera instance. Updating
+  // it inside useFrame is intentional and is the supported render-loop path.
+  // eslint-disable-next-line react-hooks/immutability
   useFrame(() => {
     if (!needsUpdate.current) return;
     if (!camera.isOrthographicCamera) return;
@@ -60,6 +63,7 @@ export default function AutoFitOrtho({
       (sizeW / targetWidth) * padding,
       (sizeH / targetHeight) * padding
     );
+    // eslint-disable-next-line react-hooks/immutability
     camera.zoom = zoom;
 
     // Visible canvas height projected back into world-Y units. Need
