@@ -85,15 +85,15 @@ function ProjectCard({
 
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden rounded-[1.75rem] border p-6 shadow-[0_18px_50px_rgba(26,26,26,0.06)] transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-8 lg:p-10 ${wide ? "min-h-[24rem] sm:min-h-[25rem]" : "min-h-[22rem] sm:min-h-[23rem]"} ${surface} ${
+      className={`group relative min-w-0 flex flex-col overflow-hidden rounded-[1.75rem] border p-6 shadow-[0_18px_50px_rgba(26,26,26,0.06)] transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-8 lg:p-10 ${wide ? "min-h-[24rem] sm:min-h-[25rem]" : "min-h-[22rem] sm:min-h-[23rem]"} ${surface} ${
         wide ? "md:col-span-2" : ""
       }`}
     >
       <div
-        className={`flex flex-1 flex-col gap-8 ${
+        className={`min-w-0 flex flex-1 flex-col gap-8 ${
           wide
-            ? "md:grid md:grid-cols-[1.15fr_0.85fr] md:gap-12"
-            : "md:grid md:grid-cols-[1.05fr_0.95fr] md:gap-8"
+            ? "md:grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:gap-12"
+            : "md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-8"
         }`}
       >
         <div className="flex flex-col">
@@ -126,10 +126,10 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className={`flex flex-col gap-7 rounded-2xl p-4 sm:p-5 ${light ? "bg-[#f4ece2]/65" : "bg-[#f4f1ea]/5"} ${wide ? "md:border-l md:pl-10" : "md:border-l md:pl-8"} ${subtleBorder}`}>
+        <div className={`min-w-0 flex flex-col gap-7 rounded-2xl p-4 sm:p-5 ${light ? "bg-[#f4ece2]/65" : "bg-[#f4f1ea]/5"} ${wide ? "md:border-l md:pl-10" : "md:border-l md:pl-8"} ${subtleBorder}`}>
           <div>
             {project.metric && (
-              <p className="max-w-sm font-display text-2xl font-medium leading-tight tracking-tight sm:text-3xl">
+                <p className="max-w-sm break-words font-display text-2xl font-medium leading-tight tracking-tight [overflow-wrap:anywhere] sm:text-3xl">
                 {project.metric}
               </p>
             )}

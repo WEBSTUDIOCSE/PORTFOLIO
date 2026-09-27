@@ -192,7 +192,7 @@ export default function ChatWidget() {
 
   return (
     <div
-      className={`fixed bottom-3 right-3 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
+      className={`fixed bottom-4 right-3 z-40 flex flex-col items-end gap-3 transition-opacity duration-300 sm:bottom-6 sm:right-6 ${
         nearFooter && !open ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -212,13 +212,13 @@ export default function ChatWidget() {
               : "pointer-events-none translate-y-2 scale-95 opacity-0"
           }`}
         >
-          <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-4 py-2.5 text-[#f4f1ea]">
+          <div className="chat-pet-header flex items-center justify-between border-b border-white/10 bg-[#171713] px-3 py-2 text-[#f4f1ea] sm:px-4 sm:py-2.5">
             <div className="pl-1">
               <div>
                 <p className="flex items-center gap-1.5 font-display text-base font-medium leading-tight tracking-tight">
                   Mini Saurabh <span className="text-[#d9ad57]">·</span> sidekick
                 </p>
-                <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50">
+                <p className="hidden font-sans text-[10px] uppercase tracking-[0.15em] text-[#f4f1ea]/50 sm:block">
                   {petMood === "thinking" ? "thinking tiny thoughts" : "ready for a mission"}
                 </p>
               </div>
@@ -227,7 +227,7 @@ export default function ChatWidget() {
               <button
                 type="button"
                 onClick={() => setMessages([])}
-                className="rounded-full border border-white/15 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-[#f4f1ea]/60 transition-colors hover:border-[#d9ad57]/60 hover:text-[#f4f1ea]"
+                className="hidden rounded-full border border-white/15 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-[#f4f1ea]/60 transition-colors hover:border-[#d9ad57]/60 hover:text-[#f4f1ea] sm:inline-flex"
               >
                 Reset
               </button>
@@ -238,7 +238,7 @@ export default function ChatWidget() {
                   bubbleRef.current?.focus();
                 }}
                 aria-label="Close chat"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[#f4f1ea] transition-colors hover:border-[#d9ad57] hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047]"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[#f4f1ea] transition-colors hover:border-[#d9ad57] hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fde047] sm:h-8 sm:w-8"
               >
                 <CloseIcon className="h-4 w-4" />
               </button>
