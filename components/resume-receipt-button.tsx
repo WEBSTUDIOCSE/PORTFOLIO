@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ResumePdfPreview from "@/components/resume-pdf-preview";
 
 const RESUME_URL = "/resume/saurabh-jadhav-resume.pdf";
@@ -12,6 +12,7 @@ type ResumeReceiptButtonProps = {
 
 type ResumeReceiptPanelProps = {
   runId: number;
+  autoDownload?: boolean;
 };
 
 export default function ResumeReceiptButton({
@@ -35,8 +36,24 @@ export default function ResumeReceiptButton({
   );
 }
 
-export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
+export function ResumeReceiptPanel({ runId, autoDownload = false }: ResumeReceiptPanelProps) {
   const [pdfReady, setPdfReady] = useState(false);
+  const downloadTriggered = useRef(false);
+
+  const handlePreviewReady = () => {
+    setPdfReady(true);
+    if (!autoDownload || downloadTriggered.current) return;
+
+    downloadTriggered.current = true;
+    window.setTimeout(() => {
+      const link = document.createElement("a");
+      link.href = RESUME_URL;
+      link.download = "saurabh-jadhav-resume.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }, 650);
+  };
 
   return (
     <section
@@ -78,7 +95,7 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
               <div className="resume-receipt-window">
                 <article className="resume-receipt relative bg-[#fffaf1] px-3 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-3">
                   <div className="resume-receipt__preview overflow-hidden bg-white">
-                    <ResumePdfPreview onReady={() => setPdfReady(true)} />
+                    <ResumePdfPreview onReady={handlePreviewReady} />
                   </div>
                 </article>
               </div>

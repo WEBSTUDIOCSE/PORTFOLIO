@@ -87,7 +87,15 @@ export default function ChatWidget() {
 
   // Auto-scroll the message list to the newest content.
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
+    const list = listRef.current;
+    if (!list || !open) return;
+
+    if (messages.length === 0) {
+      list.scrollTo({ top: 0, behavior: "auto" });
+      return;
+    }
+
+    list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }, [messages, open]);
 
   // Auto-grow the input with its content (up to TEXTAREA_MAX_HEIGHT) so
@@ -104,7 +112,7 @@ export default function ChatWidget() {
   // Focus the input + trap Escape when the panel opens.
   useEffect(() => {
     if (!open) return;
-    const t = setTimeout(() => inputRef.current?.focus(), 200);
+    const t = setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 200);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);

@@ -16,8 +16,6 @@ import { usePathname } from "next/navigation";
 
 type NavLink = { label: string; href: string };
 
-const RESUME_URL = "/resume/saurabh-jadhav-resume.pdf";
-
 const LINKS: NavLink[] = [
   { label: "Work", href: "/#work" },
   { label: "About", href: "/#about" },
@@ -173,14 +171,14 @@ export default function SiteNav() {
             ))}
           </ul>
 
-          <a
-            href={RESUME_URL}
-            download="saurabh-jadhav-resume.pdf"
+          <Link
+            href="/?resume=1#skills"
+            onClick={() => window.dispatchEvent(new Event("portfolio:open-resume"))}
             className="hidden items-center gap-2 rounded-full bg-primary px-3.5 py-2 font-sans text-[10px] font-bold uppercase tracking-[0.16em] text-primary-foreground shadow-sm transition-[background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:inline-flex"
           >
             Resume
             <span aria-hidden className="text-sm leading-none">↗</span>
-          </a>
+          </Link>
 
           {/* Mobile hamburger — visible only when desktop links hide */}
           <button
@@ -229,15 +227,17 @@ export default function SiteNav() {
             </Link>
           ))}
           <span aria-hidden className="mt-4 h-px w-12 bg-border" />
-          <a
-            href={RESUME_URL}
-            download="saurabh-jadhav-resume.pdf"
-            onClick={closeMobile}
+          <Link
+            href="/?resume=1#skills"
+            onClick={() => {
+              window.dispatchEvent(new Event("portfolio:open-resume"));
+              closeMobile();
+            }}
             className="inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 font-sans text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
           >
             Download resume
             <span aria-hidden className="text-sm leading-none">↗</span>
-          </a>
+          </Link>
           <p className="font-sans italic text-2xl text-primary">— Saurabh</p>
         </nav>
       </div>

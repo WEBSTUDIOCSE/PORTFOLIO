@@ -1,19 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SkillsExplorer, { type ResolvedSkillGroup } from "@/components/skills-explorer";
 import ResumeReceiptButton, { ResumeReceiptPanel } from "@/components/resume-receipt-button";
 
 export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] }) {
   const [resumeOpen, setResumeOpen] = useState(false);
   const [resumeRunId, setResumeRunId] = useState(0);
+  const [autoDownload, setAutoDownload] = useState(false);
   const skillCount = groups.reduce((total, group) => total + group.skills.length, 0);
   const productCount = new Set(groups.flatMap((group) => group.skills.flatMap((skill) => skill.projectSlugs))).size;
 
-  const openResume = () => {
+  const openResume = (shouldDownload = false) => {
     setResumeOpen(true);
+    setAutoDownload(shouldDownload);
     setResumeRunId((current) => current + 1);
+    window.setTimeout(() => {
+      document.getElementById("skills")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 40);
   };
+
+  useEffect(() => {
+    const handleResumeRequest = () => openResume(true);
+
+    window.addEventListener("portfolio:open-resume", handleResumeRequest);
+    if (new URLSearchParams(window.location.search).get("resume") === "1") {
+      window.setTimeout(() => {
+        openResume(true);
+        window.history.replaceState({}, "", "/#skills");
+      }, 0);
+    }
+
+    return () => {
+      window.removeEventListener("portfolio:open-resume", handleResumeRequest);
+    };
+  }, []);
 
   return (
     <section
@@ -57,6 +81,7 @@ export default function SkillsClient({ groups }: { groups: ResolvedSkillGroup[] 
               <ResumeReceiptPanel
                 key={resumeRunId}
                 runId={resumeRunId}
+                autoDownload={autoDownload}
               />
             ) : (
               <SkillsExplorer groups={groups} />
