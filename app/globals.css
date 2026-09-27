@@ -1539,47 +1539,122 @@
 /* Resume CTA: a small physical-feeling receipt printer interaction. */
 .resume-receipt-feed {
   transform-origin: center top;
-  animation: resume-receipt-feed 1700ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation: resume-receipt-settle 1700ms cubic-bezier(0.33, 1, 0.68, 1) both;
   will-change: opacity, transform;
+}
+
+.resume-receipt-window {
+  position: relative;
+  overflow: hidden;
+}
+
+.resume-receipt-window::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background: #1a1a1a;
+  clip-path: polygon(
+    0 1%,
+    2% 0,
+    4% 1%,
+    6% 0,
+    8% 1%,
+    10% 0,
+    12% 1%,
+    14% 0,
+    16% 1%,
+    18% 0,
+    20% 1%,
+    22% 0,
+    24% 1%,
+    26% 0,
+    28% 1%,
+    30% 0,
+    32% 1%,
+    34% 0,
+    36% 1%,
+    38% 0,
+    40% 1%,
+    42% 0,
+    44% 1%,
+    46% 0,
+    48% 1%,
+    50% 0,
+    52% 1%,
+    54% 0,
+    56% 1%,
+    58% 0,
+    60% 1%,
+    62% 0,
+    64% 1%,
+    66% 0,
+    68% 1%,
+    70% 0,
+    72% 1%,
+    74% 0,
+    76% 1%,
+    78% 0,
+    80% 1%,
+    82% 0,
+    84% 1%,
+    86% 0,
+    88% 1%,
+    90% 0,
+    92% 1%,
+    94% 0,
+    96% 1%,
+    98% 0,
+    100% 1%,
+    100% 100%,
+    0 100%
+  );
+  animation: resume-receipt-cover 1700ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  will-change: transform;
 }
 
 .resume-receipt {
   clip-path: polygon(
     0 0,
     100% 0,
-    100% 99.2%,
-    97% 100%,
-    94% 99.2%,
-    91% 100%,
-    88% 99.2%,
-    85% 100%,
-    82% 99.2%,
-    79% 100%,
-    76% 99.2%,
-    73% 100%,
-    70% 99.2%,
-    67% 100%,
-    64% 99.2%,
-    61% 100%,
-    58% 99.2%,
-    55% 100%,
-    52% 99.2%,
-    49% 100%,
-    46% 99.2%,
-    43% 100%,
-    40% 99.2%,
-    37% 100%,
-    34% 99.2%,
-    31% 100%,
-    28% 99.2%,
-    25% 100%,
-    22% 99.2%,
-    19% 100%,
-    16% 99.2%,
-    13% 100%,
-    10% 99.2%,
-    7% 100%,
-    4% 99.2%,
+    100% 100%,
+    97% 99.2%,
+    94% 100%,
+    91% 99.2%,
+    88% 100%,
+    85% 99.2%,
+    82% 100%,
+    79% 99.2%,
+    76% 100%,
+    73% 99.2%,
+    70% 100%,
+    67% 99.2%,
+    64% 100%,
+    61% 99.2%,
+    58% 100%,
+    55% 99.2%,
+    52% 100%,
+    49% 99.2%,
+    46% 100%,
+    43% 99.2%,
+    40% 100%,
+    37% 99.2%,
+    34% 100%,
+    31% 99.2%,
+    28% 100%,
+    25% 99.2%,
+    22% 100%,
+    19% 99.2%,
+    16% 100%,
+    13% 99.2%,
+    10% 100%,
+    7% 99.2%,
+    4% 100%,
+    0 99.2%,
     0 100%
   );
 }
@@ -1590,9 +1665,14 @@
   will-change: transform;
 }
 
-@keyframes resume-receipt-feed {
-  0% { opacity: 0.1; transform: translateY(-12%) rotateX(5deg) scaleY(0.985); }
+@keyframes resume-receipt-settle {
+  0% { opacity: 0.1; transform: translateY(-2%) rotateX(3deg) scaleY(0.99); }
   100% { opacity: 1; transform: translateY(0) rotateX(0) scaleY(1); }
+}
+
+@keyframes resume-receipt-cover {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
 }
 
 @keyframes resume-printer-progress {
@@ -1609,6 +1689,11 @@
   .resume-receipt-feed {
     opacity: 1;
     transform: none;
+  }
+
+  .resume-receipt-window::after {
+    animation: none;
+    transform: translateY(100%);
   }
 
 }

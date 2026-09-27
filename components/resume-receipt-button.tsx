@@ -42,7 +42,7 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
       className="relative overflow-visible"
     >
       <div className="flex items-start justify-center px-0 pb-0 pt-0 sm:px-0 sm:pt-1">
-        <div className="w-full max-w-[34rem] [perspective:900px]">
+        <div className="w-full max-w-[38rem] [perspective:900px]">
           <div className="relative pt-2">
             <div className="resume-printer__head relative z-30 mx-0 rounded-[0.8rem] border border-[#f4f1ea]/15 bg-[#1b1b18] px-4 pb-2.5 pt-2.5 shadow-[0_12px_24px_rgba(0,0,0,0.22)] [transform:translateZ(14px)] sm:px-5">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -70,11 +70,13 @@ export function ResumeReceiptPanel({ runId }: ResumeReceiptPanelProps) {
               key={runId}
               className="resume-receipt-feed relative z-10 mx-1 -mt-1 sm:mx-2"
             >
-              <article className="resume-receipt relative bg-[#fffaf1] px-4 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-6">
-                <div className="resume-receipt__preview overflow-hidden bg-white">
-                  <ResumePdfPreview />
-                </div>
-              </article>
+              <div className="resume-receipt-window">
+                <article className="resume-receipt relative bg-[#fffaf1] px-4 pb-0 pt-0 text-[#1a1a1a] shadow-[0_20px_36px_rgba(0,0,0,0.3)] [transform-style:preserve-3d] sm:px-3">
+                  <div className="resume-receipt__preview overflow-hidden bg-white">
+                    <ResumePdfPreview />
+                  </div>
+                </article>
+              </div>
             </div>
 
           </div>

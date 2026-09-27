@@ -24,7 +24,7 @@ export default function ResumePdfPreview() {
         const buffer = await response.arrayBuffer();
         const document = await getDocumentProxy(new Uint8Array(buffer));
         const renderedPage = await renderPageAsImage(document, 1, {
-          scale: 1.5,
+          scale: 2,
           toDataURL: true,
         });
 
