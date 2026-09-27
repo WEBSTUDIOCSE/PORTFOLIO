@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { PUBLISHED_POSTS, POSTS } from "@/lib/writing";
+import { POSTS } from "@/lib/writing";
 
 // Per-post OG image. Visually mirrors the editorial card style used
 // elsewhere on the site, with the post title as the visual anchor
@@ -16,15 +16,6 @@ const INK = "#2a1a14";
 const INK_SOFT = "#5a4435";
 const MAROON = "#7a1f2b";
 const BRASS = "#b88c3f";
-
-export function generateImageMetadata() {
-  return PUBLISHED_POSTS.map((p) => ({
-    id: p.slug,
-    alt: `${p.title} — Saurabh Jadhav`,
-    contentType: "image/png",
-    size,
-  }));
-}
 
 type Params = { params: Promise<{ slug: string }> };
 

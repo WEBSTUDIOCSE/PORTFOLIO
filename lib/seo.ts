@@ -12,6 +12,28 @@
 
 export const SITE_URL = "https://saurabhjadhav.in";
 
+export const SITE_NAME = "Saurabh Jadhav";
+export const SITE_TITLE = `${SITE_NAME} — Full Stack & AI Engineer`;
+export const SITE_DESCRIPTION =
+  "Saurabh Jadhav is a Full Stack & AI Engineer in Mumbai building production Next.js products, multi-agent AI systems, and autonomous content platforms.";
+export const SITE_OG_IMAGE = `${SITE_URL}/opengraph-image`;
+export const SITE_OG_IMAGE_ALT =
+  "Saurabh Jadhav — Full Stack & AI Engineer building production web and AI systems";
+export const SITE_KEYWORDS = [
+  "Saurabh Jadhav",
+  "Full Stack Engineer Mumbai",
+  "AI Engineer India",
+  "Next.js developer",
+  "React developer",
+  "TypeScript developer",
+  "multi-agent AI systems",
+  "generative AI products",
+  "system design portfolio",
+  "Firebase developer",
+  "web performance",
+  "production SaaS",
+];
+
 /** @id fragment for the canonical Person node declared in app/layout.tsx. */
 export const PERSON_ID = `${SITE_URL}/#person`;
 

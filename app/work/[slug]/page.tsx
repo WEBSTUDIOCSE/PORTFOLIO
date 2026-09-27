@@ -22,6 +22,7 @@ export async function generateMetadata({
 
   const title = `${project.title} — Saurabh Jadhav`;
   const url = `${SITE_URL}/work/${slug}`;
+  const image = `${url}/opengraph-image`;
   // Next.js wires app/work/[slug]/opengraph-image.tsx as the
   // og:image automatically — we just need to set the rest of the
   // OG / Twitter metadata so the card content matches the image.
@@ -37,12 +38,21 @@ export async function generateMetadata({
       siteName: "Saurabh Jadhav",
       locale: "en_IN",
       authors: ["Saurabh Jadhav"],
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} — Saurabh Jadhav`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: project.oneLiner,
       creator: "@saurabhjadhav",
+      images: [image],
     },
   };
 }
@@ -90,21 +100,16 @@ export default async function WorkDetailPage({ params }: { params: Params }) {
     url,
     image,
     applicationCategory: "DeveloperApplication",
+    applicationSubCategory: "Web application",
     operatingSystem: "Web",
     creator: { "@id": PERSON_ID },
     author: { "@id": PERSON_ID },
     dateCreated: project.year,
     keywords: project.stack.join(", "),
+    featureList: project.useCases,
     ...(projectLinks.length > 0
       ? { sameAs: projectLinks.map((link) => link.href) }
       : {}),
-    // Required by Google for richer SoftwareApplication results.
-    // Free portfolio projects → offer with price 0.
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
   };
   const breadcrumbSchema = {
     "@context": "https://schema.org",

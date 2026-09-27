@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PUBLISHED_POSTS } from "@/lib/writing";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_OG_IMAGE, SITE_URL } from "@/lib/seo";
 
 const TITLE = "Writing — Saurabh Jadhav";
 const DESCRIPTION =
@@ -18,11 +18,13 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     siteName: "Saurabh Jadhav",
     locale: "en_IN",
+    images: [SITE_OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    images: [SITE_OG_IMAGE],
   },
 };
 

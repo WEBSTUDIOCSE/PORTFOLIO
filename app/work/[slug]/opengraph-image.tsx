@@ -25,15 +25,6 @@ const INK_SOFT = "#5a4435";
 const MAROON = "#7a1f2b";
 const BRASS = "#b88c3f";
 
-export function generateImageMetadata() {
-  return PROJECTS.map((p) => ({
-    id: p.slug,
-    alt: `${p.title} — Saurabh Jadhav`,
-    contentType: "image/png",
-    size,
-  }));
-}
-
 type Params = { params: Promise<{ slug: string }> };
 
 export default async function Image({ params }: Params) {

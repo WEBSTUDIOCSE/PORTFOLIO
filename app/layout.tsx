@@ -16,7 +16,18 @@ import ChatWidget from "@/components/chat-widget";
 import { headers } from "next/headers";
 import { FirebaseAnalytics } from "@/lib/firebase/analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { PERSON_ID, SITE_URL, WEBSITE_ID, jsonLd } from "@/lib/seo";
+import {
+  PERSON_ID,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  SITE_OG_IMAGE,
+  SITE_OG_IMAGE_ALT,
+  SITE_TITLE,
+  SITE_URL,
+  WEBSITE_ID,
+  jsonLd,
+} from "@/lib/seo";
 
 // Variable fonts — per Next.js docs, omit `weight` to load the full
 // variable axis as a single woff2. Adding an array of static weights
@@ -84,22 +95,13 @@ const architectsDaughter = Architects_Daughter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://saurabhjadhav.in"),
   title: "Saurabh Jadhav — Full Stack & AI Engineer",
-  description:
-    "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
-  keywords: [
-    "Saurabh Jadhav",
-    "Full Stack Developer",
-    "AI Engineer",
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Firebase",
-    "Mumbai",
-    "Maharashtra",
-    "Portfolio",
-  ],
-  authors: [{ name: "Saurabh Jadhav", url: "https://saurabhjadhav.in" }],
-  creator: "Saurabh Jadhav",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  category: "technology",
+  keywords: SITE_KEYWORDS,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -108,6 +110,14 @@ export const metadata: Metadata = {
     title: "Saurabh Jadhav — Full Stack & AI Engineer",
     description:
       "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
+    images: [
+      {
+        url: SITE_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: SITE_OG_IMAGE_ALT,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -115,6 +125,7 @@ export const metadata: Metadata = {
     description:
       "I build systems that replace headcount. Multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
     creator: "@saurabhjadhav",
+    images: [SITE_OG_IMAGE],
   },
   robots: {
     index: true,
@@ -124,6 +135,7 @@ export const metadata: Metadata = {
       follow: true,
       "max-image-preview": "large",
       "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
   alternates: {
@@ -167,7 +179,7 @@ const ROOT_JSON_LD = {
       alternateName: "सौरभ जाधव",
       jobTitle: "Full Stack & AI Engineer",
       url: SITE_URL,
-      image: `${SITE_URL}/opengraph-image`,
+      image: `${SITE_URL}/assets/saurabh-about-editorial.png`,
       email: "mailto:saurabhjadhav.cse@gmail.com",
       description:
         "Full Stack & AI Engineer based in Mumbai. Builds multi-agent AI pipelines, autonomous content platforms, and production Next.js apps.",
@@ -219,6 +231,22 @@ const ROOT_JSON_LD = {
       description:
         "Portfolio of Saurabh Jadhav — Full Stack & AI Engineer based in Mumbai.",
       publisher: { "@id": PERSON_ID },
+      inLanguage: "en-IN",
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: SITE_TITLE,
+      description: SITE_DESCRIPTION,
+      isPartOf: { "@id": WEBSITE_ID },
+      about: { "@id": PERSON_ID },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: SITE_OG_IMAGE,
+        width: 1200,
+        height: 630,
+      },
       inLanguage: "en-IN",
     },
   ],

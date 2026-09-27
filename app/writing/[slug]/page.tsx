@@ -21,6 +21,7 @@ export async function generateMetadata({
 
   const title = `${post.title} — Saurabh Jadhav`;
   const url = `${SITE_URL}/writing/${slug}`;
+  const image = `${url}/opengraph-image`;
   return {
     title,
     description: post.excerpt,
@@ -35,12 +36,21 @@ export async function generateMetadata({
       publishedTime: post.date,
       authors: ["Saurabh Jadhav"],
       tags: post.tags,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: `${post.title} — Saurabh Jadhav`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: post.excerpt,
       creator: "@saurabhjadhav",
+      images: [image],
     },
     // ISO date string → makes Google's freshness signal pick this
     // post up as a dated article instead of an evergreen page.
@@ -86,6 +96,7 @@ export default async function WritingDetailPage({
     author: { "@id": PERSON_ID },
     publisher: { "@id": PERSON_ID },
     keywords: post.tags.join(", "),
+    articleSection: post.tags[0],
     inLanguage: "en-IN",
     wordCount,
   };
