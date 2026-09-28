@@ -1546,82 +1546,15 @@
 /* Resume CTA: a small physical-feeling receipt printer interaction. */
 .resume-receipt-feed {
   transform-origin: center top;
-  animation: resume-receipt-settle 1700ms cubic-bezier(0.33, 1, 0.68, 1) both;
-  will-change: opacity, transform;
+  animation: resume-receipt-feed 1900ms cubic-bezier(0.2, 0.82, 0.2, 1) both;
+  overflow: hidden;
+  will-change: clip-path, opacity, transform;
 }
 
 .resume-receipt-window {
   position: relative;
   overflow: hidden;
-}
-
-.resume-receipt-window::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  background: #1a1a1a;
-  clip-path: polygon(
-    0 1%,
-    2% 0,
-    4% 1%,
-    6% 0,
-    8% 1%,
-    10% 0,
-    12% 1%,
-    14% 0,
-    16% 1%,
-    18% 0,
-    20% 1%,
-    22% 0,
-    24% 1%,
-    26% 0,
-    28% 1%,
-    30% 0,
-    32% 1%,
-    34% 0,
-    36% 1%,
-    38% 0,
-    40% 1%,
-    42% 0,
-    44% 1%,
-    46% 0,
-    48% 1%,
-    50% 0,
-    52% 1%,
-    54% 0,
-    56% 1%,
-    58% 0,
-    60% 1%,
-    62% 0,
-    64% 1%,
-    66% 0,
-    68% 1%,
-    70% 0,
-    72% 1%,
-    74% 0,
-    76% 1%,
-    78% 0,
-    80% 1%,
-    82% 0,
-    84% 1%,
-    86% 0,
-    88% 1%,
-    90% 0,
-    92% 1%,
-    94% 0,
-    96% 1%,
-    98% 0,
-    100% 1%,
-    100% 100%,
-    0 100%
-  );
-  animation: resume-receipt-cover 1700ms cubic-bezier(0.33, 1, 0.68, 1) both;
-  will-change: transform;
+  overflow-anchor: none;
 }
 
 .resume-receipt {
@@ -1685,18 +1618,24 @@
 
 .resume-printer__progress {
   transform-origin: left center;
-  animation: resume-printer-progress 1500ms linear both;
+  animation: resume-printer-progress 1900ms cubic-bezier(0.2, 0.82, 0.2, 1) both;
   will-change: transform;
 }
 
-@keyframes resume-receipt-settle {
-  0% { opacity: 0.1; transform: translateY(-2%) rotateX(3deg) scaleY(0.99); }
-  100% { opacity: 1; transform: translateY(0) rotateX(0) scaleY(1); }
-}
-
-@keyframes resume-receipt-cover {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
+@keyframes resume-receipt-feed {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    transform: translateY(-0.7rem) rotateX(2deg) scaleY(0.985);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scaleY(1);
+  }
 }
 
 @keyframes resume-printer-progress {
@@ -1713,11 +1652,7 @@
   .resume-receipt-feed {
     opacity: 1;
     transform: none;
-  }
-
-  .resume-receipt-window::after {
-    animation: none;
-    transform: translateY(100%);
+    clip-path: inset(0 0 0 0);
   }
 
 }
