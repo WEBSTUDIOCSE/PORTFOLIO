@@ -180,14 +180,19 @@ function ProjectCard({
       </div>
 
       <div className={`mt-7 flex flex-wrap items-center justify-between gap-4 border-t pt-5 ${wide ? "md:mt-10" : ""} ${subtleBorder}`}>
-        <div className="relative z-10 flex flex-wrap gap-2">
-          {projectLinks.map((link) => (
+        <div className="relative z-10 flex flex-wrap items-center gap-3">
+          {projectLinks.map((link, linkIndex) => (
             <a
               key={link.href}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`rounded-full border px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.12em] transition-colors hover:border-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 ${subtleBorder} ${muted}`}
+              aria-label={`${link.label} for ${name}`}
+              className={`inline-flex min-h-11 min-w-[10.75rem] items-center justify-between gap-4 whitespace-nowrap rounded-xl border px-4 py-2.5 font-sans text-[11px] font-semibold uppercase tracking-[0.1em] transition-[background-color,border-color,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+                linkIndex === 0
+                  ? "border-[#d9ad57] bg-[#d9ad57] text-[#1a1a1a] hover:bg-[#e3b968]"
+                  : `${subtleBorder} ${muted} hover:border-current`
+              }`}
             >
               {link.label} <span aria-hidden>↗</span>
             </a>
@@ -195,7 +200,8 @@ function ProjectCard({
         </div>
         <Link
           href={`/work/${project.slug}`}
-          className="relative z-10 inline-flex items-center gap-2 rounded-full bg-[#d9ad57] px-4 py-2 font-sans text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1a1a] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+          aria-label={`Read the ${name} case study`}
+          className={`relative z-10 inline-flex min-h-11 min-w-[10.75rem] items-center justify-between gap-4 whitespace-nowrap rounded-xl border px-4 py-2.5 font-sans text-[11px] font-bold uppercase tracking-[0.1em] transition-[background-color,border-color,transform] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${subtleBorder} ${muted} hover:border-current`}
         >
           Read case study <span aria-hidden>↗</span>
         </Link>
