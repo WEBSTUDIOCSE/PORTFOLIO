@@ -27,7 +27,9 @@
 // top-level `useGSAP` import — this site has a hard Lighthouse-driven
 // rule that GSAP never sits in the main bundle.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+type ClipState = "loading" | "ready" | "error";
 
 const LAYERS = [
   {
@@ -63,6 +65,14 @@ const LAYERS = [
 export default function WhatWeBuild() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [clipStates, setClipStates] = useState<Record<string, ClipState>>({});
+
+  const setClipState = (title: string, state: ClipState) => {
+    setClipStates((current) => {
+      if (current[title] === state) return current;
+      return { ...current, [title]: state };
+    });
+  };
 
   // Play the looping 3D clips only while the section is on screen.
   useEffect(() => {
@@ -82,6 +92,16 @@ export default function WhatWeBuild() {
       },
       { threshold: 0.1 },
     );
+
+    // A cached video may already be playable before React attaches the
+    // `canplay` handler. Read the initial state as well so it never stays
+    // hidden behind the loading layer after a fast/cache hit.
+    videos.forEach((video, index) => {
+      if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        setClipState(LAYERS[index].title, "ready");
+      }
+    });
+
     io.observe(section);
     return () => io.disconnect();
   }, []);
@@ -210,14 +230,38 @@ export default function WhatWeBuild() {
                   now (no .webm re-export exists for the current
                   clips), so a single <source> avoids a guaranteed
                   404 fetch attempt per card. Decorative only, aria-hidden. */}
-              <div className="relative min-h-[240px] overflow-hidden bg-black md:min-h-0">
+              <div className="relative min-h-[240px] overflow-hidden bg-[#101010] md:min-h-0">
+                <div
+                  aria-hidden="true"
+                  className={`absolute inset-0 z-[1] flex flex-col justify-between bg-[radial-gradient(circle_at_50%_42%,rgba(217,173,87,0.14),transparent_42%),linear-gradient(145deg,#161616,#070707)] p-6 text-[#f4f1ea]/60 transition-opacity duration-500 ${
+                    clipStates[layer.title] === "ready" ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#d9ad57]/80">
+                    3D system view
+                  </span>
+                  <span className="inline-flex items-center gap-2 self-start rounded-full border border-[#f4f1ea]/15 bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em]">
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        clipStates[layer.title] === "error"
+                          ? "bg-[#d56b5d]"
+                          : "bg-[#d9ad57] motion-safe:animate-pulse"
+                      }`}
+                    />
+                    {clipStates[layer.title] === "error" ? "Preview unavailable" : "Loading render"}
+                  </span>
+                </div>
                 <video
                   loop
                   muted
                   playsInline
-                  preload="none"
+                  preload={idx === 0 ? "auto" : "metadata"}
                   aria-hidden="true"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  onCanPlay={() => setClipState(layer.title, "ready")}
+                  onError={() => setClipState(layer.title, "error")}
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+                    clipStates[layer.title] === "ready" ? "opacity-100" : "opacity-0"
+                  }`}
                 >
                   <source src={`${layer.videoBase}.mp4`} type="video/mp4" />
                 </video>

@@ -14,6 +14,7 @@ export default function ResumePdfPreview({ onReady }: ResumePdfPreviewProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const onReadyRef = useRef(onReady);
+  const readyRef = useRef(false);
 
   useEffect(() => {
     onReadyRef.current = onReady;
@@ -24,7 +25,7 @@ export default function ResumePdfPreview({ onReady }: ResumePdfPreviewProps) {
 
     async function renderResume() {
       try {
-        const response = await fetch(RESUME_URL, { cache: "no-store" });
+        const response = await fetch(RESUME_URL, { cache: "force-cache" });
 
         if (!response.ok) {
           throw new Error(`Resume request failed with ${response.status}`);
@@ -39,7 +40,6 @@ export default function ResumePdfPreview({ onReady }: ResumePdfPreviewProps) {
 
         if (!cancelled) {
           setImageUrl(renderedPage);
-          onReadyRef.current?.();
         }
       } catch {
         if (!cancelled) {
@@ -64,7 +64,13 @@ export default function ResumePdfPreview({ onReady }: ResumePdfPreviewProps) {
         width={612}
         height={792}
         unoptimized
-        className="block h-auto w-full"
+        priority
+        onLoad={() => {
+          if (readyRef.current) return;
+          readyRef.current = true;
+          onReadyRef.current?.();
+        }}
+        className="block h-auto w-full object-contain object-top"
       />
     );
   }
